@@ -26,6 +26,7 @@
             <h1>Productos <i class="fa fa-box"></i></h1>
             <a href="{{route("productos.create")}}" class="btn btn-success mb-2">Agregar</a>
             @include("notificacion")
+            <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Productos</button>        
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
