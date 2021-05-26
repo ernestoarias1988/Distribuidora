@@ -25,7 +25,7 @@
         <div class="col-12">
             <h1>Ventas <i class="fa fa-list"></i></h1>
             @include("notificacion")
-            <button style="text-align:center" class="btn btn-success" onClick="window.print()">Imprimir Ventas</button>        
+            <button style="text-align:center" class="btn btn-primary" onClick="window.print()">Imprimir Ventas</button>        
             <div  style="text-align:center" class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
