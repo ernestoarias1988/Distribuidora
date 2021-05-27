@@ -117,7 +117,7 @@ class VenderController extends Controller
     public function agregarProductoVenta(Request $request)
     {
         $codigo = $request->post("codigo");
-        $producto = Producto::where("codigo_barras", "=", $codigo)->first();
+        $producto = Producto::where("descripcion", "=", $codigo)->first();
         if (!$producto) {
             return redirect()
                 ->route("vender.index")
@@ -138,7 +138,7 @@ class VenderController extends Controller
                 ]);
         }
         $productos = $this->obtenerProductos();
-        $posibleIndice = $this->buscarIndiceDeProducto($producto->codigo_barras, $productos);
+        $posibleIndice = $this->buscarIndiceDeProducto($producto->descripcion, $productos);
         // Es decir, producto no fue encontrado
         if ($posibleIndice === -1) {
             $producto->cantidad = 1;
@@ -159,7 +159,7 @@ class VenderController extends Controller
     private function buscarIndiceDeProducto(string $codigo, array &$productos)
     {
         foreach ($productos as $indice => $producto) {
-            if ($producto->codigo_barras === $codigo) {
+            if ($producto->descripcion === $codigo) {
                 return $indice;
             }
         }
@@ -188,7 +188,7 @@ class VenderController extends Controller
     private function restarProductoACarrito($producto)
     {
         $productos = $this->obtenerProductos();
-        $posibleIndice = $this->buscarIndiceDeProducto($producto->codigo_barras, $productos);
+        $posibleIndice = $this->buscarIndiceDeProducto($producto->descripcion, $productos);
         // Es decir, producto no fue encontrado
         if ($posibleIndice === -1) {
             $producto->cantidad = 1;
@@ -200,7 +200,24 @@ class VenderController extends Controller
     }
 
 
-
+    function fetch(Request $request)
+    {
+     if($request->get('query'))
+     {
+      $query = $request->get('query');
+      $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
+        ->get();
+      $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+      foreach($data as $row)
+      {
+       $output .= '
+       <li><a href="#">'.$row->descripcion.'</a></li>
+       ';
+      }
+      $output .= '</ul>';
+      echo $output;
+     }
+    }
 
 
 

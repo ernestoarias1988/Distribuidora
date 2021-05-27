@@ -1,6 +1,11 @@
 @extends("maestra")
 @section("titulo", "Realizar venta")
 @section("contenido")
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <div class="row">
         <div class="col-12">
             <h1>Nueva venta <i class="fa fa-cart-plus"></i></h1>
@@ -12,7 +17,7 @@
                         <div class="form-group">
                             <label for="id_cliente">Cliente</label>
                             <select required class="form-control" name="id_cliente" id="id_cliente">
-                                @foreach($clientes as $cliente)
+                                @foreach($clientes->sortBy('nombre') as $cliente)
                                     <option value="{{$cliente->id}}">{{$cliente->nombre}}</option>
                                 @endforeach
                             </select>
@@ -30,15 +35,17 @@
                     </form>
                 </div>
                 <div class="col-12 col-md-6">
-                    <form action="{{route("agregarProductoVenta")}}" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="codigo">Código de barras</label>
-                            <input id="codigo" autocomplete="on" required autofocus name="codigo" type="text"
-                                   class="form-control"
-                                   placeholder="Código de barras">
+
+                <form action="{{route("agregarProductoVenta")}}" method="post">
+                    @csrf
+                    <div class="form-group">
+                        <label for="descripcion">Producto</label>
+                        <input type="text" name="codigo" autocomplete="off" id="codigo" class="form-control"required autofocus name="codigo" placeholder="descripcion" />
+                        <div id="descripcionlist">
                         </div>
-                    </form>
+                    </div>
+                    {{ csrf_field() }}
+                </form>
                 </div>
             </div>
             @if(session("productos") !== null)
@@ -84,4 +91,40 @@
             @endif
         </div>
     </div>
+
+
+
+
+
+
+
+    
+<script>
+$(document).ready(function(){
+
+ $('#codigo').keyup(function(){ 
+        var query = $(this).val();
+        if(query != '')
+        {
+         var _token = $('input[name="_token"]').val();
+         $.ajax({
+          url:"{{ route('autocomplete.fetch') }}",
+          method:"POST",
+          data:{query:query, _token:_token},
+          success:function(data){
+           $('#descripcionlist').fadeIn();  
+                    $('#descripcionlist').html(data);
+          }
+         });
+        }
+    });
+
+    $(document).on('click', 'li', function(){  
+        $('#codigo').val($(this).text());  
+        $('#descripcionlist').fadeOut();  
+    });  
+
+});
+</script>
+
 @endsection

@@ -45,7 +45,9 @@ Route::middleware("auth")
         Route::get('cancelarentrega', 'VentasController@cancelarEntrega')->name('cancelEntrega');
         Route::get('cargarpago', 'VentasController@cargarPago')->name('cargaPago');
         Route::get('cargarentrega', 'VentasController@cargarEntrega')->name('cargaEntrega');
-
         Route::post('agregarproducto', 'VenderController@agregarProductoACarrito')->name('agregaProducto');
 
+
+        
+        Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
     });

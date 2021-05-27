@@ -28,7 +28,7 @@
             @include("notificacion")
             <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Productos</button>        
             <div class="table-responsive">
-                <table class="table table-bordered">
+            <table class="table table-bordered table-striped table-highlight">
                     <thead>
                     <tr>
                         <th>Código de barras</th>

@@ -40,7 +40,8 @@ ____          _____               _ _           _
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($clientes as $cliente)
+                    @foreach($clientes->sortBy('nombre') as $cliente)                
+
                         <tr>
                             <td>{{$cliente->nombre}}</td>
                             <td>{{$cliente->telefono}}</td>

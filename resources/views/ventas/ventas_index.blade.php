@@ -27,7 +27,7 @@
             @include("notificacion")
             <button style="text-align:center" class="btn btn-primary" onClick="window.print()">Imprimir Ventas</button>        
             <div  style="text-align:center" class="table-responsive">
-                <table class="table table-bordered">
+            <table class="table table-bordered table-striped table-highlight">
                     <thead>
                     <tr>
                         <th white-space: nowrap;>Fecha</th>
@@ -42,8 +42,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($ventas->sortByDesc('created_at') as $venta)
-                    
+                    @foreach($ventas->sortByDesc('created_at') as $venta)                    
                     
                         <tr>
                             <td>{{$venta->created_at}}</td>
