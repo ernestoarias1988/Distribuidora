@@ -40,7 +40,7 @@
                 @csrf
                     <div class="form-group">
                         <label for="descripcion">Producto</label>
-                        <input type="text" name="codigo" autocomplete="off" id="codigo" class="form-control"required autofocus name="codigo" placeholder="descripcion" />
+                        <input type="text" name="codigo" autocomplete="off" id="codigo" class="form-control"required autofocus name="codigo" placeholder="Ingrese el producto" />
                         <div id="descripcionlist">
                         </div>
                     </div>
