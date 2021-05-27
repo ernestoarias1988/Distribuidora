@@ -25,6 +25,7 @@
         <div class="col-12">
             <h1>Detalle de venta #{{$venta->id}}</h1>
             <h1>Cliente: <small>{{$venta->cliente->nombre}}</small></h1>
+            <h1>Direccion: <small>{{$venta->cliente->direccion}}</small></h1>
             <h1>Vendedor: <small>{{$venta->vendedor}}</small></h1>
             @include("notificacion")
             <a class="btn btn-info" href="{{route("ventas.index")}}">

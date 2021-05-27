@@ -4,6 +4,7 @@ use App\Venta;
 use Illuminate\Http\Request;
 
 $cliente = $data['cliente'];
+$direccion = $data['direccion'];
 $remitente = "Distribuidora ***"; 
 $vendedor = $data['vendedor'];
 //$web = "https://parzibyte.me/blog";
@@ -28,15 +29,15 @@ $fecha = date("Y-m-d");
         <div class="col-xs-10 ">
             <h1>Comprobante de pedido</h1>
         </div>
-        <div class="col-xs-2">
+        <!--<div class="col-xs-2">
             <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="C:\xampp7\htdocs\POS_TANTUM\Distribuidora\resources\views\pdf\logo.jpg" alt="Logotipo">
-        </div>
+        </div> 
     </div>
     <hr>
     <div class="row">
         <div class="col-xs-10">
             <h1 class="h6"><?php echo $remitente ?></h1>
-        </div>
+        </div>-->
         <div class="col-xs-2 text-center">
             <strong>Fecha</strong>
             <br>
@@ -52,10 +53,10 @@ $fecha = date("Y-m-d");
         <div class="col-xs-6">
             <h2 class="h2">Cliente</h2>
             <strong><?php echo $cliente ?></strong>
-        </div>
+            <h3 class="h3">Direccion: <?php echo $direccion ?></h3>
+
         <div class="col-xs-6">
-            <h2 class="h2">Vendedor</h2>
-            <strong><?php echo $vendedor ?></strong>
+            <h2 class="h2">Vendedor: <strong><?php echo $vendedor ?></strong></h2>
         </div>
     </div>
     <div class="row">

@@ -182,7 +182,8 @@ class VentasController extends Controller
             'cliente'   => $venta->cliente->nombre,  
             'Request' => $request,  
             'vendedor' => $venta->vendedor,        
-            'descuento'=> 0        
+            'descuento'=> 0,
+            'direccion'=>$venta->cliente->direccion        
         ];
         return $data;
     }
