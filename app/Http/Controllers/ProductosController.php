@@ -57,6 +57,36 @@ class ProductosController extends Controller
     public function store(Request $request)
     {
         $producto = new Producto($request->input());
+
+        $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
+        if ($probando) {
+            return redirect()
+                ->route("productos.index")
+                ->with([
+                    "mensaje" => "Codigo ya existente. Producto no creado",
+                    "tipo" => "danger"
+                ]);
+        }
+        $probando = Producto::where("descripcion", "=", $producto->descripcion)->first();
+        if($probando) {
+            return redirect()
+                ->route("productos.index")
+                ->with([
+                    "mensaje" => "Producto ya existente",
+                    "tipo" => "danger"
+                ]);
+
+        }
+
+
+
+
+
+        if($producto == Producto::find($producto->id))
+        {
+            return redirect()->route("productos.index")->with("mensaje", "Producto NOOO guardado");
+        }
+        $producto = new Producto($request->input());
         $producto->saveOrFail();
         return redirect()->route("productos.index")->with("mensaje", "Producto guardado");
     }
