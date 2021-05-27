@@ -48,6 +48,8 @@ Route::middleware("auth")
         Route::post('agregarproducto', 'VenderController@agregarProductoACarrito')->name('agregaProducto');
 
 
+        Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');
+
         
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
     });

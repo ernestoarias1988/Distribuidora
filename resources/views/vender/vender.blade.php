@@ -33,11 +33,11 @@
                             </div>
                         @endif
                     </form>
-                </div>
-                <div class="col-12 col-md-6">
-
-                <form action="{{route("agregarProductoVenta")}}" method="post">
-                    @csrf
+                    </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                               <form action="{{route("editaCantidad")}}" method="post">
+                @csrf
                     <div class="form-group">
                         <label for="descripcion">Producto</label>
                         <input type="text" name="codigo" autocomplete="off" id="codigo" class="form-control"required autofocus name="codigo" placeholder="descripcion" />
@@ -45,8 +45,23 @@
                         </div>
                     </div>
                     {{ csrf_field() }}
+                    @csrf
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="text" name="cantidad" autocomplete="off" id="cantidad" class="form-control"required autofocus name="cantidad" placeholder="Cantidad" />                    
+                    </div>
+                    {{ csrf_field() }}
+                    <button type="submit" class="btn btn-default">Agregar Producto
+                    <i class="fa fa-plus-square fa-2x" aria-hidden="true"></i>                                        </button>
                 </form>
                 </div>
+                </div>
+
+
+
+
+
+
             </div>
             @if(session("productos") !== null)
                 <h2>Total: ${{number_format($total, 2)}}</h2>
@@ -58,6 +73,7 @@
                             <th>Descripción</th>
                             <th>Precio</th>
                             <th>Cantidad</th>
+                            <th>Total</th>
                             <th>Quitar</th>
                         </tr>
                         </thead>
@@ -67,8 +83,13 @@
                                 <td>{{$producto->codigo_barras}}</td>
                                 <td>{{$producto->descripcion}}</td>
                                 <td>${{number_format($producto->precio_venta, 2)}}</td>
-                                <td>{{$producto->cantidad}}                                                              
-                                </td>                                
+                                <td>{{$producto->cantidad}}</td> 
+                                <td>  
+                                <?php
+                                $total=$producto->cantidad*$producto->precio_venta;
+                                echo "$".$total."";
+                                ?>
+                                </td>
                                 <td>
                                     <form action="{{route("quitarProductoDeVenta")}}" method="post">
                                         @method("delete")
@@ -78,7 +99,7 @@
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </form>
-                                </td>
+                                </td>                                
                             </tr>
                         @endforeach
                         </tbody>
@@ -99,6 +120,7 @@
 
 
     
+
 <script>
 $(document).ready(function(){
 
