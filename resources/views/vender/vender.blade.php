@@ -48,10 +48,10 @@
                     @csrf
                     <div class="form-group">
                         <label for="cantidad">Cantidad</label>
-                        <input type="text" name="cantidad" autocomplete="off" id="cantidad" class="form-control"required autofocus name="cantidad" placeholder="Cantidad" />                    
+                        <input type="number" min="1" name="cantidad" autocomplete="off" id="cantidad" class="form-control"required autofocus name="cantidad" placeholder="Cantidad" />                    
                     </div>
                     {{ csrf_field() }}
-                    <button type="submit" class="btn btn-default">Agregar Producto
+                    <button type="submit" class="btn btn-primary">Agregar Producto &nbsp;
                     <i class="fa fa-plus-square fa-2x" aria-hidden="true"></i>                                        </button>
                 </form>
                 </div>
