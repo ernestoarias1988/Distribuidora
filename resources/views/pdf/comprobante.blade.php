@@ -61,7 +61,7 @@ $fecha = date("Y-m-d");
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <table class="table table-condensed table-bordered table-striped" style="width:100%">
+            <table style="text-align: center;" width="100%" class="table table-condensed table-bordered table-striped" style="width:100%">
                 <thead>
                 <tr>
                     <th>Descripción</th>
@@ -94,7 +94,8 @@ $fecha = date("Y-m-d");
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="3" class="text-right"><strong>Total</strong></td>
+                    <td class="text-right"><strong>Total</strong></td>
+                    <td></td><td></td>
                     <td><strong>$<?php echo number_format($subtotal, 2) ?></strong></td>
                 </tr>
                 <!--<tr>
