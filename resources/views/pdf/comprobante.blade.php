@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 
 $cliente = $data['cliente'];
 $direccion = $data['direccion'];
-$remitente = "Distribuidora ***"; 
+$remitente = "Distribuidora"; 
 $vendedor = $data['vendedor'];
 //$web = "https://parzibyte.me/blog";
 $mensajePie = "Gracias por su compra!";
@@ -27,17 +27,17 @@ $fecha = date("Y-m-d");
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-10 ">
-            <h1>Comprobante de pedido</h1>
+            <h1>Distribuidora</h1>
         </div>
-        <!--<div class="col-xs-2">
-            <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="C:\xampp7\htdocs\POS_TANTUM\Distribuidora\resources\views\pdf\logo.jpg" alt="Logotipo">
+        <div class="col-xs-2">            
+            <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="img\logo.jpg">
         </div> 
     </div>
     <hr>
     <div class="row">
         <div class="col-xs-10">
-            <h1 class="h6"><?php echo $remitente ?></h1>
-        </div>-->
+            <h1 class="h6">Comprobante de Pedido</h1>
+        </div>
         <div class="col-xs-2 text-center">
             <strong>Fecha</strong>
             <br>

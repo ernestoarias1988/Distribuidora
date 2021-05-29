@@ -47,7 +47,9 @@ class VenderController extends Controller
         // Crear una venta
         
         $venta = new Venta();
-        $venta->id_cliente = $request->input("id_cliente");
+        $nombre_cliente = $request->input("id_cliente");
+        $cliente = Cliente::where("nombre", "=", $nombre_cliente)->first();
+        $venta->id_cliente = $cliente->id;
         $venta->vendedor = auth()->user()->name;
         $venta->saveOrFail();
         $idVenta = $venta->id;
@@ -212,6 +214,26 @@ class VenderController extends Controller
       {
        $output .= '
        <li><a href="#">'.$row->descripcion.'</a></li>
+       ';
+      }
+      $output .= '</ul>';
+      echo $output;
+     }
+    }
+
+
+    function fetchcliente(Request $request)
+    {
+     if($request->get('query'))
+     {
+      $query = $request->get('query');
+      $data = Cliente::where('nombre', 'LIKE', "%{$query}%")
+        ->get();
+      $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+      foreach($data as $row)
+      {
+       $output .= '
+       <li><a href="#">'.$row->nombre.'</a></li>
        ';
       }
       $output .= '</ul>';
