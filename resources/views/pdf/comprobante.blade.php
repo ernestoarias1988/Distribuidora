@@ -110,13 +110,7 @@ $fecha = date("Y-m-d");
                     <!--<td colspan="3" class="text-right">Impuestos</td>-->
                     <!--<td>$<//?php echo number_format($impuestos, 2) ?></td>-->
                 </tr>
-                <tr>
-                    <td colspan="3" class="text-right">
-                        <h4>Total</h4></td>
-                    <td>
-                        <h4>$<?php echo number_format($total, 2) ?></h4>
-                    </td>
-                </tr>
+                
                 </tfoot>
             </table>
         </div>
