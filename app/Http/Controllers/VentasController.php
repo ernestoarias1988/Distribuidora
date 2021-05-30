@@ -66,7 +66,6 @@ class VentasController extends Controller
         $impresora->setJustification(Printer::JUSTIFY_CENTER);
         $impresora->setTextSize(1, 1);
         $impresora->text("Gracias por su compra\n");
-        $impresora->text("https://parzibyte.me/blog");
         $impresora->feed(5);
         $impresora->close();
         return redirect()->back()->with("mensaje", "Ticket impreso");
