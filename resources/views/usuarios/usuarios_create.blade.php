@@ -12,11 +12,12 @@
                            type="text" placeholder="Nombre">
                 </div>
                 <div class="form-group">
-                    <label class="label">Correo electrónico</label>
+                    <label class="label">Usuario</label>
                     <input required autocomplete="off" name="email" class="form-control"
-                           type="email" placeholder="Correo electrónico">
+                           type="text" placeholder="Usuario">
                 </div>
                 <div class="form-group">
+                <label class="label">Rol</label>
                 <select name="role_id" id="role_id" class="form-control @error('role_id') is-invalid @enderror" required autocomplete="role_id" autofocus>
                              <option value="Administrador">Administrador</option> 
                              <option value="Vendedor">Vendedor</option> 

@@ -12,7 +12,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
+            'email' => 'required|string|unique:users',
             'role_id' => 'required|int',
             'password' => 'required|string|confirmed',
         ]);
@@ -30,7 +30,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email',
+            'email' => 'required|string',
             'password' => 'required|string',
             'remember_me' => 'boolean',
         ]);

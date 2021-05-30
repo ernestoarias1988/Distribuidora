@@ -111,7 +111,7 @@ return [
     'starts_with' => 'El campo :attribute con uno de los siguientes valores: :values',
     'string' => 'El campo :attribute debe ser una cadena.',
     'timezone' => 'El campo :attribute debe ser una zona horaria válida.',
-    'unique' => 'El campo :attribute ya existe.',
+    'unique' => 'El campo ya existe.',
     'uploaded' => 'Error al subir :attribute.',
     'url' => 'El formato de :attribute es inválido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',

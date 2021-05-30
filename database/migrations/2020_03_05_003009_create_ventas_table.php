@@ -15,8 +15,8 @@ class CreateVentasTable extends Migration
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
-            $table->integer('entregado');
-            $table->integer('pagado');
+            $table->integer('entregado')->default('0');
+            $table->integer('pagado')->default('0');
             $table->string('vendedor');
             $table->timestamps();
         });

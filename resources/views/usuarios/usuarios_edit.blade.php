@@ -33,9 +33,9 @@ ____          _____               _ _           _
                            type="text" placeholder="Nombre">
                 </div>
                 <div class="form-group">
-                    <label class="label">Correo electrónico</label>
+                    <label class="label">Usuario</label>
                     <input required value="{{$usuario->email}}" autocomplete="off" name="email" class="form-control"
-                           type="email" placeholder="Correo electrónico">
+                           type="text" placeholder="Usuario">
                 </div>
                 <div class="form-group">
                     <label class="label">Rol</label>

@@ -10,7 +10,7 @@
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>Correo electrónico</th>
+                        <th>Usuario</th>
                         <th>Nombre</th>
                         <th>Rol</th>
                         <th>Editar</th>
