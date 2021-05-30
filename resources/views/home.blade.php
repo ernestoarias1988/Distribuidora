@@ -9,7 +9,6 @@
         <h1>Rol: Administrador</h1>
         @endif
     </div>
-
     @if (Auth::user()->role_id=="Administrador")
     @foreach([
     ["productos", "vender","ventas", "clientes"],
@@ -36,10 +35,9 @@
     @endif
   
 
-    @if (Auth::user()->role_id=="dsa")
+    @if (Auth::user()->role_id=="Vendedor")
     @foreach([
-    ["productos", "ventas", "vender", "clientes"],
-    ["usuarios"]
+    ["productos", "ventas", "vender", "clientes"]
     ] as $modulos)
         <div class="col-10 pb-2">
             <div class="row">
@@ -63,8 +61,7 @@
 
     @if (Auth::user()->role_id=="Repartidor")
     @foreach([
-    ["productos", "ventas", "vender", "clientes"],
-    ["usuarios"]
+    ["ventas"]
     ] as $modulos)
         <div class="col-10 pb-2">
             <div class="row">
