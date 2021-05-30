@@ -1,23 +1,3 @@
-{{--
-
-____          _____               _ _           _
-|  _ \        |  __ \             (_) |         | |
-| |_) |_   _  | |__) |_ _ _ __ _____| |__  _   _| |_ ___
-|  _ <| | | | |  ___/ _` | '__|_  / | '_ \| | | | __/ _ \
-| |_) | |_| | | |  | (_| | |   / /| | |_) | |_| | ||  __/
-|____/ \__, | |_|   \__,_|_|  /___|_|_.__/ \__, |\__\___|
-       __/ |                               __/ |
-      |___/                               |___/
-
-  Blog:       https://parzibyte.me/blog
-  Ayuda:      https://parzibyte.me/blog/contrataciones-ayuda/
-  Contacto:   https://parzibyte.me/blog/contacto/
-
-  Copyright (c) 2020 Luis Cabrera Benito
-  Licenciado bajo la licencia MIT
-
-  El texto de arriba debe ser incluido en cualquier redistribucion
---}}
 @extends("maestra")
 @section("titulo", "Usuarios")
 @section("contenido")
@@ -32,6 +12,7 @@ ____          _____               _ _           _
                     <tr>
                         <th>Correo electrónico</th>
                         <th>Nombre</th>
+                        <th>Rol</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
@@ -41,6 +22,7 @@ ____          _____               _ _           _
                         <tr>
                             <td>{{$usuario->email}}</td>
                             <td>{{$usuario->name}}</td>
+                            <td>{{$usuario->role_id}}</td>
                             <td>
                                 <a class="btn btn-warning" href="{{route("usuarios.edit",[$usuario])}}">
                                     <i class="fa fa-edit"></i>

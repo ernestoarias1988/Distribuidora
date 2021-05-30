@@ -38,6 +38,16 @@ ____          _____               _ _           _
                            type="email" placeholder="Correo electrónico">
                 </div>
                 <div class="form-group">
+                    <label class="label">Rol</label>
+ 
+                           <select name="role_id" value="{{$usuario->role_id}}" id="role_id" class="form-control @error('role_id') is-invalid @enderror" required autocomplete="role_id" autofocus>
+                           <option value="{{$usuario->role_id}}" selected disabled hidden>{{$usuario->role_id}}</option>
+                             <option value="Administrador">Administrador</option> 
+                             <option value="Vendedor">Vendedor</option> 
+                            <option value="Repartidor">Repartidor</option>
+                            </select>
+                </div>
+                <div class="form-group">
                     <label class="label">Contraseña</label>
                     <input required value="{{$usuario->password}}" autocomplete="off" name="password"
                            class="form-control"

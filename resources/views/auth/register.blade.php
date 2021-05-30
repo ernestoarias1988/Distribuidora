@@ -50,9 +50,9 @@
 
                             <div class="col-md-6">
                             <select name="role_id" id="role_id" class="form-control @error('role_id') is-invalid @enderror" required autocomplete="role_id" autofocus>
-                             <option value="1">Administrador</option> 
-                             <option value="2">Vendedor</option> 
-                            <option value="3">Repartidor</option>
+                             <option value="Administrador">Administrador</option> 
+                             <option value="Vendedor">Vendedor</option> 
+                            <option value="Repartidor">Repartidor</option>
                             </select>
 
                                 @error('role_id')
