@@ -7,12 +7,28 @@ use Illuminate\Http\Request;
 
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class ProductosExport implements FromCollection
+class ProductosExport implements FromCollection,WithStrictNullComparison,WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
     */
+
+    public function headings(): array
+    {
+        return [
+            'Nro',
+            'Codigo',
+            'Descripcion',
+            'Precio compra',
+            'Precio Venta',
+            'Cantidad',
+            'Fecha Creado',
+            'Fecha Modificado'
+        ];
+    }
     public function collection()
     {
         return Producto::all();
