@@ -214,7 +214,8 @@ class VenderController extends Controller
       {
        $output .= '
        <li><a href="#">'.$row->descripcion.'</a></li>
-       ';
+       '
+       ;
       }
       $output .= '</ul>';
       echo $output;
@@ -240,6 +241,36 @@ class VenderController extends Controller
       echo $output;
      }
     }
+
+
+
+    function fetchcantidad(Request $request)
+    {
+     if($request->get('query'))
+     {
+      $query = $request->get('query');
+      $producto = Producto::where("descripcion", "LIKE", $query)->first();    
+      if($producto)
+      {
+      $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
+        ->get();      
+      foreach($data as $row)
+      {
+       $output = ''.$row->existencia.'';
+      }
+     }else{
+               $output= '';
+     }
+    }else{
+    $output= "";
+    }
+    echo $output;
+    }
+
+
+
+
+
 
 
     function editarCantidad(Request $request)
@@ -277,7 +308,7 @@ class VenderController extends Controller
             if ($productos[$posibleIndice]->cantidad + $nro > $producto->existencia) {
                 return redirect()->route("vender.index")
                     ->with([
-                        "mensaje" => "No se pueden agregar más productos de este tipo, se quedarían sin existencia Stock actual: ".$producto->existencia."",
+                        "mensaje" => "No se pueden agregar más productos de este tipo, se quedarían sin existencia. Stock actual: ".$producto->existencia."",
                         "tipo" => "danger"
                     ]);
             }

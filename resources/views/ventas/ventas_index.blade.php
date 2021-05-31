@@ -33,12 +33,11 @@
                         <th white-space: nowrap;>Fecha</th>
                         <th>Cliente</th>
                         <th>Total</th>
-                        <th>Comprobante</th>
-                        <th>Detalles</th>
                         <th>Entregado</th>
                         <th>Pagado</th>
                         <th>Vendedor</th>
-                        <th>Eliminar</th>
+                        <th>Detalles</th>
+                        <th>Eliminar</th>                        
                     </tr>
                     </thead>
                     <tbody>
@@ -47,18 +46,7 @@
                         <tr>
                             <td>{{$venta->created_at}}</td>
                             <td>{{$venta->cliente->nombre}}</td>
-                            <td>${{number_format($venta->total, 2)}}</td>
-                            <td>
-                                <a class="btn btn-info" target="blank" href="{{route("users.pdf", ["id"=>$venta->id])}}">  <!--, ["id" => $venta->id]) -->
-                                    <i class="fa fa-print"></i>
-                                </a>
-                            </td>
-
-                            <td>
-                                <a class="btn btn-success" href="{{route("ventas.show", $venta)}}">
-                                    <i class="fa fa-info"></i>
-                                </a>                                                               
-                                
+                            <td>${{number_format($venta->total, 2)}}</td>   
                                 @if ($venta->entregado == 0)
                                 <td>
                                 <a class="btn btn-danger" href="{{route('cancelEntrega', ["id"=>$venta->id])}}">  <!--, ["id" => $venta->id]) -->
@@ -92,8 +80,14 @@
 
                                 </td>                                                             
                                 @endif
-                                </td>                                                             
+                                </td>  
+                                                                                           
                                 <td>{{$venta->vendedor}}</td>
+                                <td>
+                                <a class="btn btn-success" href="{{route("ventas.show", $venta)}}">
+                                    <i class="fa fa-info"></i>
+                                </a>                                                               
+                                </td>
                             <td>
                                 <form action="{{route("ventas.destroy", [$venta])}}" method="post">
                                     @method("delete")

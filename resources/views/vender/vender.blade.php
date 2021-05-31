@@ -20,6 +20,10 @@
                         <div id="descripcionlist">
                         </div>
                     </div>
+                    <div
+                    <label for="existencia">Stock Disponible: </label>
+                    <p id="existencia"></p>                   
+                    </div>
                     {{ csrf_field() }}
                     @csrf
                     <div class="form-group">
@@ -129,25 +133,42 @@ $('#codigo').ready(function(){
         var query = $(this).val();
         if(query != '')
         {
-         var _token = $('input[name="_token"]').val();
+            var _token = $('input[name="_token"]').val();
          $.ajax({
-          url:"{{ route('autocomplete.fetch')}}",
+        url:"{{ route('autocomplete.fetch')}}",
           method:"POST",
           data:{query:query, _token:_token},
           success:function(data){
            $('#descripcionlist').fadeIn();  
                     $('#descripcionlist').html(data);
           }
-         });
+         });     
         }
     });
 
     $('#descripcionlist').on('click', 'li', function(){  
         $('#codigo').val($(this).text());  
-        $('#descripcionlist').fadeOut();  
+        $('#descripcionlist').fadeOut(); 
     });  
 
+
 });
+
+
+
+        $('#descripcionlist').on('click',function(){
+var query = $(document.getElementById("codigo")).val();
+        var _token = $('input[name="_token"]').val();
+         $.ajax({
+        url:"{{ route('autocomplete.fetchcantidad')}}",
+          method:"POST",
+          data:{query:query, _token:_token},
+          success:function(data){
+            document.getElementById("existencia").textContent =data;
+          }
+         });
+        });
+
 </script>
 
 

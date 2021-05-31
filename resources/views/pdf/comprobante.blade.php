@@ -30,7 +30,7 @@ $fecha = date("Y-m-d");
             <h1>Distribuidora</h1>
         </div>
         <div class="col-xs-2">            
-            <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="img\logo.jpg">
+            <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="https://distribuidora.tantunapps.com/public/img/logo.jpg">
         </div> 
     </div>
     <hr>
