@@ -10,20 +10,42 @@ use Mike42\Escpos\Printer;
 use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
 
+
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class VentasExport implements FromCollection
+class VentasExport implements FromCollection,WithStrictNullComparison,WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
     */
+    public function headings(): array
+    {
+        return [
+            'Nro Venta',
+            'Pagado',
+            'Entregado',
+            'Vendedor',
+            'Fecha Venta',
+            'Fecha Modificada',
+            'Id Cliente',
+            'Cliente',
+            'Total Venta'
+        ];
+    }
     public function collection()
     {
-        return Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
-        ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-        ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
+  
+        $totales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+        ->Join('clientes', 'clientes.id', '=', 'ventas.id_cliente')
+        ->select("ventas.*","clientes.nombre", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+        ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor","clientes.nombre")
         ->get();
+        
+  
+        Return $totales;
     }
 }
 class VentasController extends Controller
