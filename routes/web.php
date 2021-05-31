@@ -27,6 +27,9 @@ Route::get("/logout", function () {
 })->name("logout");
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/exportarp', 'ProductosController@export');
+Route::get('/exportarv', 'VentasController@export');
+
 
 Route::middleware("auth")
     ->group(function () {

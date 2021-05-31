@@ -10,9 +10,28 @@ use Mike42\Escpos\Printer;
 use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\FromCollection;
+
+class VentasExport implements FromCollection
+{
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function collection()
+    {
+        return Venta::all();
+    }
+}
 class VentasController extends Controller
 {
 
+    public function export() 
+    {
+        return Excel::download(new VentasExport, 'Ventas.xlsx');
+    }
+
+    
     public function ticket(Request $request)
     {
         $venta = Venta::findOrFail($request->get("id"));
