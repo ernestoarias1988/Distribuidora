@@ -20,7 +20,10 @@ class VentasExport implements FromCollection
     */
     public function collection()
     {
-        return Venta::all();
+        return Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+        ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+        ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
+        ->get();
     }
 }
 class VentasController extends Controller

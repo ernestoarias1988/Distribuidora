@@ -25,7 +25,8 @@
         <div class="col-12">
             <h1>Ventas <i class="fa fa-list"></i></h1>
             @include("notificacion")
-            <button style="text-align:center" class="btn btn-primary" onClick="window.print()">Imprimir Ventas</button>        
+            <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Ventas</button> 
+            <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='http://127.0.0.1:8000/exportarv'">Exportar a Excel</button>        
             <div  style="text-align:center" class="table-responsive">
             <table class="table table-bordered table-striped table-highlight">
                     <thead>
