@@ -7,7 +7,7 @@
             <a href="{{route("productos.create")}}" class="btn btn-success mb-2">Agregar</a>
             @include("notificacion")
             <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Productos</button>  
-            <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='/exportarp'">Exportar a Excel</button>       
+            <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://distribuidora.tantunapps.com/public/exportarp'">Exportar a Excel</button>       
             <div class="table-responsive">
             <table class="table table-bordered table-striped table-highlight">
                     <thead>
