@@ -9,6 +9,8 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
+use App\ProductoVendido;
+use App\Producto;
 
 
 use Maatwebsite\Excel\Facades\Excel;
@@ -177,6 +179,31 @@ class VentasController extends Controller
      */
     public function destroy(Venta $venta)
     {
+        $productos = $venta->productos;
+        // Recorrer carrito de compras
+        foreach ($productos as $producto) {
+            /*/ El producto que se vende...
+            $productoVendido = new ProductoVendido();
+            $productoVendido->fill([
+                "id_venta" => $venta->id,
+                "descripcion" => $producto->descripcion,
+                "codigo_barras" => $producto->codigo_barras,
+                "precio" => $producto->precio_venta,
+                "cantidad" => $producto->cantidad,
+            ]);
+            */ // Lo guardamos
+            //$producto->saveOrFail();
+            // Y restamos la existencia del original
+            //$productoActualizado = Producto::find($producto->id);
+            $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
+            //echo"$productoActualizado->id";
+            echo"C:";
+            echo"$producto->cantidad";
+            echo"$producto->descripcion";
+            echo"---";
+            $productoActualizado->existencia += $producto->cantidad;
+            $productoActualizado->saveOrFail();
+        }
         $venta->delete();
         return redirect()->route("ventas.index")
             ->with("mensaje", "Venta eliminada");
