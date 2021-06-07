@@ -255,10 +255,11 @@ class VentasController extends Controller
 
     public function cargarPago(Request $request)
     {
-        $venta = Venta::findOrFail($request->get("id"));
-        $venta->pagado = 0;
+        $venta = Venta::findOrFail($request->get("id"));    
+        $pago = $request->get("pago");              
+        $venta->pagado += $pago;        
         $venta->save();
-        return redirect()->route("ventas.index")->with("mensaje", "Venta NO Pagada");
+        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
                 
     }
 

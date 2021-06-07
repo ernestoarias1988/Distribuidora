@@ -46,7 +46,7 @@ Route::middleware("auth")
         Route::get('user-list-pdf', 'VentasController@exportPdf')->name('users.pdf');
         Route::get('cancelarpago', 'VentasController@cancelarPago')->name('cancelPago');
         Route::get('cancelarentrega', 'VentasController@cancelarEntrega')->name('cancelEntrega');
-        Route::get('cargarpago', 'VentasController@cargarPago')->name('cargaPago');
+        Route::post('cargarpago', 'VentasController@cargarPago')->name('cargaPago');
         Route::get('cargarentrega', 'VentasController@cargarEntrega')->name('cargaEntrega');
         Route::post('agregarproducto', 'VenderController@agregarProductoACarrito')->name('agregaProducto');
         Route::post('guardarCliente', 'VenderController@guardarCliente')->name('guardarCliente');

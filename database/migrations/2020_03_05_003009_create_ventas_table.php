@@ -13,12 +13,13 @@ class CreateVentasTable extends Migration
      */
     public function up()
     {
+        //date_default_timezone_set('America/Argentina/Salta');
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->integer('entregado')->default('0');
             $table->integer('pagado')->default('0');
             $table->string('vendedor');
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 
