@@ -42,9 +42,19 @@
                            type="decimal(9,2)" placeholder="Precio de compra">
                 </div>
                 <div class="form-group">
-                    <label class="label">Precio de venta</label>
-                    <input required autocomplete="off" name="precio_venta" class="form-control"
-                           type="decimal(9,2)" placeholder="Precio de venta">
+                    <label class="label">Precio de Lista 1</label>
+                    <input required autocomplete="off" name="precio_venta1" class="form-control"
+                           type="decimal(9,2)" placeholder="Precio de Lista 1">
+                </div>
+                <div class="form-group">
+                    <label class="label">Precio de Lista 2</label>
+                    <input required autocomplete="off" name="precio_venta2" class="form-control"
+                           type="decimal(9,2)" placeholder="Precio de Lista 2">
+                </div>
+                <div class="form-group">
+                    <label class="label">Precio de Lista 3</label>
+                    <input required autocomplete="off" name="precio_venta3" class="form-control"
+                           type="decimal(9,2)" placeholder="Precio de Lista 3">
                 </div>
                 <div class="form-group">
                     <label class="label">Existencia</label>

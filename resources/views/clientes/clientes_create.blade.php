@@ -47,6 +47,14 @@ ____          _____               _ _           _
                     <input required autocomplete="off" name="direccion" class="form-control"
                            type="text" placeholder="Dirección">
                 </div>
+                <div class="form-group">
+                    <label class="label">Lista</label>
+                    <select name="lista" id="lista" class="form-control @error('lista') is-invalid @enderror" required autocomplete="lista" autofocus>
+                             <option value="1">Lista 1</option> 
+                             <option value="2">Lista 2</option> 
+                            <option value="3">Lista 3</option>
+                            </select>    
+                </div>            
 
                 @include("notificacion")
                 <button class="btn btn-success">Guardar</button>

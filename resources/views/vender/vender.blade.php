@@ -10,7 +10,23 @@
         <div class="col-12">
             <h1>Nueva venta <i class="fa fa-cart-plus"></i></h1>
             @include("notificacion")
-            
+            <div class="col-12">
+                <div class="col-12 col-md-6">
+                <form action="{{route("guardarCliente")}}" method="post">
+                {{ csrf_field() }}
+                    @csrf
+                <div class="form-group">
+                            <label for="id_cliente">Cliente</label>
+                            <input type="text" autocomplete="off" required class="form-control" name="id_cliente" id="id_cliente" placeholder="Ingrese el Cliente antes de finalizar la venta"/>
+                            <div id="clientelist">
+                        </div>
+                    </div>
+                    <button name="accioncliente" type="submit" class="btn btn-primary">Seleccionar Cliente                                    
+                                </button>
+                    </div>
+                    </div>
+                    </form>
+                    @if(session("cliente") !== null)
                     <div class="col-12 col-md-6">
                                <form action="{{route("editaCantidad")}}" method="post">
                 @csrf
@@ -30,7 +46,7 @@
                         <label for="cantidad">Cantidad</label>
                         <input type="number" min="1" name="cantidad" autocomplete="off" id="cantidad" class="form-control"required autofocus name="cantidad" placeholder="Cantidad" />                    
                     </div>
-                    {{ csrf_field() }}
+                    {{ csrf_field() }}                    
                     <button type="submit" class="btn btn-primary">Agregar Producto &nbsp;
                     <i class="fa fa-plus-square fa-2x" aria-hidden="true"></i>                                        </button>
                 </form>
@@ -39,8 +55,22 @@
 
 
             </div>
+            <h2><br>Cliente: {{$cliente->nombre}}  </h2>
             @if(session("productos") !== null)
-                <h2>Total: ${{number_format($total, 2)}}</h2>
+                <h2><br>Total:${{number_format($total, 2)}}</h2>
+                <form action="{{route("terminarOCancelarVenta")}}" method="post">
+                        @csrf                    
+                           
+                        <div>
+                            <div class="form-group">
+                                <button name="accion" value="terminar" type="submit" class="btn btn-success">Terminar
+                                    venta
+                                </button>
+                                <button name="accion" value="cancelar" type="submit" class="btn btn-danger">Cancelar
+                                    venta
+                                </button>
+                            </div>
+                    </form>                    
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
@@ -58,11 +88,38 @@
                             <tr>
                                 <td>{{$producto->codigo_barras}}</td>
                                 <td>{{$producto->descripcion}}</td>
-                                <td>${{number_format($producto->precio_venta, 2)}}</td>
+                                <td><?php $precioactual=0; ?>
+                                @if(session("cliente") !== null)
+                                <?php     
+                                if($cliente)
+                                {                           
+                                            switch($cliente->lista)
+                                            {
+                                                case "1": echo"$producto->precio_venta1";
+                                                $precioactual = $producto->precio_venta1;
+                                                break;
+                                
+                                                case "2": echo"$producto->precio_venta2";
+                                                $precioactual = $producto->precio_venta2;
+                                                break;
+                                
+                                                case "3": echo"$producto->precio_venta3";
+                                                $precioactual = $producto->precio_venta3;
+                                                break;
+                                            }
+                                        }else{
+                                            echo"Seleccione Cliente";
+                                        }
+                                ?>
+                                @endif
+                                @if(session("cliente") == null)
+                                Seleccione Cliente
+                                @endif
+                                </td>
                                 <td>{{$producto->cantidad}}</td> 
                                 <td>  
                                 <?php
-                                $total=$producto->cantidad*$producto->precio_venta;
+                                $total=$producto->cantidad*$precioactual;
                                 echo "$".$total."";
                                 ?>
                                 </td>
@@ -81,41 +138,12 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
             @else
                 <h2>Aquí aparecerán los productos de la venta
                     <br></h2>
-            @endif
+                    @endif                    
         </div>
-        <div class="col-12">
-                <div class="col-12 col-md-6">
-                    <form action="{{route("terminarOCancelarVenta")}}" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="id_cliente">Cliente</label>
-                            <input type="text" required class="form-control" name="id_cliente" id="id_cliente" placeholder="Ingrese el Cliente antes de finalizar la venta"/>
-                            <div id="clientelist">
-                        </div>
-                    </div>
-                    
-                    {{ csrf_field() }}
-                    @csrf
-                            
-                        @if(session("productos") !== null)
-                        <div>
-                            <div class="form-group">
-                                <button name="accion" value="terminar" type="submit" class="btn btn-success">Terminar
-                                    venta
-                                </button>
-                                <button name="accion" value="cancelar" type="submit" class="btn btn-danger">Cancelar
-                                    venta
-                                </button>
-                            </div>
-                        @endif
-                    </form>
-                    </div>
-                    </div>
-
-
     </div>
 
 

@@ -49,6 +49,7 @@ Route::middleware("auth")
         Route::get('cargarpago', 'VentasController@cargarPago')->name('cargaPago');
         Route::get('cargarentrega', 'VentasController@cargarEntrega')->name('cargaEntrega');
         Route::post('agregarproducto', 'VenderController@agregarProductoACarrito')->name('agregaProducto');
+        Route::post('guardarCliente', 'VenderController@guardarCliente')->name('guardarCliente');
 
 
         Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');

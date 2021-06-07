@@ -23,7 +23,9 @@ class ProductosExport implements FromCollection,WithStrictNullComparison,WithHea
             'Codigo',
             'Descripcion',
             'Precio compra',
-            'Precio Venta',
+            'precio_venta1',
+            'precio_venta2',
+            'precio_venta3',
             'Cantidad',
             'Fecha Creado',
             'Fecha Modificado'
@@ -97,7 +99,7 @@ class ProductosController extends Controller
 
         if($producto == Producto::find($producto->id))
         {
-            return redirect()->route("productos.index")->with("mensaje", "Producto NOOO guardado");
+            return redirect()->route("productos.index")->with("mensaje", "Producto NO guardado");
         }
         $producto = new Producto($request->input());
         $producto->saveOrFail();

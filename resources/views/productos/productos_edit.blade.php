@@ -46,10 +46,22 @@
                            type="decimal(9,2)" placeholder="Precio de compra">
                 </div>
                 <div class="form-group">
-                    <label class="label">Precio de venta</label>
-                    <input required value="{{$producto->precio_venta}}" autocomplete="off" name="precio_venta"
+                    <label class="label">Precio de Venta 1</label>
+                    <input required value="{{$producto->precio_venta1}}" autocomplete="off" name="precio_venta1"
                            class="form-control"
-                           type="decimal(9,2)" placeholder="Precio de venta">
+                           type="decimal(9,2)" placeholder="Precio de Lista 1">
+                </div>
+                <div class="form-group">
+                    <label class="label">Precio de venta 2</label>
+                    <input required value="{{$producto->precio_venta2}}" autocomplete="off" name="precio_venta2"
+                           class="form-control"
+                           type="decimal(9,2)" placeholder="Precio de Lista 2">
+                </div>
+                <div class="form-group">
+                    <label class="label">Precio de venta 3</label>
+                    <input required value="{{$producto->precio_venta3}}" autocomplete="off" name="precio_venta3"
+                           class="form-control"
+                           type="decimal(9,2)" placeholder="Precio de Lista 3">
                 </div>
                 <div class="form-group">
                     <label class="label">Existencia</label>

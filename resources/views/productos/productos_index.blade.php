@@ -15,10 +15,11 @@
                         <th>Código de barras</th>
                         <th>Descripción</th>
                         <th>Precio de compra</th>
-                        <th>Precio de venta</th>
+                        <th>Precio de Lista 1</th>
+                        <th>Precio de Lista 2</th>
+                        <th>Precio de Lista 3</th>
                         <th>Utilidad</th>
                         <th>Existencia</th>
-
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
@@ -29,8 +30,10 @@
                             <td>{{$producto->codigo_barras}}</td>
                             <td>{{$producto->descripcion}}</td>
                             <td>${{$producto->precio_compra}}</td>
-                            <td>${{$producto->precio_venta}}</td>
-                            <td>${{$producto->precio_venta - $producto->precio_compra}}</td>
+                            <td>${{$producto->precio_venta1}}</td>
+                            <td>${{$producto->precio_venta2}}</td>
+                            <td>${{$producto->precio_venta3}}</td>
+                            <td>${{$producto->precio_venta1 - $producto->precio_compra}}</td>
                             <td><?php  if($producto->existencia>0){echo "$producto->existencia";}else{
 echo '<span style="color: #f00;text-align:center; font-weight: bold;">SIN STOCK</span>';}
                              ?>

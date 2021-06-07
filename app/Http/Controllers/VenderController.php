@@ -21,27 +21,73 @@ class VenderController extends Controller
         }
     }
 
+    public function guardarCliente(Request $request)
+    {
+        $nombre_cliente="NombreList";
+        $nombre_cliente = $request->post("id_cliente");
+        $cliente = Cliente::where("nombre", "=", $nombre_cliente)->first();
+        if (!$cliente) {
+            return redirect()
+                ->route("vender.index")
+                ->with("mensaje", "Cliente no encontrado");
+        }else{
+        session(["cliente" => $cliente,
+        ]);
+        return redirect()
+        ->route("vender.index")
+        ->with("mensaje", "Cliente Guardado");
+        }
+    }
+
+
+    public function obtenercliente()
+    {
+        $productos = session("cliente");
+        if (!$productos) {
+            $productos = [];
+        }
+        return $productos;
+    }
+
     public function terminarVenta(Request $request)
     {
         // Crear una venta
         
-        $venta = new Venta();
-        $nombre_cliente = $request->input("id_cliente");
-        $cliente = Cliente::where("nombre", "=", $nombre_cliente)->first();
+        $venta = new Venta(); 
+        $nombre_cliente = $this->obtenercliente();        
+        $cliente=$nombre_cliente;
+        $lista = $cliente->lista;  
         $venta->id_cliente = $cliente->id;
         $venta->vendedor = auth()->user()->name;
         $venta->saveOrFail();
         $idVenta = $venta->id;
-        $productos = $this->obtenerProductos();
+        $productos = $this->obtenerProductos();        
         // Recorrer carrito de compras
         foreach ($productos as $producto) {
+
+
+            switch($lista)
+            {
+                case "1": $precio = $producto->precio_venta1;
+                break;
+
+                case "2": $precio = $producto->precio_venta2;
+                break;
+
+                case "3": $precio = $producto->precio_venta3;
+                break;
+
+                default: $precio=9999;
+                break;
+            }
+
             // El producto que se vende...
             $productoVendido = new ProductoVendido();
             $productoVendido->fill([
                 "id_venta" => $idVenta,
                 "descripcion" => $producto->descripcion,
                 "codigo_barras" => $producto->codigo_barras,
-                "precio" => $producto->precio_venta,
+                "precio" => $precio,
                 "cantidad" => $producto->cantidad,
             ]);
             // Lo guardamos
@@ -69,6 +115,9 @@ class VenderController extends Controller
     private function vaciarProductos()
     {
         $this->guardarProductos(null);
+        session(["cliente" => null,
+        ]);
+        
     }
 
     private function guardarProductos($productos)
@@ -76,6 +125,7 @@ class VenderController extends Controller
         session(["productos" => $productos,
         ]);
     }
+
 
     public function cancelarVenta()
     {
@@ -104,6 +154,26 @@ class VenderController extends Controller
                 ->route("vender.index")
                 ->with("mensaje", "Producto no encontrado");
         }
+
+        $lista = $request->input("lista");
+
+        switch($lista)
+        {
+            case 1: $precio = $producto->precio_venta1;
+            break;
+
+            case 2: $precio = $producto->precio_venta2;
+            break;
+
+            case 3: $precio = $producto->precio_venta3;
+            break;
+
+            default: $precio = 100;
+            break;
+        }
+
+        $producto->precio_venta = $precio;
+        route("productos.update", [$producto]);
         $this->agregarProductoACarrito($producto);
         return redirect()
             ->route("vender.index");
@@ -155,31 +225,31 @@ class VenderController extends Controller
     public function index()
     {
         $total = 0;
+        $cliente = $this->obtenercliente();
         foreach ($this->obtenerProductos() as $producto) {
-            $total += $producto->cantidad * $producto->precio_venta;
-        }
+            if($cliente)
+            {
+            switch($cliente->lista)
+            {
+                case "1": $total += $producto->cantidad * $producto->precio_venta1;
+                break;
+
+                case "2": $total += $producto->cantidad * $producto->precio_venta2;
+                break;
+
+                case "3": $total += $producto->cantidad * $producto->precio_venta3;
+                break;
+            }
+        }else{
+            
+        }}        
         return view("vender.vender",
             [
                 "total" => $total,
                 "clientes" => Cliente::all(),
+                "cliente" => $cliente
             ]);
     }
-
-
-    private function restarProductoACarrito($producto)
-    {
-        $productos = $this->obtenerProductos();
-        $posibleIndice = $this->buscarIndiceDeProducto($producto->descripcion, $productos);
-        // Es decir, producto no fue encontrado
-        if ($posibleIndice === -1) {
-            $producto->cantidad = 1;
-            array_push($productos, $producto);
-        } else {        
-            $productos[$posibleIndice]->cantidad--;
-        }
-        $this->guardarProductos($productos);
-    }
-
 
     function fetch(Request $request)
     {
