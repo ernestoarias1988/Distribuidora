@@ -15,8 +15,7 @@
                         <th>Cliente</th>
                         <th>Total</th>
                         <th>Entregado</th>
-                        <th>Cargar pago</th>
-                        <th>Pagado</th>
+                        <th style="width: 100px;">Pago</th>
                         <th>Vendedor</th>
                         <th>Detalles</th>
                         <th>Eliminar</th>                        
@@ -29,31 +28,25 @@
                             <td>{{$venta->created_at}}</td>
                             <td>{{$venta->cliente->nombre}}</td>
                             <td>${{number_format($venta->total, 2)}}</td>   
+                            <td>
                                 @if ($venta->entregado == 0)
-                                <td>
+  
                                 <a class="btn btn-danger" href="{{route('cancelEntrega', ["id"=>$venta->id])}}">  <!--, ["id" => $venta->id]) -->
                                 <i class="fa fa-times" aria-hidden="true"></i>
 
-                                </a>
-                                </td>                                                             
+                                </a>                                                                                             
                                 @else
-                                <td>
                                 <a class="btn btn-success" href="{{route('cargaEntrega', ["id"=>$venta->id])}}"> <!--  ["id" => $venta->id]) -->
                                 <i class="fa fa-check-square" aria-hidden="true"></i>
 
-                                </a>
-                                </td>                                                             
-                                @endif
-                                </td>                                                             
-                                
-
-                                <td>                                                             
-
+                                </a>                                                            
+                                @endif                                                             
+                            </td>
+                            <td style="width: 100px;">
                                 <form action="{{route('cargaPago', ['id'=>$venta->id])}}" method="post">
                                 {{ csrf_field() }}
                                  @csrf
                                 <div>
-                                <label for="pago"></label>
                                 <input  type="number" autocomplete="off" required class="form-control" name="pago" id="pago" placeholder="$"/>   
                                 </div>
                                 <button name="accionpago" type="submit" class="btn btn-primary">$                                    
@@ -61,27 +54,19 @@
                                 </div>
                                 </div>
                                 </form>
-
-                                </td>                                                             
-
                                 @if ($venta->pagado == 0)
-                                <td>
                                 <a class="btn btn-danger" href="">
                                 <i class="fa fa-times" aria-hidden="true"></i>
-
                                 </a>
                                 </td>                                                             
                                 @endif
                                 @if(($venta->pagado == $venta->total))
-                                <td>
                                 <a class="btn btn-success" href="">
                                     <i class="fa fa-check-square" aria-hidden="true"></i>
-
                                 </a>                                 
                                 @else
                                 @if($venta->pagado>0)
-                                <td>
-                                ${{$venta->pagado}}                                 
+                                ${{$venta->pagado}}/${{number_format($venta->total, 0)}}                                 
                                 @endif
                                 @endif
                                 </td>                                                             
