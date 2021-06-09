@@ -54,7 +54,7 @@
                                 </form>
                             </td>
 
-                            <td>${{$venta->total-$venta->pagado}}</td>                                              
+                            <td>${{number_format($venta->total-$venta->pagado,2)}}</td>                                              
                                                                                            
                                 <td>{{$venta->vendedor}}</td>
                             <td>
