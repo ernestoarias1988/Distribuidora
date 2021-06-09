@@ -91,23 +91,11 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $usuario1 = new User($request->input());
-        $existencia = User::where("email", "=", $usuario1->email)->first();
-        if($existencia)
-        {
-            return redirect()
-            ->route("usuarios.index")
-            ->with([
-                "mensaje" => "Usuario existente, por favor elija otro nombre de usuario",
-                "tipo" => "danger"
-            ]);
-        }
-        else
-        {
         $user->fill($request->input());
         $user->password = Hash::make($user->password);
         $user->saveOrFail();
         return redirect()->route("usuarios.index")->with("mensaje", "Usuario actualizado");
-        }
+        
     }
 
     /**
