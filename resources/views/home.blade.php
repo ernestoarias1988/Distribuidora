@@ -37,7 +37,7 @@
 
     @if (Auth::user()->role_id=="Vendedor")
     @foreach([
-    ["productos", "ventas", "vender", "clientes"]
+    ["ventas", "vender", "clientes"]
     ] as $modulos)
         <div class="col-10 pb-2">
             <div class="row">
