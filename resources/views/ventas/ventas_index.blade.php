@@ -50,7 +50,7 @@
                                 {{ csrf_field() }}
                                 @csrf
                                 
-                                <input type="number" $ required value="{{$venta->pagado}}" required class="form-control" name="pago" id="pago" placeholder=""></p>
+                                <input type="number" step="0.01" $ required value="{{$venta->pagado}}" required class="form-control" name="pago" id="pago" placeholder=""></p>
                                 </form>
                             </td>
 
