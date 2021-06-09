@@ -257,7 +257,7 @@ class VentasController extends Controller
     {
         $venta = Venta::findOrFail($request->get("id"));    
         $pago = $request->get("pago");              
-        $venta->pagado += $pago;        
+        $venta->pagado = $pago;        
         $venta->save();
         return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
                 
