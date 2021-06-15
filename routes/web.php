@@ -58,4 +58,5 @@ Route::middleware("auth")
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
         Route::post('/autocomplete/fetchcliente', 'VenderController@fetchcliente')->name('autocomplete.fetchcliente');
         Route::post('/autocomplete/fetchcantidad', 'VenderController@fetchcantidad')->name('autocomplete.fetchcantidad');
+        Route::get("/totales", "TotalesController@index")->name("totales.index");
     });

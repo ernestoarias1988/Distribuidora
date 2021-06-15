@@ -61,7 +61,7 @@
                                 </a>                                                            
                                 @endif                                                             
                             </td>                                                                                              
-                                <td>{{$venta->vendedor}}</td>
+                                <td><a href="{{route('totales.index', ["vendedor"=>$venta->vendedor])}}"> {{$venta->vendedor}}</a></td>
                             <td>
                                 <a class="btn btn-success" href="{{route("ventas.show", $venta)}}">
                                 <i class="fa fa-info"></i>

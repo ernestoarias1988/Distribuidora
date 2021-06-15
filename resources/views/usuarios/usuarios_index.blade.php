@@ -20,7 +20,7 @@
                     <tbody>
                     @foreach($usuarios as $usuario)
                         <tr>
-                            <td>{{$usuario->email}}</td>
+                        <td><a href="{{route('totales.index', ["vendedor"=>$usuario->email])}}"> {{$usuario->email}}</a></td>
                             <td>{{$usuario->name}}</td>
                             <td>{{$usuario->role_id}}</td>
                             <td>
