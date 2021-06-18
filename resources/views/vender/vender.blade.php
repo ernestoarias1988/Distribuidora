@@ -37,7 +37,6 @@
                         </div>
                     </div>
                     <div
-                    <label for="existencia">Stock Disponible: </label>
                     <p id="existencia"></p>                   
                     </div>
                     {{ csrf_field() }}

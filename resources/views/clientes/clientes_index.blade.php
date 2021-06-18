@@ -26,6 +26,7 @@ ____          _____               _ _           _
             <h1>Clientes <i class="fa fa-users"></i></h1>
             <a href="{{route("clientes.create")}}" class="btn btn-success mb-2">Agregar</a>
             @include("notificacion")
+            @if (Auth::user()->role_id=="Administrador")            
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -67,6 +68,7 @@ ____          _____               _ _           _
                     </tbody>
                 </table>
             </div>
+            @endif
         </div>
     </div>
 @endsection

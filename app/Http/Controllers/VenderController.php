@@ -305,7 +305,7 @@ class VenderController extends Controller
         ->get();      
       foreach($data as $row)
       {
-       $output = ''.$row->existencia.'';
+       $output = 'Stock Disponible: '.$row->existencia.'';//'     Precio: $'.$row->precio_venta1;
       }
      }else{
                $output= '';
