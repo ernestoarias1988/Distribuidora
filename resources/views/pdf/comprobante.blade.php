@@ -7,7 +7,6 @@ $cliente = $data['cliente'];
 $direccion = $data['direccion'];
 $remitente = "Distribuidora"; 
 $vendedor = $data['vendedor'];
-//$web = "https://parzibyte.me/blog";
 $mensajePie = "Gracias por su compra!";
 $numero = $data['facturaNro'];
 $descuento = $data['descuento'];
