@@ -24,15 +24,24 @@ class ProductsImport  implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-        return new Producto([
-            'codigo_barras'     => $row['codigo_barras'],
-            'descripcion'    => $row['descripcion'], 
-            'precio_compra'    => $row['precio_compra'], 
-            'precio_venta1'    => $row['precio_venta1'], 
-            'precio_venta2'    => $row['precio_venta2'], 
-            'precio_venta3'    => $row['precio_venta3'], 
-            'existencia'    => $row['existencia'], 
-        ]);
+        if($row[1]!=null && $row[6]!=null)
+        {
+            if(Producto::where("descripcion", "=", $row[1])->first()==null)            
+            {
+                return new Producto([
+                    'codigo_barras'     => $row[0],
+                    'descripcion'    => $row[1], 
+                    'precio_compra'    => $row[2], 
+                    'precio_venta1'    => $row[3], 
+                    'precio_venta2'    => $row[4], 
+                    'precio_venta3'    => $row[5], 
+                    'existencia'    => $row[6], 
+                    ]);
+            }
+        }else{
+            //Agregar mensaje de error
+        }
+        
     }
 
 
