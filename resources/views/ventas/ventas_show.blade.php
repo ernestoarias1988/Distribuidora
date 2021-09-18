@@ -14,7 +14,15 @@
             </a>
             <a class="btn btn-success" target="blank" href="{{route("users.pdf", ["id"=>$venta->id])}}">  <!--, ["id" => $venta->id]) -->
                 <i class="fa fa-print"></i>&nbsp;PDF
-            </a>                     
+            </a>
+            <form action="{{route("ventas.destroy", [$venta])}}" method="post">
+                @method("delete")                                    
+                @csrf
+                <button type="submit" class="btn btn-danger">
+                <i class="fa fa-trash"></i>
+                Eliminar Pedido
+                </button>
+            </form>    
             <h2>Productos</h2>
             <table class="table table-bordered">
                 <thead>
@@ -22,8 +30,9 @@
                     <th>Descripción</th>
                     <th>Código de barras</th>
                     <th>Precio</th>
-                    <th>Cantidad</th>
+                    <th style="width: 10%;">Cantidad</th>
                     <th>Subtotal</th>
+                    <th>Eliminar Producto</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,9 +41,23 @@
                         <td>{{$producto->descripcion}}</td>
                         <td>{{$producto->codigo_barras}}</td>
                         <td>${{number_format($producto->precio, 2)}}</td>
-                        <td>{{$producto->cantidad}}</td>
-                        <td>${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
-                    </tr>
+                        <td>
+                            <form action="{{route('cargaCantidad', ["id"=>$venta->id,"descripcion"=>$producto->descripcion])}}" method="post">
+                                {{ csrf_field() }}
+                                @csrf                                
+                                <input type="number" step="1" $ required value="{{number_format($producto->cantidad, 0)}}" required class="form-control" name="cantidad" id="cantidad" placeholder=""></p>
+                                </form>  
+                        </td>                      
+                                <td>${{number_format($producto->cantidad * $producto->precio, 2)}}                                    
+                                </td>
+                        <td>                               
+                    @method("post")                                    
+                    @csrf                                    
+                    <button type="submit" class="btn btn-danger">                                        
+                    <i class="fa fa-trash"></i>                                    
+                </button>                                
+            </form> 
+            </td></tr>
                 @endforeach
                 </tbody>
                 <tfoot>

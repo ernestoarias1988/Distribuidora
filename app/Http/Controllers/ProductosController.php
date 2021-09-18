@@ -7,8 +7,33 @@ use Illuminate\Http\Request;
 
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+
+
+class ProductsImport  implements ToModel
+{
+    /**
+    * @param array $row
+    *
+    * @return \Illuminate\Database\Eloquent\Model|null
+    */
+    public function model(array $row)
+    {
+        return new Producto([
+            'codigo_barras'     => $row[0],
+            'descripcion'    => $row[1], 
+            'precio_compra'    => $row[2], 
+            'precio_venta1'    => $row[3], 
+            'precio_venta2'    => $row[4], 
+            'precio_venta3'    => $row[5], 
+            'existencia'    => $row[6], 
+        ]);
+    }
+
+
+}
 
 class ProductosExport implements FromCollection,WithStrictNullComparison,WithHeadings
 {
@@ -43,6 +68,11 @@ class ProductosController extends Controller
         return Excel::download(new ProductosExport, 'Productos.xlsx');
     }
 
+    public function importar() 
+    {
+        Excel::import(new ProductsImport,request()->file('file'));        
+        return back();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -154,4 +184,6 @@ class ProductosController extends Controller
         $producto->delete();
         return redirect()->route("productos.index")->with("mensaje", "Producto eliminado");
     }
+
+    
 }

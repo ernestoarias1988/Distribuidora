@@ -197,7 +197,6 @@ class VentasController extends Controller
             //$productoActualizado = Producto::find($producto->id);
             $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
             //echo"$productoActualizado->id";
-            echo"C:";
             echo"$producto->cantidad";
             echo"$producto->descripcion";
             echo"---";
@@ -207,6 +206,45 @@ class VentasController extends Controller
         $venta->delete();
         return redirect()->route("ventas.index")
             ->with("mensaje", "Venta eliminada");
+    }
+
+    public function destroyProducto(Request $request)
+    {
+    $venta = Venta::findOrFail($request->get("id"));
+    $descripcion = $request->get("descripcion");
+    $productos = $venta->productos;
+        // Recorrer carrito de compras
+        foreach ($productos as $producto) {
+            /*/ El producto que se vende...
+            $productoVendido = new ProductoVendido();
+            $productoVendido->fill([
+                "id_venta" => $venta->id,
+                "descripcion" => $producto->descripcion,
+                "codigo_barras" => $producto->codigo_barras,
+                "precio" => $producto->precio_venta,
+                "cantidad" => $producto->cantidad,
+            ]);
+            */ // Lo guardamos
+            //$producto->saveOrFail();
+            // Y restamos la existencia del original
+            //$productoActualizado = Producto::find($producto->id);
+            if($producto->descripcion == $descripcion)
+            {
+                $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
+                echo"$producto->descripcion == $descripcion <br>";
+                echo"$producto->cantidad";
+                echo"$venta->id";
+                echo"$productoActualizado->descripcion";
+                $productoActualizado->existencia += $producto->cantidad;
+                $productoActualizado->saveOrFail();
+                $producto->cantidad = 0;
+                $producto->delete();
+            }
+
+        }
+      //  $venta->delete();
+        return redirect()->route("ventas.indexas")
+            ->with("mensaje", "Producto $producto->descrpcion eliminado");
     }
 
     public function exportPdf(Request $request)
@@ -270,6 +308,42 @@ class VentasController extends Controller
         $venta->save();        
         return redirect()->route("ventas.index")->with("mensaje", "Venta NO Entregada");
 
+    }
+
+    public function cargarCantidad(Request $request)
+    {
+        $venta = Venta::findOrFail($request->get("id")); 
+        $descripcion = $request->get("descripcion");
+        $cantidad = $request->get("cantidad"); 
+        $productos = $venta->productos;
+        // Recorrer carrito de compras
+        foreach ($productos as $producto) {
+                    if($producto->descripcion == $descripcion)
+                    {
+                        $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
+                        $diferencia = $producto->cantidad - $cantidad;
+                        if(($diferencia*-1) > $productoActualizado->existencia)
+                        {
+                            return redirect()->route("ventas.index")->with("mensaje", "No hay Stock suficiente");
+                        }                
+                        echo"$producto->descripcion == $descripcion <br>";
+                        echo"$producto->cantidad";
+                        echo"$venta->id";
+                        echo"$productoActualizado->descripcion";
+                        $productoActualizado->existencia += $diferencia;
+                        $productoActualizado->saveOrFail();
+                        $producto->cantidad = $cantidad;
+                        if($cantidad==0)
+                        {
+                            $producto->delete();
+                        }else{
+                        $producto->save();
+                        $venta->save();
+                        }
+                    }        
+                }
+        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
+                
     }
 }
 

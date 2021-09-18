@@ -324,7 +324,6 @@ class VenderController extends Controller
 
     function editarCantidad(Request $request)
     {
-        $nro=17;
         $codigo = $request->post("codigo");
         $nro = $request->post("cantidad");
         $producto = Producto::where("descripcion", "=", $codigo)->first();
@@ -333,34 +332,34 @@ class VenderController extends Controller
                 ->route("vender.index")
                 ->with("mensaje", "Producto no encontrado");
         }
-        if ($producto->existencia <= 0) {
-            return redirect()->route("vender.index")
-                ->with([
-                    "mensaje" => "No hay existencias del producto",
-                    "tipo" => "danger"
-                ]);
-        }
+        // if ($producto->existencia <= 0) {
+        //     return redirect()->route("vender.index")
+        //         ->with([
+        //             "mensaje" => "No hay existencias del producto",
+        //             "tipo" => "danger"
+        //         ]);
+        // }
         $productos = $this->obtenerProductos();
         $posibleIndice = $this->buscarIndiceDeProducto($producto->descripcion, $productos);
         // Es decir, producto no fue encontrado
         if ($posibleIndice === -1) {
-            if ($producto->cantidad + $nro > $producto->existencia) {
-                return redirect()->route("vender.index")
-                    ->with([
-                        "mensaje" => "No se pueden agregar más productos de este tipo, se quedarían sin existencia. Stock actual: ".$producto->existencia."",
-                        "tipo" => "danger"
-                    ]);
-            }
+            // if ($producto->cantidad + $nro > $producto->existencia) {
+            //     return redirect()->route("vender.index")
+            //         ->with([
+            //             "mensaje" => "No se pueden agregar más productos de este tipo, se quedarían sin existencia. Stock actual: ".$producto->existencia."",
+            //             "tipo" => "danger"
+            //         ]);
+            // }
             $producto->cantidad = $nro;
             array_push($productos, $producto);
         } else {
-            if ($productos[$posibleIndice]->cantidad + $nro > $producto->existencia) {
-                return redirect()->route("vender.index")
-                    ->with([
-                        "mensaje" => "No se pueden agregar más productos de este tipo, se quedarían sin existencia. Stock actual: ".$producto->existencia."",
-                        "tipo" => "danger"
-                    ]);
-            }
+            // if ($productos[$posibleIndice]->cantidad + $nro > $producto->existencia) {
+            //     return redirect()->route("vender.index")
+            //         ->with([
+            //             "mensaje" => "No se pueden agregar más productos de este tipo, se quedarían sin existencia. Stock actual: ".$producto->existencia."",
+            //             "tipo" => "danger"
+            //         ]);
+            // }
             $productos[$posibleIndice]->cantidad+=$nro;
         }
         $this->guardarProductos($productos);

@@ -8,6 +8,14 @@
             @include("notificacion")
             <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Productos</button>  
             <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://distribuidora.tantunapps.com/public/exportarp'">Exportar a Excel</button>       
+            <div class="card-body">
+            <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file" class="form-control">
+                <br>
+                <button class="btn btn-success">Importar Productos</button>
+            </form>
+        </div>
             <div class="table-responsive">
             <table class="table table-bordered table-striped table-highlight">
                     <thead>
@@ -34,9 +42,10 @@
                             <td>${{$producto->precio_venta2}}</td>
                             <td>${{$producto->precio_venta3}}</td>
                             <td>${{$producto->precio_venta1 - $producto->precio_compra}}</td>
-                            <td><?php  if($producto->existencia>0){echo "$producto->existencia";}else{
-echo '<span style="color: #f00;text-align:center; font-weight: bold;">SIN STOCK</span>';}
-                             ?>
+                            <td>@if($producto->existencia>0) {{$producto->existencia}} 
+                                @else
+                                <span style="color: #f00;text-align:center; font-weight: bold;"> {{$producto->existencia}} </span>
+                                @endif                            
                              </td>
                             <td>
                                 <a class="btn btn-warning" href="{{route("productos.edit",[$producto])}}">

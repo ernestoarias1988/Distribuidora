@@ -32,8 +32,7 @@
                     <tr style="background-color: #afa;">
                     @elseif($venta->pagado>0)
                     <tr style="background-color: #ff4;">                    
-                    @endif
-
+                    @endif                    
                             <td>{{$venta->created_at}}</td>
                             <td>{{$venta->cliente->nombre}}</td>
                             <td>${{number_format($venta->total,2)}}</td>   
@@ -42,7 +41,7 @@
                                 {{ csrf_field() }}
                                 @csrf
                                 
-                                <input type="number" step="0.01" $ required value="{{$venta->pagado}}" required class="form-control" name="pago" id="pago" placeholder=""></p>
+                                <input type="number" step="0.1" $ required value="{{$venta->pagado}}" required class="form-control" name="pago" id="pago" placeholder=""></p>
                                 </form>
                             </td>
 

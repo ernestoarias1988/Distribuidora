@@ -54,9 +54,15 @@ Route::middleware("auth")
 
         Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');
 
-        
+        Route::post('import', 'ProductosController@importar')->name('import');
+
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
         Route::post('/autocomplete/fetchcliente', 'VenderController@fetchcliente')->name('autocomplete.fetchcliente');
         Route::post('/autocomplete/fetchcantidad', 'VenderController@fetchcantidad')->name('autocomplete.fetchcantidad');
         Route::get("/totales", "TotalesController@index")->name("totales.index");
+
+        Route::post("/ventas", "VentasController@destroyProducto")->name("destroyProducto");
+        Route::post('cargarCantidad', 'VentasController@cargarCantidad')->name('cargaCantidad');
+
+
     });
