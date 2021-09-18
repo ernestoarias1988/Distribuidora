@@ -37,6 +37,14 @@ class ProductsImport  implements ToModel, WithHeadingRow
                     'precio_venta3'    => $row[5], 
                     'existencia'    => $row[6], 
                     ]);
+            }else{
+                $productoActualizando = Producto::where("descripcion", "=", $row[1])->first();
+                $productoActualizando->precio_compra = $row[2]; 
+                $productoActualizando->precio_venta1 = $row[3]; 
+                $productoActualizando->precio_venta2 = $row[4]; 
+                $productoActualizando->precio_venta3 = $row[5];
+                $productoActualizando->existencia = $row[6];
+                $productoActualizando->saveOrFail();
             }
         }else{
             //Agregar mensaje de error
