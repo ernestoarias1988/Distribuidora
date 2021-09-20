@@ -24,9 +24,9 @@ class ProductsImport  implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-        if($row[1]!=null && $row[6]!=null)
+        if($row['descripcion']!=null && $row['existencia']!=null)
         {
-            if(Producto::where("descripcion", "=", $row[1])->first()==null)            
+            if(Producto::where("descripcion", "=", $row['descripcion'])->first()==null)            
             {
                 return new Producto([
                     'codigo_barras'     => $row['codigo_barras'],
