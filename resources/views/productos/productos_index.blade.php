@@ -11,8 +11,7 @@
             <div class="card-body">
             <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="file" class="form-control">
-                <br>
+                <input type="file" name="file" class="form-control" style="width: fit-content; margin-bottom:0.7%" >
                 <button class="btn btn-success">Importar Productos</button>
             </form>
         </div>
