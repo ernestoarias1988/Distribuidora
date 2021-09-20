@@ -29,21 +29,21 @@ class ProductsImport  implements ToModel, WithHeadingRow
             if(Producto::where("descripcion", "=", $row[1])->first()==null)            
             {
                 return new Producto([
-                    'codigo_barras'     => $row[0],
-                    'descripcion'    => $row[1], 
-                    'precio_compra'    => $row[2], 
-                    'precio_venta1'    => $row[3], 
-                    'precio_venta2'    => $row[4], 
-                    'precio_venta3'    => $row[5], 
-                    'existencia'    => $row[6], 
+                    'codigo_barras'     => $row['codigo_barras'],
+                    'descripcion'    => $row['descripcion'], 
+                    'precio_compra'    => $row['precio_compra'], 
+                    'precio_venta1'    => $row['precio_venta1'], 
+                    'precio_venta2'    => $row['precio_venta2'], 
+                    'precio_venta3'    => $row['precio_venta3'], 
+                    'existencia'    => $row['existencia'], 
                     ]);
             }else{
-                $productoActualizando = Producto::where("descripcion", "=", $row[1])->first();
-                $productoActualizando->precio_compra = $row[2]; 
-                $productoActualizando->precio_venta1 = $row[3]; 
-                $productoActualizando->precio_venta2 = $row[4]; 
-                $productoActualizando->precio_venta3 = $row[5];
-                $productoActualizando->existencia = $row[6];
+                $productoActualizando = Producto::where("descripcion", "=", $row['descripcion'])->first();
+                $productoActualizando->precio_compra = $row['precio_compra']; 
+                $productoActualizando->precio_venta1 = $row['precio_venta1']; 
+                $productoActualizando->precio_venta2 = $row['precio_venta2']; 
+                $productoActualizando->precio_venta3 = $row['precio_venta3'];
+                $productoActualizando->existencia = $row['existencia'];
                 $productoActualizando->saveOrFail();
             }
         }else{
