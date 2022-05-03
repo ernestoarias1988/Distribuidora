@@ -322,10 +322,11 @@ class VentasController extends Controller
                     {
                         $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
                         $diferencia = $producto->cantidad - $cantidad;
+                        /* CONTROL DE STOCK
                         if(($diferencia*-1) > $productoActualizado->existencia)
                         {
                             return redirect()->route("ventas.index")->with("mensaje", "No hay Stock suficiente");
-                        }                
+                        }  */              
                         echo"$producto->descripcion == $descripcion <br>";
                         echo"$producto->cantidad";
                         echo"$venta->id";
