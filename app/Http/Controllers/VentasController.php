@@ -322,11 +322,11 @@ class VentasController extends Controller
                     {
                         $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
                         $diferencia = $producto->cantidad - $cantidad;
-                        /* CONTROL DE STOCK
-                        if(($diferencia*-1) > $productoActualizado->existencia)
+                        /*if(($diferencia*-1) > $productoActualizado->existencia)
                         {
                             return redirect()->route("ventas.index")->with("mensaje", "No hay Stock suficiente");
-                        }  */              
+                        }   */
+                        #TODO: Que no sea necesario apretar enter para cargar la cantidad             
                         echo"$producto->descripcion == $descripcion <br>";
                         echo"$producto->cantidad";
                         echo"$venta->id";
@@ -343,8 +343,44 @@ class VentasController extends Controller
                         }
                     }        
                 }
-        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
-                
+        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");          
+    }
+
+
+    public function cargarCantidadShow(Request $request)
+    {
+        $venta = Venta::findOrFail($request->get("id")); 
+        $descripcion = $request->get("descripcion");
+        $cantidad = $request->get("cantidad"); 
+        $productos = $venta->productos;
+        // Recorrer carrito de compras
+        foreach ($productos as $producto) {
+                    if($producto->descripcion == $descripcion)
+                    {
+                        $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
+                        $diferencia = $producto->cantidad - $cantidad;
+                        /*if(($diferencia*-1) > $productoActualizado->existencia)
+                        {
+                            return redirect()->route("ventas.index")->with("mensaje", "No hay Stock suficiente");
+                        }   */
+                        #TODO: Que no sea necesario apretar enter para cargar la cantidad             
+                        echo"$producto->descripcion == $descripcion <br>";
+                        echo"$producto->cantidad";
+                        echo"$venta->id";
+                        echo"$productoActualizado->descripcion";
+                        $productoActualizado->existencia += $diferencia;
+                        $productoActualizado->saveOrFail();
+                        $producto->cantidad = $cantidad;
+                        if($cantidad==0)
+                        {
+                            $producto->delete();
+                        }else{
+                        $producto->save();
+                        $venta->save();
+                        }
+                    }        
+                }
+        return redirect()->route("ventas.show", $venta)->with("mensaje", "Venta Actualizada");          
     }
 }
 

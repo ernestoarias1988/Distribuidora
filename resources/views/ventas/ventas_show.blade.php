@@ -42,7 +42,7 @@
                         <td>{{$producto->codigo_barras}}</td>
                         <td>${{number_format($producto->precio, 2)}}</td>
                         <td>
-                            <form action="{{route('cargaCantidad', ["id"=>$venta->id,"descripcion"=>$producto->descripcion])}}" method="post">
+                            <form action="{{route('cargaCantidadShow', ["id"=>$venta->id,"descripcion"=>$producto->descripcion])}}" method="post">
                                 {{ csrf_field() }}
                                 @csrf                                
                                 <input type="number" step="1" $ required value="{{number_format($producto->cantidad, 0)}}" required class="form-control" name="cantidad" id="cantidad" placeholder=""></p>
@@ -56,7 +56,7 @@
                     <button type="submit" class="btn btn-danger">                                        
                     <i class="fa fa-trash"></i>                                    
                 </button>                                
-            </form> 
+
             </td></tr>
                 @endforeach
                 </tbody>

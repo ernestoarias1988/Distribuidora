@@ -63,6 +63,7 @@ Route::middleware("auth")
 
         Route::post("/ventas", "VentasController@destroyProducto")->name("destroyProducto");
         Route::post('cargarCantidad', 'VentasController@cargarCantidad')->name('cargaCantidad');
+        Route::post('cargarCantidadShow', 'VentasController@cargarCantidadShow')->name('cargaCantidadShow');
 
 
     });
