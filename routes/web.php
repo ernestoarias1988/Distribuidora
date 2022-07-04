@@ -11,12 +11,12 @@ Route::get('/', function () {
 Route::get("/acerca-de", function () {
     return view("");
 })->name("acerca_de.index");
-Route::get("/soporte", function(){
+Route::get("/soporte", function () {
     return redirect("");
 })->name("soporte.index");
 
 Auth::routes([
-    "reset" => false,// no pueden olvidar contraseña
+    "reset" => false, // no pueden olvidar contraseña
 ]);
 
 
@@ -42,14 +42,18 @@ Route::middleware("auth")
         Route::post("/productoDeVenta", "VenderController@agregarProductoVenta")->name("agregarProductoVenta");
         Route::delete("/productoDeVenta", "VenderController@quitarProductoDeVenta")->name("quitarProductoDeVenta");
         Route::post("/terminarOCancelarVenta", "VenderController@terminarOCancelarVenta")->name("terminarOCancelarVenta");
-        
+
         Route::get('user-list-pdf', 'VentasController@exportPdf')->name('users.pdf');
+        Route::get('indexNoShowEntregados', 'VentasController@indexNoShowEntregados')->name('ventas.indexNoShowEntregados');
+        Route::get('indexSiShowEntregados', 'VentasController@indexSiShowEntregados')->name('ventas.indexSiShowEntregados');
+        Route::get('ventas-list-pdf', 'VentasController@exportVentasPdf')->name('ventas.pdf');
         Route::get('cancelarpago', 'VentasController@cancelarPago')->name('cancelPago');
         Route::get('cancelarentrega', 'VentasController@cancelarEntrega')->name('cancelEntrega');
         Route::post('cargarpago', 'VentasController@cargarPago')->name('cargaPago');
         Route::get('cargarentrega', 'VentasController@cargarEntrega')->name('cargaEntrega');
         Route::post('agregarproducto', 'VenderController@agregarProductoACarrito')->name('agregaProducto');
         Route::post('guardarCliente', 'VenderController@guardarCliente')->name('guardarCliente');
+        Route::post('guardarLocalidad', 'VentasController@guardarLocalidad')->name('guardarLocalidad');
 
 
         Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');
@@ -58,12 +62,11 @@ Route::middleware("auth")
 
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
         Route::post('/autocomplete/fetchcliente', 'VenderController@fetchcliente')->name('autocomplete.fetchcliente');
+        Route::post('/autocomplete/fetchlocalidad', 'VentasController@fetchlocalidad')->name('autocomplete.fetchlocalidad');
         Route::post('/autocomplete/fetchcantidad', 'VenderController@fetchcantidad')->name('autocomplete.fetchcantidad');
         Route::get("/totales", "TotalesController@index")->name("totales.index");
 
         Route::post("/ventas", "VentasController@destroyProducto")->name("destroyProducto");
         Route::post('cargarCantidad', 'VentasController@cargarCantidad')->name('cargaCantidad');
         Route::post('cargarCantidadShow', 'VentasController@cargarCantidadShow')->name('cargaCantidadShow');
-
-
     });

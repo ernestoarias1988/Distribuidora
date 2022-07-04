@@ -23,19 +23,20 @@ class VenderController extends Controller
 
     public function guardarCliente(Request $request)
     {
-        $nombre_cliente="NombreList";
+        $nombre_cliente = "NombreList";
         $nombre_cliente = $request->post("id_cliente");
         $cliente = Cliente::where("nombre", "=", $nombre_cliente)->first();
         if (!$cliente) {
             return redirect()
                 ->route("vender.index")
                 ->with("mensaje", "Cliente no encontrado");
-        }else{
-        session(["cliente" => $cliente,
-        ]);
-        return redirect()
-        ->route("vender.index")
-        ->with("mensaje", "Cliente Guardado");
+        } else {
+            session([
+                "cliente" => $cliente,
+            ]);
+            return redirect()
+                ->route("vender.index")
+                ->with("mensaje", "Cliente Guardado");
         }
     }
 
@@ -52,33 +53,36 @@ class VenderController extends Controller
     public function terminarVenta(Request $request)
     {
         // Crear una venta
-        
-        $venta = new Venta(); 
-        $nombre_cliente = $this->obtenercliente();        
-        $cliente=$nombre_cliente;
-        $lista = $cliente->lista;  
+
+        $venta = new Venta();
+        $nombre_cliente = $this->obtenercliente();
+        $cliente = $nombre_cliente;
+        $lista = $cliente->lista;
         $venta->id_cliente = $cliente->id;
         $venta->vendedor = auth()->user()->name;
         $venta->saveOrFail();
         $idVenta = $venta->id;
-        $productos = $this->obtenerProductos();        
+        $productos = $this->obtenerProductos();
         // Recorrer carrito de compras
         foreach ($productos as $producto) {
 
 
-            switch($lista)
-            {
-                case "1": $precio = $producto->precio_venta1;
-                break;
+            switch ($lista) {
+                case "1":
+                    $precio = $producto->precio_venta1;
+                    break;
 
-                case "2": $precio = $producto->precio_venta2;
-                break;
+                case "2":
+                    $precio = $producto->precio_venta2;
+                    break;
 
-                case "3": $precio = $producto->precio_venta3;
-                break;
+                case "3":
+                    $precio = $producto->precio_venta3;
+                    break;
 
-                default: $precio=9999;
-                break;
+                default:
+                    $precio = 9999;
+                    break;
             }
 
             // El producto que se vende...
@@ -99,7 +103,7 @@ class VenderController extends Controller
         }
         $this->vaciarProductos();
         return redirect()
-            ->route("vender.index")
+            ->route("ventas.index")
             ->with("mensaje", "Venta terminada");
     }
 
@@ -115,14 +119,15 @@ class VenderController extends Controller
     private function vaciarProductos()
     {
         $this->guardarProductos(null);
-        session(["cliente" => null,
+        session([
+            "cliente" => null,
         ]);
-        
     }
 
     private function guardarProductos($productos)
     {
-        session(["productos" => $productos,
+        session([
+            "productos" => $productos,
         ]);
     }
 
@@ -157,19 +162,22 @@ class VenderController extends Controller
 
         $lista = $request->input("lista");
 
-        switch($lista)
-        {
-            case 1: $precio = $producto->precio_venta1;
-            break;
+        switch ($lista) {
+            case 1:
+                $precio = $producto->precio_venta1;
+                break;
 
-            case 2: $precio = $producto->precio_venta2;
-            break;
+            case 2:
+                $precio = $producto->precio_venta2;
+                break;
 
-            case 3: $precio = $producto->precio_venta3;
-            break;
+            case 3:
+                $precio = $producto->precio_venta3;
+                break;
 
-            default: $precio = 100;
-            break;
+            default:
+                $precio = 100;
+                break;
         }
 
         $producto->precio_venta = $precio;
@@ -227,93 +235,88 @@ class VenderController extends Controller
         $total = 0;
         $cliente = $this->obtenercliente();
         foreach ($this->obtenerProductos() as $producto) {
-            if($cliente)
-            {
-            switch($cliente->lista)
-            {
-                case "1": $total += $producto->cantidad * $producto->precio_venta1;
-                break;
+            if ($cliente) {
+                switch ($cliente->lista) {
+                    case "1":
+                        $total += $producto->cantidad * $producto->precio_venta1;
+                        break;
 
-                case "2": $total += $producto->cantidad * $producto->precio_venta2;
-                break;
+                    case "2":
+                        $total += $producto->cantidad * $producto->precio_venta2;
+                        break;
 
-                case "3": $total += $producto->cantidad * $producto->precio_venta3;
-                break;
+                    case "3":
+                        $total += $producto->cantidad * $producto->precio_venta3;
+                        break;
+                }
+            } else {
             }
-        }else{
-            
-        }}        
-        return view("vender.vender",
+        }
+        return view(
+            "vender.vender",
             [
                 "total" => $total,
                 "clientes" => Cliente::all(),
                 "cliente" => $cliente
-            ]);
+            ]
+        );
     }
 
     function fetch(Request $request)
     {
-     if($request->get('query'))
-     {
-      $query = $request->get('query');
-      $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
-        ->get();
-      $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
-      foreach($data as $row)
-      {
-       $output .= '
-       <li><a href="#">'.$row->descripcion.'</a></li>
-       '
-       ;
-      }
-      $output .= '</ul>';
-      echo $output;
-     }
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
+                ->get();
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            foreach ($data as $row) {
+                $output .= '
+       <li><a href="#">' . $row->descripcion . '</a></li>
+       ';
+            }
+            $output .= '</ul>';
+            echo $output;
+        }
     }
 
 
     function fetchcliente(Request $request)
     {
-     if($request->get('query'))
-     {
-      $query = $request->get('query');
-      $data = Cliente::where('nombre', 'LIKE', "%{$query}%")
-        ->get();
-      $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
-      foreach($data as $row)
-      {
-       $output .= '
-       <li><a href="#">'.$row->nombre.'</a></li>
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = Cliente::where('nombre', 'LIKE', "%{$query}%")
+                ->get();
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            foreach ($data as $row) {
+                $output .= '
+       <li><a href="#">' . $row->nombre . '</a></li>
        ';
-      }
-      $output .= '</ul>';
-      echo $output;
-     }
+            }
+            $output .= '</ul>';
+            echo $output;
+        }
     }
 
 
 
     function fetchcantidad(Request $request)
     {
-     if($request->get('query'))
-     {
-      $query = $request->get('query');
-      $producto = Producto::where("descripcion", "LIKE", $query)->first();    
-      if($producto)
-      {
-      $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
-        ->get();      
-      foreach($data as $row)
-      {
-       $output = 'Stock Disponible: '.$row->existencia.'';//'     Precio: $'.$row->precio_venta1;
-      }
-     }else{
-               $output= '';
-     }
-    }else{
-    $output= "";
-    }
-    echo $output;
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $producto = Producto::where("descripcion", "LIKE", $query)->first();
+            if ($producto) {
+                $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
+                    ->get();
+                foreach ($data as $row) {
+                    $output = 'Stock Disponible: ' . $row->existencia . ''; //'     Precio: $'.$row->precio_venta1;
+                }
+            } else {
+                $output = '';
+            }
+        } else {
+            $output = "";
+        }
+        echo $output;
     }
 
 
@@ -360,11 +363,10 @@ class VenderController extends Controller
             //             "tipo" => "danger"
             //         ]);
             // }
-            $productos[$posibleIndice]->cantidad+=$nro;
+            $productos[$posibleIndice]->cantidad += $nro;
         }
         $this->guardarProductos($productos);
         return redirect()
             ->route("vender.index");
     }
-
 }

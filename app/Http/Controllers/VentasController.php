@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Venta;
+use App\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
@@ -18,11 +19,11 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class VentasExport implements FromCollection,WithStrictNullComparison,WithHeadings
+class VentasExport implements FromCollection, WithStrictNullComparison, WithHeadings
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function headings(): array
     {
         return [
@@ -39,26 +40,26 @@ class VentasExport implements FromCollection,WithStrictNullComparison,WithHeadin
     }
     public function collection()
     {
-  
+
         $totales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
-        ->Join('clientes', 'clientes.id', '=', 'ventas.id_cliente')
-        ->select("ventas.*","clientes.nombre", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-        ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor","clientes.nombre")
-        ->get();
-        
-  
-        Return $totales;
+            ->Join('clientes', 'clientes.id', '=', 'ventas.id_cliente')
+            ->select("ventas.*", "clientes.nombre", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor", "clientes.nombre")
+            ->get();
+
+
+        return $totales;
     }
 }
 class VentasController extends Controller
 {
 
-    public function export() 
+    public function export()
     {
         return Excel::download(new VentasExport, 'Ventas.xlsx');
     }
 
-    
+
     public function ticket(Request $request)
     {
         $venta = Venta::findOrFail($request->get("id"));
@@ -102,13 +103,42 @@ class VentasController extends Controller
      */
     public function index()
     {
+        $localidad = $this->obtenerlocalidad();
+        $entregadosFlag = 0;
         $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
             ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
             ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
             ->get();
-        return view("ventas.ventas_index", ["ventas" => $ventasConTotales,]);
+        return view("ventas.ventas_index", [
+            "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        ]);
     }
 
+    public function indexNoShowEntregados()
+    {
+        $localidad = $this->obtenerlocalidad();
+        $entregadosFlag = 0;
+        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
+            ->get();
+        return view("ventas.ventas_index", [
+            "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        ]);
+    }
+
+    public function indexSiShowEntregados()
+    {
+        $localidad = $this->obtenerlocalidad();
+        $entregadosFlag = 1;
+        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
+            ->get();
+        return view("ventas.ventas_index", [
+            "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -197,9 +227,9 @@ class VentasController extends Controller
             //$productoActualizado = Producto::find($producto->id);
             $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
             //echo"$productoActualizado->id";
-            echo"$producto->cantidad";
-            echo"$producto->descripcion";
-            echo"---";
+            echo "$producto->cantidad";
+            echo "$producto->descripcion";
+            echo "---";
             $productoActualizado->existencia += $producto->cantidad;
             $productoActualizado->saveOrFail();
         }
@@ -210,9 +240,9 @@ class VentasController extends Controller
 
     public function destroyProducto(Request $request)
     {
-    $venta = Venta::findOrFail($request->get("id"));
-    $descripcion = $request->get("descripcion");
-    $productos = $venta->productos;
+        $venta = Venta::findOrFail($request->get("id"));
+        $descripcion = $request->get("descripcion");
+        $productos = $venta->productos;
         // Recorrer carrito de compras
         foreach ($productos as $producto) {
             /*/ El producto que se vende...
@@ -228,52 +258,77 @@ class VentasController extends Controller
             //$producto->saveOrFail();
             // Y restamos la existencia del original
             //$productoActualizado = Producto::find($producto->id);
-            if($producto->descripcion == $descripcion)
-            {
+            if ($producto->descripcion == $descripcion) {
                 $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
-                echo"$producto->descripcion == $descripcion <br>";
-                echo"$producto->cantidad";
-                echo"$venta->id";
-                echo"$productoActualizado->descripcion";
+                echo "$producto->descripcion == $descripcion <br>";
+                echo "$producto->cantidad";
+                echo "$venta->id";
+                echo "$productoActualizado->descripcion";
                 $productoActualizado->existencia += $producto->cantidad;
                 $productoActualizado->saveOrFail();
                 $producto->cantidad = 0;
                 $producto->delete();
             }
-
         }
-      //  $venta->delete();
-        return redirect()->route("ventas.indexas")
+        //  $venta->delete();
+        return redirect()->route("ventas.index")
             ->with("mensaje", "Producto $producto->descrpcion eliminado");
     }
 
     public function exportPdf(Request $request)
     {
-       $data = $this->getData($request);
-       $date = date('Y-m-d');
-       $invoice = "2222";
-       $view =  \View::make('pdf.comprobante', compact('data', 'date', 'invoice'))->render();
-       $pdf = \App::make('dompdf.wrapper');
-       $pdf->loadHTML($view);
-       return $pdf->stream('invoice');
-   }
+        $data = $this->getData($request);
+        $date = date('Y-m-d');
+        $invoice = "2222";
+        $view =  \View::make('pdf.comprobante', compact('data', 'date', 'invoice'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view);
+        return $pdf->stream('invoice');
+    }
 
 
-   public function getData(Request $request) 
-   {
-       $venta = Venta::findOrFail($request->get("id"));
+
+    public function getData(Request $request)
+    {
+        $venta = Venta::findOrFail($request->get("id"));
 
         $data =  [
             'facturaNro'  => $venta->id,
-            'cliente'   => $venta->cliente->nombre,  
-            'Request' => $request,  
-            'vendedor' => $venta->vendedor,        
-            'descuento'=> 0,
-            'direccion'=>$venta->cliente->direccion        
+            'cliente'   => $venta->cliente->nombre,
+            'Request' => $request,
+            'vendedor' => $venta->vendedor,
+            'descuento' => 0,
+            'direccion' => $venta->cliente->direccion
         ];
         return $data;
     }
-
+    public function exportVentasPdf(Request $request)
+    {
+        $data = [
+            "ventas" => Venta::all(),
+            "localidad" => $request->get("id")
+        ];
+        $date = date('Y-m-d');
+        $invoice = "2222";
+        $view =  \View::make('pdf.ventas', compact('data', 'date', 'invoice'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view);
+        return $pdf->stream('invoice');
+    }
+    public function getDataVentas(Request $request)
+    {
+        /*$venta = Venta::findOrFail($request->get("id"));
+        $data =  [
+            'facturaNro'  => $venta->id,
+            'cliente'   => $venta->cliente->nombre,
+            'Request' => $request,
+            'vendedor' => $venta->vendedor,
+            'descuento' => 0,
+            'direccion' => $venta->cliente->direccion
+        ];*/
+        $data = ["localidad" => $request->get("id")];
+        return $data;
+    }
     public function cancelarPago(Request $request)
     {
 
@@ -293,94 +348,137 @@ class VentasController extends Controller
 
     public function cargarPago(Request $request)
     {
-        $venta = Venta::findOrFail($request->get("id"));    
-        $pago = $request->get("pago");              
-        $venta->pagado = $pago;        
+        $venta = Venta::findOrFail($request->get("id"));
+        $pago = $request->get("pago");
+        $venta->pagado = $pago;
         $venta->save();
         return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
-                
     }
 
     public function cargarEntrega(Request $request)
     {
         $venta = Venta::findOrFail($request->get("id"));
         $venta->entregado = 0;
-        $venta->save();        
+        $venta->save();
         return redirect()->route("ventas.index")->with("mensaje", "Venta NO Entregada");
-
     }
 
     public function cargarCantidad(Request $request)
     {
-        $venta = Venta::findOrFail($request->get("id")); 
+        $venta = Venta::findOrFail($request->get("id"));
         $descripcion = $request->get("descripcion");
-        $cantidad = $request->get("cantidad"); 
+        $cantidad = $request->get("cantidad");
         $productos = $venta->productos;
         // Recorrer carrito de compras
         foreach ($productos as $producto) {
-                    if($producto->descripcion == $descripcion)
-                    {
-                        $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
-                        $diferencia = $producto->cantidad - $cantidad;
-                        /*if(($diferencia*-1) > $productoActualizado->existencia)
+            if ($producto->descripcion == $descripcion) {
+                $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
+                $diferencia = $producto->cantidad - $cantidad;
+                /*if(($diferencia*-1) > $productoActualizado->existencia)
                         {
                             return redirect()->route("ventas.index")->with("mensaje", "No hay Stock suficiente");
                         }   */
-                        #TODO: Que no sea necesario apretar enter para cargar la cantidad             
-                        echo"$producto->descripcion == $descripcion <br>";
-                        echo"$producto->cantidad";
-                        echo"$venta->id";
-                        echo"$productoActualizado->descripcion";
-                        $productoActualizado->existencia += $diferencia;
-                        $productoActualizado->saveOrFail();
-                        $producto->cantidad = $cantidad;
-                        if($cantidad==0)
-                        {
-                            $producto->delete();
-                        }else{
-                        $producto->save();
-                        $venta->save();
-                        }
-                    }        
+                #TODO: Que no sea necesario apretar enter para cargar la cantidad             
+                echo "$producto->descripcion == $descripcion <br>";
+                echo "$producto->cantidad";
+                echo "$venta->id";
+                echo "$productoActualizado->descripcion";
+                $productoActualizado->existencia += $diferencia;
+                $productoActualizado->saveOrFail();
+                $producto->cantidad = $cantidad;
+                if ($cantidad == 0) {
+                    $producto->delete();
+                } else {
+                    $producto->save();
+                    $venta->save();
                 }
-        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");          
+            }
+        }
+        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
     }
+
+    function fetchlocalidad(Request $request)
+    {
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = Cliente::where('localidad', 'LIKE', "%{$query}%")
+                ->get();
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            foreach ($data as $row) {
+                $output .= '
+       <li><a href="#">' . $row->localidad . '</a></li>
+       ';
+            }
+            $output .= '</ul>';
+            echo $output;
+        }
+    }
+
+    public function guardarLocalidad(Request $request)
+    {
+        $localidad_cliente = "NombreList";
+        $localidad_cliente = $request->post("id_localidad");
+        $cliente = Cliente::where("localidad", 'LIKE', $localidad_cliente)->first();
+        if (!$cliente) {
+            session([
+                "localidad" => 'Todas'
+            ]);
+            return redirect()
+                ->route("ventas.index")
+                ->with("mensaje", "Localidad no encontrada");
+        } else {
+            session([
+                "localidad" => $cliente->localidad,
+            ]);
+            return redirect()
+                ->route("ventas.index")
+                ->with("mensaje", "Localidad Guardada:$cliente->localidad");
+        }
+    }
+
+
+    public function obtenerlocalidad()
+    {
+        $localidad = session("localidad");
+        if (!$localidad || $localidad == 'Todas') {
+            $localidad = 'Todas';
+        }
+        return $localidad;
+    }
+
 
 
     public function cargarCantidadShow(Request $request)
     {
-        $venta = Venta::findOrFail($request->get("id")); 
+        $venta = Venta::findOrFail($request->get("id"));
         $descripcion = $request->get("descripcion");
-        $cantidad = $request->get("cantidad"); 
+        $cantidad = $request->get("cantidad");
         $productos = $venta->productos;
         // Recorrer carrito de compras
         foreach ($productos as $producto) {
-                    if($producto->descripcion == $descripcion)
-                    {
-                        $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
-                        $diferencia = $producto->cantidad - $cantidad;
-                        /*if(($diferencia*-1) > $productoActualizado->existencia)
+            if ($producto->descripcion == $descripcion) {
+                $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
+                $diferencia = $producto->cantidad - $cantidad;
+                /*if(($diferencia*-1) > $productoActualizado->existencia)
                         {
                             return redirect()->route("ventas.index")->with("mensaje", "No hay Stock suficiente");
                         }   */
-                        #TODO: Que no sea necesario apretar enter para cargar la cantidad             
-                        echo"$producto->descripcion == $descripcion <br>";
-                        echo"$producto->cantidad";
-                        echo"$venta->id";
-                        echo"$productoActualizado->descripcion";
-                        $productoActualizado->existencia += $diferencia;
-                        $productoActualizado->saveOrFail();
-                        $producto->cantidad = $cantidad;
-                        if($cantidad==0)
-                        {
-                            $producto->delete();
-                        }else{
-                        $producto->save();
-                        $venta->save();
-                        }
-                    }        
+                #TODO: Que no sea necesario apretar enter para cargar la cantidad             
+                echo "$producto->descripcion == $descripcion <br>";
+                echo "$producto->cantidad";
+                echo "$venta->id";
+                echo "$productoActualizado->descripcion";
+                $productoActualizado->existencia += $diferencia;
+                $productoActualizado->saveOrFail();
+                $producto->cantidad = $cantidad;
+                if ($cantidad == 0) {
+                    $producto->delete();
+                } else {
+                    $producto->save();
+                    $venta->save();
                 }
-        return redirect()->route("ventas.show", $venta)->with("mensaje", "Venta Actualizada");          
+            }
+        }
+        return redirect()->route("ventas.show", $venta)->with("mensaje", "Venta Actualizada");
     }
 }
-

@@ -11,8 +11,7 @@
     </div>
     @if (Auth::user()->role_id=="Administrador")
     @foreach([
-    ["productos", "vender","ventas", "clientes"],
-    ["usuarios"]
+    ["productos", "vender","ventas", "clientes","usuarios"]
     ] as $modulos)
         <div class="col-10 pb-2">
             <div class="row">
@@ -29,11 +28,24 @@
                         </div>
                     </div>
                 @endforeach
+                <div class="col-10 col-md-3">
+                        <div class="card">
+                            <img style="max-width:100%;width:auto;height:auto;" class="card-img-top" src="{{url("/img/descarga.png")}}">
+                            <div class="card-body">
+                                <a href="" onclick="message()" class="btn btn-success">
+                                    Actualizar Datos
+                                    <i class="fa fa-arrow-right"></i>
+
+                                </a>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     @endforeach
     @endif
   
+
 
     @if (Auth::user()->role_id=="Vendedor")
     @foreach([
@@ -57,6 +69,18 @@
             </div>
         </div>
     @endforeach
+    <div class="col-10 col-md-3">
+                        <div class="card">
+                            <img style="max-width:100%;width:auto;height:auto;" class="card-img-top" src="{{url("/img/descarga.png")}}">
+                            <div class="card-body">
+                                <a href="" onclick="message()" class="btn btn-success">
+                                    Actualizar Datos
+                                    <i class="fa fa-arrow-right"></i>
+
+                                </a>
+                            </div>
+                        </div>
+                    </div>
     @endif
 
     @if (Auth::user()->role_id=="Repartidor")
@@ -81,6 +105,24 @@
             </div>
         </div>
     @endforeach
+    <div class="col-10 col-md-3">
+                        <div class="card">
+                            <img style="max-width:100%;width:auto;height:auto;" class="card-img-top" src="{{url("/img/descarga.png")}}">
+                            <div class="card-body">
+                                <a href="" onclick="message()" class="btn btn-success">
+                                    Actualizar Datos
+                                    <i class="fa fa-arrow-right"></i>
+
+                                </a>
+                            </div>
+                        </div>
+                    </div>
     @endif
    
 @endsection
+<script>
+function message()
+{
+    alert("Datos descargados!");
+}
+</script>
