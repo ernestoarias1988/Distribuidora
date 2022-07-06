@@ -10,23 +10,13 @@
         @include("notificacion")
         <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventas.pdf", ["id"=>$localidad])}}">
             <!--, ["id" => $venta->id]) -->
-            <i class="fa fa-print"></i>&nbsp;PDF
+            <i class="fa fa-print"></i>&nbsp; Imprimir tickets
         </a>
         <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://localhost/Distribuidora/public/exportarv'">Exportar a Excel</button>
-        <div style="padding-bottom:3%" class="col-10 col-md-3">
-            <img style="max-width:20%;width:auto;height:auto;
-                box-shadow: 10px 10px 5px #ccc;
-                -moz-box-shadow: 10px 10px 5px #ccc;
-                -webkit-box-shadow: 10px 10px 5px #ccc;
-                -khtml-box-shadow: 10px 10px 5px #ccc;
-                " src="{{url("/img/subir.png")}}" onClick="message()">
-            &nbsp&nbsp Enviar Datos
-        </div>
         <form action="{{route("guardarLocalidad")}}" method="post">
             {{ csrf_field() }}
             @csrf
             <div class="form-group">
-                <label for="id_localidad">Localidad</label>
                 <input type="text" autocomplete="off" required class="form-control" name="id_localidad" id="id_localidad" placeholder="Ingrese Localidad" style="width:40% ;" />
                 <div id="localidadlist">
                 </div>
@@ -38,16 +28,13 @@
 </form>
 @if(session("localidad") !== null)
 <h4>Localidad:{{$localidad}} </h4>
-<div class="row" style="margin-left: 0.2%;">
+<div class="row" style="margin: 0.2%;">
     <h4 id="showEntregado">Mostrar Entregados: @if($entregadosFlag==0) NO @else SI @endif</h4>
-
-    <a class="btn btn-success" style="margin: 0.5%" href="{{route("ventas.indexSiShowEntregados")}}">
-        <!--, ["id" => $venta->id]) -->
-        <i class="fa fa-check"></i>&nbsp;
+    <a class="btn btn-success" style="margin-left:0.2% ;" href="{{route("ventas.indexSiShowEntregados")}}">
+        <i class="fa fa-check"></i>
     </a>
-    <a class="btn btn-danger" tyle="margin-bottom:0.5%" href="{{route("ventas.indexNoShowEntregados")}}">
-        <!--, ["id" => $venta->id]) -->
-        <i class="fa fa-times"></i>&nbsp;
+    <a class="btn btn-danger" style="margin-left:0.2% ;" href="{{route("ventas.indexNoShowEntregados")}}">
+        <i class="fa fa-times"></i>
     </a>
 </div>
 @endif

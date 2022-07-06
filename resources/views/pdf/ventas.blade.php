@@ -39,17 +39,36 @@ $fecha = date("Y-m-d");
             </div>
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null) && $venta->entregado != 1)
-            Venta:#{{$venta->id}}<br>
+            <h4>Venta:#{{$venta->id}}</h4>
             Vendedor:{{$venta->vendedor}}<br>
             Cliente: {{$venta->cliente->nombre}}<br>
-            Productos: <br>
-            @foreach($venta->productos as $producto)
-            {{$producto->descripcion}} | {{number_format($producto->cantidad, 0)}} unidades | ${{number_format($producto->cantidad * $producto->precio, 2)}}<br>
-            <?php $total += ($producto->cantidad * $producto->precio); ?>
-            @endforeach
-            Total: ${{number_format($total, 2)}}
+            Direccion: {{$venta->cliente->direccion}} - Localidad: {{$venta->cliente->localidad}}<br>
+            <br>
+
+            <table style="text-align: center; width:100%;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left">Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>SubTotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($venta->productos as $producto)
+                    <tr>
+                        <td style="text-align:left">{{$producto->descripcion}} </td>
+                        <td> {{number_format($producto->cantidad, 0)}} U. </td>
+                        <td> ${{number_format($producto->precio, 2)}}</td>
+                        <td> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
+                    </tr>
+                    <?php $total += ($producto->cantidad * $producto->precio); ?>
+                    @endforeach
+                </tbody>
+            </table>
+            <h4>Total: ${{number_format($total, 2)}}</h4>
             <?php $total = 0; ?>
-            <br>-----------------------------------------------------------------------------------------<br>
+            --------------------------------------------------------------------------------------------------<br>
             @endif
             @endforeach
 

@@ -65,10 +65,6 @@ Login
                             @endif
                         </div>
                     </div>
-
-                    <a href="" onclick="message()" class="btn btn-success" style="margin-top:2%">
-                        Actualizar Datos
-                    </a>
                 </form>
             </div>
         </div>
