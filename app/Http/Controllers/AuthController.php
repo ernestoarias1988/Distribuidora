@@ -24,7 +24,8 @@ class AuthController extends Controller
         ]);
         $user->save();
         return response()->json([
-            'message' => 'Successfully created user!'], 201);
+            'message' => 'Successfully created user!'
+        ], 201);
     }
 
     public function login(Request $request)
@@ -37,7 +38,8 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
         if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'Unauthorized'], 401);
+                'message' => 'Unauthorized'
+            ], 401);
         }
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
@@ -45,12 +47,16 @@ class AuthController extends Controller
         if ($request->remember_me) {
             $token->expires_at = Carbon::now()->addWeeks(1);
         }
+
+        echo ("<script>console.log('PHP: " . $token . "');</script>");
+        echo ("<script>console.log('PHP: " . "ACA" . "');</script>");
         $token->save();
         return response()->json([
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at)
+                $tokenResult->token->expires_at
+            )
                 ->toDateTimeString(),
         ]);
     }
@@ -59,7 +65,7 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
         return response()->json(['message' =>
-            'Successfully logged out']);
+        'Successfully logged out']);
     }
 
     public function user(Request $request)

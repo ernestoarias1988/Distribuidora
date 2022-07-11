@@ -9,6 +9,8 @@
     @endif
 </div>
 @if (Auth::user()->role_id=="Administrador")
+
+
 @foreach([
 ["productos", "vender","ventas", "clientes","usuarios"]
 ] as $modulos)

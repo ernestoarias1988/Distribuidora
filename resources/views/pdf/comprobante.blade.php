@@ -26,26 +26,26 @@ $fecha = date("Y-m-d");
 
 <body>
     <div class="container-fluid">
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-xs-10 ">
                 <h1>Distribuidora</h1>
             </div>
             <div class="col-xs-2">
-                <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="https://distribuidora.tantunapps.com/public/img/logo.jpg">
+                <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="{{url("/img/vender.png")}}">
             </div>
         </div>
-        <hr>
+        <hr>   -->
         <div class="row">
             <div class="col-xs-10">
                 <h1 class="h6">Comprobante de Pedido</h1>
             </div>
             <div class="col-xs-2 text-center">
-                <strong>Fecha</strong>
-                <br>
+                <strong>Fecha:</strong>
+
                 <?php echo $fecha ?>
                 <br>
                 <strong>Pedido Nro:</strong>
-                <br>
+
                 <?php echo $numero ?>
             </div>
         </div>

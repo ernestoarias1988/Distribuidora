@@ -327,8 +327,16 @@ class VenderController extends Controller
 
     function editarCantidad(Request $request)
     {
+
         $codigo = $request->post("codigo");
         $nro = $request->post("cantidad");
+        if (!is_numeric($nro)) {
+            return redirect()->route("vender.index")
+                ->with([
+                    "mensaje" => "Ingrese un numero en el campo cantidad",
+                    "tipo" => "danger"
+                ]);
+        }
         $producto = Producto::where("descripcion", "=", $codigo)->first();
         if (!$producto) {
             return redirect()

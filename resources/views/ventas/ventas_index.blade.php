@@ -43,7 +43,7 @@
         <thead>
             <tr>
                 <th white-space: nowrap;>Fecha</th>
-                <th id="ventaslistado">{{$entregadosFlag}}</th>
+                <th>Cliente</th>
                 <th>Total</th>
                 <th style="width: 150px;">Pagado</th>
                 <th>Diferencia</th>

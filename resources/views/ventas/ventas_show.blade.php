@@ -46,7 +46,7 @@
                         <form action="{{route('cargaCantidadShow', ["id"=>$venta->id,"descripcion"=>$producto->descripcion])}}" method="post">
                             {{ csrf_field() }}
                             @csrf
-                            <input type="number" step="1" $ required value="{{number_format($producto->cantidad, 0)}}" required class="form-control" name="cantidad" id="cantidad" placeholder=""></p>
+                            <input type="number" step="0.1" $ required value="{{number_format($producto->cantidad, 2)}}" required class="form-control" name="cantidad" id="cantidad" placeholder=""></p>
                         </form>
                     </td>
                     <td>${{number_format($producto->cantidad * $producto->precio, 2)}}
