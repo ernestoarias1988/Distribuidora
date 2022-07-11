@@ -48,8 +48,6 @@ class AuthController extends Controller
             $token->expires_at = Carbon::now()->addWeeks(1);
         }
 
-        echo ("<script>console.log('PHP: " . $token . "');</script>");
-        echo ("<script>console.log('PHP: " . "ACA" . "');</script>");
         $token->save();
         return response()->json([
             'access_token' => $tokenResult->accessToken,
