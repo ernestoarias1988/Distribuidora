@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Venta extends Model
 {
+    protected $fillable = [
+        "entregado", "pagado", "id_cliente", "vendedor"
+    ];
     public function productos()
     {
         return $this->hasMany("App\ProductoVendido", "id_venta");

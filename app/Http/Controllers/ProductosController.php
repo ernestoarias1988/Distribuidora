@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Producto;
 use Illuminate\Http\Request;
 
-
+use Artisan;
+use Illuminate\Support\Composer;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -15,51 +17,46 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 
 class ProductsImport  implements ToModel, WithHeadingRow
-{ 
+{
     use Importable;
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
-        if($row['descripcion']!=null && $row['existencia']!=null)
-        {
-            if(Producto::where("descripcion", "=", $row['descripcion'])->first()==null)            
-            {
+        if ($row['descripcion'] != null && $row['existencia'] != null) {
+            if (Producto::where("descripcion", "=", $row['descripcion'])->first() == null) {
                 return new Producto([
                     'codigo_barras'     => $row['codigo_barras'],
-                    'descripcion'    => $row['descripcion'], 
-                    'precio_compra'    => $row['precio_compra'], 
-                    'precio_venta1'    => $row['precio_venta1'], 
-                    'precio_venta2'    => $row['precio_venta2'], 
-                    'precio_venta3'    => $row['precio_venta3'], 
-                    'existencia'    => $row['existencia'], 
-                    ]);
-            }else{
+                    'descripcion'    => $row['descripcion'],
+                    'precio_compra'    => $row['precio_compra'],
+                    'precio_venta1'    => $row['precio_venta1'],
+                    'precio_venta2'    => $row['precio_venta2'],
+                    'precio_venta3'    => $row['precio_venta3'],
+                    'existencia'    => $row['existencia'],
+                ]);
+            } else {
                 $productoActualizando = Producto::where("descripcion", "=", $row['descripcion'])->first();
-                $productoActualizando->precio_compra = $row['precio_compra']; 
-                $productoActualizando->precio_venta1 = $row['precio_venta1']; 
-                $productoActualizando->precio_venta2 = $row['precio_venta2']; 
+                $productoActualizando->precio_compra = $row['precio_compra'];
+                $productoActualizando->precio_venta1 = $row['precio_venta1'];
+                $productoActualizando->precio_venta2 = $row['precio_venta2'];
                 $productoActualizando->precio_venta3 = $row['precio_venta3'];
                 $productoActualizando->existencia = $row['existencia'];
                 $productoActualizando->saveOrFail();
             }
-        }else{
+        } else {
             //Agregar mensaje de error
         }
-        
     }
-
-
 }
 
-class ProductosExport implements FromCollection,WithStrictNullComparison,WithHeadings
+class ProductosExport implements FromCollection, WithStrictNullComparison, WithHeadings
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
 
     public function headings(): array
     {
@@ -83,14 +80,14 @@ class ProductosExport implements FromCollection,WithStrictNullComparison,WithHea
 }
 class ProductosController extends Controller
 {
-    public function export() 
+    public function export()
     {
         return Excel::download(new ProductosExport, 'Productos.xlsx');
     }
 
-    public function importar() 
+    public function importar()
     {
-        Excel::import(new ProductsImport,request()->file('file'));        
+        Excel::import(new ProductsImport, request()->file('file'));
         return back();
     }
     /**
@@ -121,6 +118,7 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
+        //Artisan::call('key:generate');
         $producto = new Producto($request->input());
 
         $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
@@ -133,22 +131,20 @@ class ProductosController extends Controller
                 ]);
         }
         $probando = Producto::where("descripcion", "=", $producto->descripcion)->first();
-        if($probando) {
+        if ($probando) {
             return redirect()
                 ->route("productos.index")
                 ->with([
                     "mensaje" => "Producto ya existente",
                     "tipo" => "danger"
                 ]);
-
         }
 
 
 
 
 
-        if($producto == Producto::find($producto->id))
-        {
+        if ($producto == Producto::find($producto->id)) {
             return redirect()->route("productos.index")->with("mensaje", "Producto NO guardado");
         }
         $producto = new Producto($request->input());
@@ -175,7 +171,8 @@ class ProductosController extends Controller
      */
     public function edit(Producto $producto)
     {
-        return view("productos.productos_edit", ["producto" => $producto,
+        return view("productos.productos_edit", [
+            "producto" => $producto,
         ]);
     }
 
@@ -204,6 +201,4 @@ class ProductosController extends Controller
         $producto->delete();
         return redirect()->route("productos.index")->with("mensaje", "Producto eliminado");
     }
-
-    
 }
