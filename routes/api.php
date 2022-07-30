@@ -99,6 +99,13 @@ Route::group(['prefix' => 'auth'], function () {
                 "data" => "true"
             ]);
         });
+        Route::put("/venta", function (Request $request) {
+            $venta_controller =  new VenderController;
+            $venta_controller->editarVentaAPI($request);
+            return response()->json([
+                "data" => "venta actualizada"
+            ]);
+        });
         Route::get("/venta/{id}", function ($id) {
             $venta = Venta::with(["productos", "cliente"])->findOrFail($id);
             return response()->json($venta);

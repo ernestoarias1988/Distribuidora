@@ -435,4 +435,15 @@ class VenderController extends Controller
             ->route("ventas.index")
             ->with("mensaje", "Venta terminada");
     }
+
+    public function editarVentaAPI(Request $request)
+    {
+        $venta = Venta::findOrFail($request->id);
+        $venta->pagado = $request->pagado;
+        $venta->entregado = $request->entregado;
+        $venta->saveOrFail();
+        return redirect()
+            ->route("ventas.index")
+            ->with("mensaje", "Venta terminada");
+    }
 }
