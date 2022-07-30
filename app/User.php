@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'role_id', 'password', 
+        'name', 'email', 'role_id', 'password',
     ];
 
     /**
@@ -26,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'remember_token',
     ];
 
     /**
@@ -44,11 +44,9 @@ class User extends Authenticatable
     }
     public function esAdmin()
     {
-        if($this->role->nombre_rol='Administrador')
-        {
+        if ($this->role->nombre_rol = 'Administrador') {
             return true;
         }
         return false;
     }
-
 }

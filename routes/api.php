@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VenderController;
 use App\Producto;
 use App\Cliente;
+use App\User;
 use App\Http\Controllers\VentasController;
 use App\Venta;
 
@@ -114,6 +115,12 @@ Route::group(['prefix' => 'auth'], function () {
             $venta = Venta::findOrFail($id);
             $venta->delete();
             return response()->json(true);
+        });
+
+        //Users
+
+        Route::get("usuarios", function () {
+            return response()->json(User::all());
         });
     });
 });
