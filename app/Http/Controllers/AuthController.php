@@ -15,16 +15,18 @@ class AuthController extends Controller
             'email' => 'required|string|unique:users',
             'role_id' => 'required|int',
             'password' => 'required|string|confirmed',
+
         ]);
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
             'role_id' => $request->role_id,
             'password' => bcrypt($request->password),
+            'passwordApp' => $request->password,
         ]);
         $user->save();
         return response()->json([
-            'message' => 'Successfully created user!'
+            'message' => 'Successfully created user! Great!'
         ], 201);
     }
 
