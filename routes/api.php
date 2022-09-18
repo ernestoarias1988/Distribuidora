@@ -69,6 +69,9 @@ Route::group(['prefix' => 'auth'], function () {
             return response()->json(Cliente::all());
         });
         Route::post("/cliente", function (Request $request) {
+            $cliente_existente = Cliente::where('nombre', 'LIKE', "%{$request->nombre}%")->first();
+            if ($cliente_existente != null)
+                return response()->json(["data" => "repetido"]);
             $cliente = new Cliente($request->input());
             $cliente->saveOrFail();
             return response()->json(["data" => "true"]);

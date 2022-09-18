@@ -383,9 +383,8 @@ class VenderController extends Controller
         // Crear una venta
 
         $venta = new Venta();
-
-        $cliente = Cliente::findOrFail($request->cliente);
-
+        // $cliente = Cliente::findOrFail($request->cliente);
+        $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
         $lista = $cliente->lista;
         $venta->id_cliente = $cliente->id;
         $venta->vendedor = $request->vendedor;

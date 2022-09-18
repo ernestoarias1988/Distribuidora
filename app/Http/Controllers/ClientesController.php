@@ -35,6 +35,9 @@ class ClientesController extends Controller
      */
     public function store(Request $request)
     {
+        $cliente_existente = Cliente::where('nombre', 'LIKE', "%{$request->nombre}%")->first();
+        if ($cliente_existente != null)
+            return redirect()->route("clientes.index")->with("mensaje", "Cliente NO CREADO, Nombre ya existente");
         (new Cliente($request->input()))->saveOrFail();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente agregado");
     }
