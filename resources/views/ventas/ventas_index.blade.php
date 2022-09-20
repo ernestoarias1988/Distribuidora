@@ -21,7 +21,7 @@
                 <div id="localidadlist">
                 </div>
             </div>
-            <button name="accionlocalidad" type="submit" class="btn btn-primary">Seleccionar Localidad
+            <button name="accionlocalidad" type="submit" class="btn btn-primary" style=" margin-top:-10px; margin-bottom:10px">Seleccionar Localidad
             </button>
     </div>
 </div>

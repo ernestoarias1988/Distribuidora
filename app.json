@@ -1,0 +1,7 @@
+{
+    "android": {
+      "package": "com.tantunapps.distribuidora"
+    },
+    "packagerOpts":{"sourceExts": [ "js", "json", "ts", "tsx", "jsx", "vue"]
+  }
+  }
