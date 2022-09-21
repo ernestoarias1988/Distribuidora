@@ -15,7 +15,7 @@ for ($i = 0; $i < 1000; $i++) {
 
 ?>
 <div class="row">
-    <div class="col-6">
+    <div class="col-lg-6 col-md-12">
         <h2>Acumulado de {{$vendedor}}</h2>
 
         @include("notificacion")
