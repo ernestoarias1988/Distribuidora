@@ -4,15 +4,14 @@
 <div class="row">
     <div class="col-12">
         <h1>Detalle de venta #{{$venta->id}}</h1>
-        <h1>Cliente: <small>{{$venta->cliente->nombre}}</small></h1>
-        <h1>Direccion: <small>{{$venta->cliente->direccion}}</small></h1>
-        <h1>Localidad: <small>{{$venta->cliente->localidad}}</small></h1>
-        <h1>Vendedor: <small>{{$venta->vendedor}}</small></h1>
+        <h2>Cliente: <small>{{$venta->cliente->nombre}}</small></h2>
+        <h3>Direccion: <small>{{$venta->cliente->direccion}} - {{$venta->cliente->localidad}}</small></h3>
+        <h3>Vendedor: <small>{{$venta->vendedor}}</small></h3>
         @include("notificacion")
         <a class="btn btn-info" href="{{route("ventas.index")}}">
             <i class="fa fa-arrow-left"></i>&nbsp;Volver
         </a>
-        <a class="btn btn-success" target="blank" href="{{route("users.pdf", ["id"=>$venta->id])}}">
+        <a class="btn btn-success" style="margin:5px ;" target="blank" href="{{route("users.pdf", ["id"=>$venta->id])}}">
             <!--, ["id" => $venta->id]) -->
             <i class="fa fa-print"></i>&nbsp;PDF
         </a>
