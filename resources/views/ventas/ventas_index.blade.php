@@ -17,7 +17,7 @@
             {{ csrf_field() }}
             @csrf
             <div class="form-group">
-                <input type="text" autocomplete="off" required class="form-control" name="id_localidad" id="id_localidad" placeholder="Ingrese Localidad" style="width:40% ;" />
+                <input type="text" autocomplete="nipinta" required class="form-control" name="id_localidad" id="id_localidad" placeholder="Ingrese Localidad" style="width:40% ;" />
                 <div id="localidadlist">
                 </div>
             </div>
@@ -44,6 +44,7 @@
             <tr>
                 <th white-space: nowrap;>Fecha</th>
                 <th>Cliente</th>
+                <th>Localidad</th>
                 <th>Total</th>
                 <th style="width: 150px;">Pagado</th>
                 <th>Diferencia</th>
@@ -65,6 +66,7 @@
                 @endif
                 <td>{{$venta->created_at}}</td>
                 <td>{{$venta->cliente->nombre}}</td>
+                <td>{{$venta->cliente->localidad}}</td>
                 <td>${{number_format($venta->total,2)}}</td>
                 <td>
                     <form action="{{route('cargaPago', ['id'=>$venta->id])}}" method="post">
