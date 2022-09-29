@@ -21,15 +21,15 @@ ____          _____               _ _           _
 @extends("maestra")
 @section("titulo", "Clientes")
 @section("contenido")
-    <div class="row">
-        <div class="col-12">
-            <h1>Clientes <i class="fa fa-users"></i></h1>
-            <a href="{{route("clientes.create")}}" class="btn btn-success mb-2">Agregar</a>
-            @include("notificacion")
-            @if (Auth::user()->role_id=="Administrador")            
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+<div class="row">
+    <div class="col-12">
+        <h1>Clientes <i class="fa fa-users"></i></h1>
+        <a href="{{route("clientes.create")}}" class="btn btn-success mb-2">Agregar</a>
+        @include("notificacion")
+        @if (Auth::user()->role_id=="Administrador")
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
                         <th>Nombre</th>
                         <th>Teléfono</th>
@@ -39,36 +39,37 @@ ____          _____               _ _           _
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($clientes->sortBy('nombre') as $cliente)                
+                </thead>
+                <tbody>
+                    @foreach($clientes->sortBy('nombre') as $cliente)
 
-                        <tr>
-                            <td>{{$cliente->nombre}}</td>
-                            <td>{{$cliente->telefono}}</td>
-                            <td>{{$cliente->direccion}}</td>
-                            <td>{{$cliente->localidad}}</td>
-                            <td>{{$cliente->lista}}</td>
-                            <td>
-                                <a class="btn btn-warning" href="{{route("clientes.edit",[$cliente])}}">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                            </td>
-                            <td>
-                                <form action="{{route("clientes.destroy", [$cliente])}}" method="post">
-                                    @method("delete")
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>{{$cliente->nombre}}</td>
+                        <td>{{$cliente->telefono}}</td>
+                        <td>{{$cliente->direccion}}</td>
+                        <td>{{$cliente->localidad}}</td>
+                        <td>{{$cliente->lista}}</td>
+                        <td>{{$cliente->vendedor}}</td>
+                        <td>
+                            <a class="btn btn-warning" href="{{route("clientes.edit",[$cliente])}}">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <form action="{{route("clientes.destroy", [$cliente])}}" method="post">
+                                @method("delete")
+                                @csrf
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
                     @endforeach
-                    </tbody>
-                </table>
-            </div>
-            @endif
+                </tbody>
+            </table>
         </div>
+        @endif
     </div>
+</div>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\User;
 use Illuminate\Http\Request;
 
 class ClientesController extends Controller
@@ -88,5 +89,22 @@ class ClientesController extends Controller
     {
         $cliente->delete();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente eliminado");
+    }
+
+    function fetchvendedor(Request $request)
+    {
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = User::where('name', 'LIKE', "%{$query}%")
+                ->get();
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            foreach ($data as $row) {
+                $output .= '
+       <li><a href="#">' . $row->name . '</a></li>
+       ';
+            }
+            $output .= '</ul>';
+            echo $output;
+        }
     }
 }
