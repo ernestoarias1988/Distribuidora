@@ -36,6 +36,7 @@ ____          _____               _ _           _
                         <th>Dirección</th>
                         <th>Localidad</th>
                         <th>Lista</th>
+                        <th>Vendedor</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
