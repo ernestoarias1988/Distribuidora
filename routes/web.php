@@ -59,6 +59,7 @@ Route::middleware("auth")
         Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');
 
         Route::post('import', 'ProductosController@importar')->name('import');
+        Route::get('/delete', 'ProductosController@deleteAll')->name('delete');
 
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
         Route::post('/autocomplete/fetchcliente', 'VenderController@fetchcliente')->name('autocomplete.fetchcliente');

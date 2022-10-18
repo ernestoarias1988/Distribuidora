@@ -7,6 +7,9 @@
         <a href="{{route("productos.create")}}" class="btn btn-success mb-2">Agregar</a>
         @include("notificacion")
         <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Productos</button>
+        <a class="btn btn-danger" href="{{route("delete")}}">
+            <i class="fa fa-trash"></i>
+        </a>
         <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://localhost/Distribuidora/public/exportarp'">Exportar a Excel</button>
         <div class="card-body">
             <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
@@ -19,7 +22,6 @@
             <table class="table table-bordered table-striped table-highlight">
                 <thead>
                     <tr>
-                        <th>Código de barras</th>
                         <th>Descripción</th>
                         <th>Precio de compra</th>
                         <th>Precio de Lista 1</th>
@@ -34,7 +36,7 @@
                 <tbody>
                     @foreach($productos as $producto)
                     <tr>
-                        <td>{{$producto->codigo_barras}}</td>
+
                         <td>{{$producto->descripcion}}</td>
                         <td>${{$producto->precio_compra}}</td>
                         <td>${{$producto->precio_venta1}}</td>
