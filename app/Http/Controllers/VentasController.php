@@ -227,11 +227,13 @@ class VentasController extends Controller
             //$productoActualizado = Producto::find($producto->id);
             $productoActualizado = Producto::where("descripcion", "=", $producto->descripcion)->first();
             //echo"$productoActualizado->id";
-            echo "$producto->cantidad";
+            /* echo "$producto->cantidad";
             echo "$producto->descripcion";
-            echo "---";
-            $productoActualizado->existencia += $producto->cantidad;
-            $productoActualizado->saveOrFail();
+            echo "---";*/
+            if ($productoActualizado != null) {
+                $productoActualizado->existencia += $producto->cantidad;
+                $productoActualizado->saveOrFail();
+            }
         }
         $venta->delete();
         return redirect()->route("ventas.index")

@@ -7,9 +7,9 @@
         <a href="{{route("productos.create")}}" class="btn btn-success mb-2">Agregar</a>
         @include("notificacion")
         <button style="text-align:center" class="btn btn-primary mb-2" onClick="window.print()">Imprimir Productos</button>
-        <a class="btn btn-danger" href="{{route("delete")}}">
-            <i class="fa fa-trash"></i>
-        </a>
+        <!--a class="btn btn-danger" href="{{route("delete")}}">
+            <i class="fa fa-trash"></i>    DESCOMENTAR PARA ELIMINAR TODOS LOS PRODUCTOS
+        </a-->
         <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://localhost/Distribuidora/public/exportarp'">Exportar a Excel</button>
         <div class="card-body">
             <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
