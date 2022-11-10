@@ -41,7 +41,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
             }*/
             if (Producto::where("descripcion", "=", $row['articulo'])->first() == null) {
                 return new Producto([
-                    'codigo_barras'     => $row['n'],
+                    'codigo_barras'     => $row['codigo'],
                     'descripcion'    => $row['articulo'],
                     'precio_compra'    => $row['precio_real'],
                     'precio_venta1'    => $row['precio_real'],
@@ -51,7 +51,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
                 ]);
             } else {
                 $productoActualizando = Producto::where("descripcion", "=", $row['articulo'])->first();
-                $productoActualizando->codigo_barras = $row['n'];
+                $productoActualizando->codigo_barras = $row['codigo'];
                 $productoActualizando->precio_compra = $row['precio_real'];
                 $productoActualizando->precio_venta1 = $row['precio_real'];
                 $productoActualizando->precio_venta2 = $row['precio_real'];
@@ -75,9 +75,10 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
     {
         return [
             'descripcion',
+            'articulo',
             'PRECIO REAL',
             'cantidad',
-            'N'
+            'codigo'
             /*'Precio compra',
             'precio_venta1',
             'precio_venta2',

@@ -56,6 +56,7 @@
         </thead>
         <tbody>
             @foreach($ventas->sortByDesc('created_at') as $venta)
+            @if (Auth::user()->role_id=="Administrador"||Auth::user()->name==$venta->vendedor)
             @if(($venta->cliente->localidad==$localidad && ($venta->entregado != 1 || $entregadosFlag == 1)) || $localidad==='Todas' || $localidad==null)
             @if($venta->pagado==0)
             <tr style="background-color: #faa;">
@@ -112,6 +113,7 @@
                     </form>
                 </td>
             </tr>
+            @endif
             @endif
             @endforeach
         </tbody>
