@@ -58,7 +58,7 @@ $fecha = date("Y-m-d");
                     @foreach($venta->productos as $producto)
                     <tr>
                         <td style="text-align:left">{{$producto->descripcion}} </td>
-                        <td> {{number_format($producto->cantidad, 0)}} U. </td>
+                        <td> {{$producto->cantidad}} U. </td>
                         <td> ${{number_format($producto->precio, 2)}}</td>
                         <td> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                     </tr>
