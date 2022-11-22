@@ -17,8 +17,13 @@ for ($i = 0; $i < 1000; $i++) {
 <div class="row">
     <div class="col-lg-6 col-md-12">
         <h2>Acumulado de {{$vendedor}}</h2>
-
         @include("notificacion")
+        <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventasVendedor.pdf", ["id"=>$vendedor])}}">
+            <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Vendedor
+        </a>
+        <a class="btn btn-warning" target="blank" style="margin-top:-0.5%" href="{{ route('ventas.index') }}">
+            <i class="fa fa-print"></i>&nbsp; Volver a ventas
+        </a>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>

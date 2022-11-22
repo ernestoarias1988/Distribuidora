@@ -10,14 +10,14 @@
         @include("notificacion")
         <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventas.pdf", ["id"=>$localidad])}}">
             <!--, ["id" => $venta->id]) -->
-            <i class="fa fa-print"></i>&nbsp; Imprimir tickets
+            <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Localidad
         </a>
         <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://localhost/Distribuidora/public/exportarv'">Exportar a Excel</button>
         <form action="{{route("guardarLocalidad")}}" method="post">
             {{ csrf_field() }}
             @csrf
             <div class="form-group">
-                <input type="text" autocomplete="nipinta" required class="form-control" name="id_localidad" id="id_localidad" placeholder="Ingrese Localidad" style="width:40% ;" />
+                <input type="text" autocomplete="nipinta" class="form-control" name="id_localidad" id="id_localidad" defaultValue="Todas" style="width:40% ;" />
                 <div id="localidadlist">
                 </div>
             </div>
@@ -26,8 +26,10 @@
     </div>
 </div>
 </form>
+
+
 @if(session("localidad") !== null)
-<h4>Localidad:{{$localidad}} </h4>
+<h4>Localidad: {{$localidad}} </h4>
 <div class="row" style="margin: 0.2%;">
     <h4 id="showEntregado">Mostrar Entregados: @if($entregadosFlag==0) NO @else SI @endif</h4>
     <a class="btn btn-success" style="margin-left:0.2% ;" href="{{route("ventas.indexSiShowEntregados")}}">

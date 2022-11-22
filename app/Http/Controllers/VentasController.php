@@ -12,8 +12,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
 use App\ProductoVendido;
 use App\Producto;
-
-
+use Illuminate\Validation\Rules\Exists;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -317,6 +316,19 @@ class VentasController extends Controller
         $pdf->loadHTML($view);
         return $pdf->stream('invoice');
     }
+    public function exportVentasVendedorPdf(Request $request)
+    {
+        $data = [
+            "ventas" => Venta::all(),
+            "vendedor" => $request->get("id")
+        ];
+        $date = date('Y-m-d');
+        $invoice = "2222";
+        $view =  \View::make('pdf.ventasVendedor', compact('data', 'date', 'invoice'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view);
+        return $pdf->stream('invoice');
+    }
     public function getDataVentas(Request $request)
     {
         /*$venta = Venta::findOrFail($request->get("id"));
@@ -405,13 +417,23 @@ class VentasController extends Controller
             $query = $request->get('query');
             $data = Cliente::where('localidad', 'LIKE', "%{$query}%")
                 ->get();
-            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
-            foreach ($data as $row) {
-                $output .= '
-       <li><a href="#">' . $row->localidad . '</a></li>
+            if ($data !== null) {
+
+                $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+                foreach ($data as $row) {
+                    $localidades[] = $row->localidad;
+                }
+                $localidades = array_unique($localidades);
+                foreach ($localidades as $row) {
+                    $output .= '
+       <li><a href="#">' . $row . '</a></li>
        ';
+                }
+                $output .= '</ul>';
+            } else {
+                $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+                $output .= '</ul>';
             }
-            $output .= '</ul>';
             echo $output;
         }
     }
