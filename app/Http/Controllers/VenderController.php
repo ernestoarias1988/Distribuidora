@@ -288,9 +288,11 @@ class VenderController extends Controller
                 ->get();
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             foreach ($data as $row) {
-                $output .= '
+                if (auth()->user()->role_id == 'Administrador' || auth()->user()->name == $row->vendedor) {
+                    $output .= '
        <li><a href="#">' . $row->nombre . '</a></li>
        ';
+                }
             }
             $output .= '</ul>';
             echo $output;

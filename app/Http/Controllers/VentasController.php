@@ -113,9 +113,9 @@ class VentasController extends Controller
         ]);
     }
 
-    public function indexNoShowEntregados()
+    public function indexNoShowEntregados(Request $request)
     {
-        $localidad = $this->obtenerlocalidad();
+        $localidad = $request->get("localidad");
         $entregadosFlag = 0;
         $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
             ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
@@ -126,9 +126,9 @@ class VentasController extends Controller
         ]);
     }
 
-    public function indexSiShowEntregados()
+    public function indexSiShowEntregados(Request $request)
     {
-        $localidad = $this->obtenerlocalidad();
+        $localidad = $request->get("localidad");
         $entregadosFlag = 1;
         $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
             ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
@@ -136,6 +136,17 @@ class VentasController extends Controller
             ->get();
         return view("ventas.ventas_index", [
             "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        ]);
+    }
+    public function indexShowTodos(Request $request)
+    {
+        $show = $request->get("show");
+        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
+            ->get();
+        return view("ventas.ventas_index", [
+            "ventas" => $ventasConTotales, "localidad" => 'Todas', "entregadosFlag" => $show
         ]);
     }
     /**

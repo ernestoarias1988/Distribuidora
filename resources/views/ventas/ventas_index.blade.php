@@ -26,19 +26,18 @@
     </div>
 </div>
 </form>
-
-
 @if(session("localidad") !== null)
-<h4>Localidad: {{$localidad}} </h4>
-<div class="row" style="margin: 0.2%;">
-    <h4 id="showEntregado">Mostrar Entregados: @if($entregadosFlag==0) NO @else SI @endif</h4>
-    <a class="btn btn-success" style="margin-left:0.2% ;" href="{{route("ventas.indexSiShowEntregados")}}">
-        <i class="fa fa-check"></i>
-    </a>
-    <a class="btn btn-danger" style="margin-left:0.2% ;" href="{{route("ventas.indexNoShowEntregados")}}">
-        <i class="fa fa-times"></i>
-    </a>
+<h4>Localidad: {{$localidad}} <a style="margin-left:0.2%" href="{{route("ventas.indexShowTodos",["show"=>$entregadosFlag])}}">Mostrar todas las localidades</a>
+</h4>
+<div class="row" style="margin: 0.2%; margin-bottom:-0.4%">
+    <h5 id="showEntregado">Mostrando Entregados: @if($entregadosFlag==0) No @else Si @endif</h5>
 </div>
+@if($entregadosFlag==0)<a class="btn btn-primary" style="margin:0.2% ;" href="{{route("ventas.indexSiShowEntregados",["localidad"=>$localidad])}}">Mostrar entregados
+</a> @else
+<a class="btn btn-danger" style="margin:0.2% ;" href="{{route("ventas.indexNoShowEntregados",["localidad"=>$localidad])}}">
+    No mostrar entregados
+</a>@endif
+
 @endif
 <div style="text-align:center" class="table-responsive">
     <table class="table table-bordered table-striped table-highlight">
