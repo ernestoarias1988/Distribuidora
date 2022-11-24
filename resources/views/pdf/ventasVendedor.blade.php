@@ -39,7 +39,7 @@ $fecha = date("Y-m-d");
             </div>
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->vendedor==$vendedor) && $venta->entregado != 1)
-            <h4>Venta:#{{$venta->id}}</h4>
+            <h5>Venta:#{{$venta->id}}</h5>
             Vendedor:{{$venta->vendedor}}<br>
             Cliente: {{$venta->cliente->nombre}}<br>
             Direccion: {{$venta->cliente->direccion}} - Localidad: {{$venta->cliente->localidad}}<br>
@@ -66,7 +66,7 @@ $fecha = date("Y-m-d");
                     @endforeach
                 </tbody>
             </table>
-            <h4>Total: ${{number_format($total, 2)}}</h4>
+            <h4 style="text-align:right; margin-right: 3%">Total: ${{number_format($total, 2)}}</h4>
             <?php $total = 0; ?>
             --------------------------------------------------------------------------------------------------<br>
             @endif

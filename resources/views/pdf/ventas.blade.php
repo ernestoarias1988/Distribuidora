@@ -66,7 +66,7 @@ $fecha = date("Y-m-d");
                     @endforeach
                 </tbody>
             </table>
-            <h4>Total: ${{number_format($total, 2)}}</h4>
+            <h4 style="text-align:right; margin-right: 3%">Total: ${{number_format($total, 2)}}</h4>
             <?php $total = 0; ?>
             --------------------------------------------------------------------------------------------------<br>
             @endif

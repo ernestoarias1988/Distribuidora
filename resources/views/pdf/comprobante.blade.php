@@ -37,27 +37,23 @@ $fecha = date("Y-m-d");
         <hr>   -->
         <div class="row">
             <div class="col-xs-10">
-                <h1 class="h6">Comprobante de Pedido</h1>
+                <h2 class="h6">Comprobante de Pedido</h2>
             </div>
             <div class="col-xs-2 text-center">
                 <strong>Fecha:</strong>
-
                 <?php echo $fecha ?>
                 <br>
                 <strong>Pedido Nro:</strong>
-
                 <?php echo $numero ?>
             </div>
         </div>
         <hr>
         <div class="row text-center" style="margin-bottom: 2rem;">
             <div class="col-xs-6">
-                <h2 class="h2">Cliente</h2>
-                <strong><?php echo $cliente ?></strong>
-                <h3 class="h3">Direccion: <?php echo $direccion ?></h3>
-
+                <h3 style="margin-bottom:-2% ;">Cliente: {{$cliente}} </h3>
+                <h4 style="margin-bottom:-2% ;">Direccion: <?php echo $direccion ?></h4>
                 <div class="col-xs-6">
-                    <h2 class="h2">Vendedor: <strong><?php echo $vendedor ?></strong></h2>
+                    <h4 class="h2">Vendedor: <strong><?php echo $vendedor ?></strong></h4>
                 </div>
             </div>
             <div class="row">
@@ -65,7 +61,7 @@ $fecha = date("Y-m-d");
                     <table style="text-align: center;" width="100%" class="table table-condensed table-bordered table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Descripción</th>
+                                <th style="text-align: left;">Descripción</th>
                                 <th>Cantidad</th>
                                 <th>Precio unitario</th>
                                 <th>Total</th>
@@ -82,7 +78,7 @@ $fecha = date("Y-m-d");
                                 $subtotal += $totalProducto;
                             ?>
                                 <tr>
-                                    <td><?php echo $producto->descripcion ?></td>
+                                    <td style="text-align: left;"><?php echo $producto->descripcion ?></td>
                                     <td><?php echo number_format($producto->cantidad, 2) ?></td>
                                     <td>$<?php echo number_format($producto->precio, 2) ?></td>
                                     <td>$<?php echo number_format($totalProducto, 2) ?></td>
@@ -95,7 +91,7 @@ $fecha = date("Y-m-d");
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td class="text-right"><strong>Total</strong></td>
+                                <td style="text-align: left"><strong>Total</strong></td>
                                 <td></td>
                                 <td></td>
                                 <td><strong>$<?php echo number_format($subtotal, 2) ?></strong></td>
