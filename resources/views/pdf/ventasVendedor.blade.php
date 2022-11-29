@@ -40,10 +40,9 @@ $fecha = date("Y-m-d");
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->vendedor==$vendedor) && $venta->entregado != 1)
-            <h5>Venta:#{{$venta->id}}</h5>
-            Vendedor:{{$venta->vendedor}}<br>
-            Cliente: {{$venta->cliente->nombre}}<br>
-            Direccion: {{$venta->cliente->direccion}} - Localidad: {{$venta->cliente->localidad}}<br>
+            <h5 style="margin-bottom:0% ; margin-top:1%">Venta: #{{$venta->id}}</h5>
+            <u>Vendedor:</u> {{$venta->vendedor}}<br>
+            <u>Cliente:</u> {{$venta->cliente->nombre}} - <u>Direccion:</u> {{$venta->cliente->direccion}} - <u>Localidad:</u> {{$venta->cliente->localidad}}<br>
             <br>
 
             <table style="text-align: center; width:100%;">
