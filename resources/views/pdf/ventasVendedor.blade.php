@@ -37,6 +37,7 @@ $fecha = date("Y-m-d");
             <div class="col-xs-10 ">
                 <h1></h1>
             </div>
+            @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->vendedor==$vendedor) && $venta->entregado != 1)
             <h5>Venta:#{{$venta->id}}</h5>
@@ -69,6 +70,11 @@ $fecha = date("Y-m-d");
             <h4 style="text-align:right; margin-right: 3%">Total: ${{number_format($total, 2)}}</h4>
             <?php $total = 0; ?>
             --------------------------------------------------------------------------------------------------<br>
+            @php $check++ @endphp
+            <!-- Salto de pagina cada 2 ventas -->
+            @if( $check % 2 == 0 )
+            @php echo '<div style="page-break-after: always;"></div>'; @endphp
+            @endif
             @endif
             @endforeach
 
