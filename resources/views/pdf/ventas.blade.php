@@ -48,8 +48,8 @@ $fecha = date("Y-m-d");
             <table style="text-align: center; width:100%;">
                 <thead>
                     <tr>
-                        <th style="text-align:left">Descripción</th>
                         <th>Cantidad</th>
+                        <th style="text-align:left">Descripción</th>
                         <th>Precio unitario</th>
                         <th>SubTotal</th>
                     </tr>
@@ -57,8 +57,8 @@ $fecha = date("Y-m-d");
                 <tbody>
                     @foreach($venta->productos as $producto)
                     <tr>
-                        <td style="text-align:left">{{$producto->descripcion}} </td>
                         <td> {{$producto->cantidad}} U. </td>
+                        <td style="text-align:left">{{$producto->descripcion}} </td>
                         <td> ${{number_format($producto->precio, 2)}}</td>
                         <td> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                     </tr>

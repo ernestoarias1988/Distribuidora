@@ -61,8 +61,8 @@ $fecha = date("Y-m-d");
                     <table style="text-align: center;" width="100%" class="table table-condensed table-bordered table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th style="text-align: left;">Descripción</th>
                                 <th>Cantidad</th>
+                                <th style="text-align: left;">Descripción</th>
                                 <th>Precio unitario</th>
                                 <th>Total</th>
                             </tr>
@@ -78,8 +78,8 @@ $fecha = date("Y-m-d");
                                 $subtotal += $totalProducto;
                             ?>
                                 <tr>
-                                    <td style="text-align: left;"><?php echo $producto->descripcion ?></td>
                                     <td><?php echo number_format($producto->cantidad, 2) ?></td>
+                                    <td style="text-align: left;"><?php echo $producto->descripcion ?></td>
                                     <td>$<?php echo number_format($producto->precio, 2) ?></td>
                                     <td>$<?php echo number_format($totalProducto, 2) ?></td>
                                 </tr>

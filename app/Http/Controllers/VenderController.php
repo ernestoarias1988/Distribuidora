@@ -340,10 +340,13 @@ class VenderController extends Controller
                 ]);
         }
         $producto = Producto::where("descripcion", "=", $codigo)->first();
-        if (!$producto) {
+        if (!$producto || $producto->precio_venta1 == 0) {
             return redirect()
                 ->route("vender.index")
-                ->with("mensaje", "Producto no encontrado");
+                ->with([
+                    "mensaje" => "Producto no encontrado o precio = 0",
+                    "tipo" => "danger"
+                ]);
         }
         // if ($producto->existencia <= 0) {
         //     return redirect()->route("vender.index")
