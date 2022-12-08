@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions;
 use App\Cliente;
 use App\Producto;
 use App\ProductoVendido;
@@ -386,58 +387,60 @@ class VenderController extends Controller
     public function terminarVentaAPI(Request $request)
     {
         // Crear una venta
+        try {
+            $venta = new Venta();
+            // $cliente = Cliente::findOrFail($request->cliente);
+            $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
+            $lista = $cliente->lista;
+            $venta->id_cliente = $cliente->id;
+            $venta->vendedor = $request->vendedor;
+            $venta->saveOrFail();
 
-        $venta = new Venta();
-        // $cliente = Cliente::findOrFail($request->cliente);
-        $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
-        $lista = $cliente->lista;
-        $venta->id_cliente = $cliente->id;
-        $venta->vendedor = $request->vendedor;
-        $venta->saveOrFail();
-        $idVenta = $venta->id;
-        foreach ($request['productos'] as $producto)
+            $idVenta = $venta->id;
+            foreach ($request['productos'] as $producto)
 
-        // Recorrer carrito de compras
-        {
-            $productoAVender = Producto::where("codigo_barras", "LIKE", json_decode($producto['codigo_barras']))->first();
+            // Recorrer carrito de compras
+            {
+                $productoAVender = Producto::where("codigo_barras", "=", json_decode($producto['codigo_barras']))->first();
 
-            switch ($lista) {
-                case "1":
-                    $precio = $productoAVender->precio_venta1;
-                    break;
+                switch ($lista) {
+                    case "1":
+                        $precio = $productoAVender->precio_venta1;
+                        break;
 
-                case "2":
-                    $precio = $productoAVender->precio_venta2;
-                    break;
+                    case "2":
+                        $precio = $productoAVender->precio_venta2;
+                        break;
 
-                case "3":
-                    $precio = $productoAVender->precio_venta3;
-                    break;
+                    case "3":
+                        $precio = $productoAVender->precio_venta3;
+                        break;
 
-                default:
-                    $precio = 9999;
-                    break;
+                    default:
+                        $precio = 9999;
+                        break;
+                }
+
+                // El producto que se vende...
+                $productoVendido = new ProductoVendido();
+                $productoVendido->fill([
+                    "id_venta" => $idVenta,
+                    "descripcion" => $productoAVender->descripcion, //json_decode($producto['descripcion']),
+                    "codigo_barras" => $productoAVender->codigo_barras,
+                    "precio" => $precio,
+                    "cantidad" => json_decode($producto['cantidad']),
+                ]);
+                // Lo guardamos
+                $productoVendido->saveOrFail();
+                // Y restamos la existencia del original
+                $productoActualizado = Producto::where("descripcion", "LIKE", $productoVendido->descripcion)->first();
+                $productoActualizado->existencia -= $productoVendido->cantidad;
+                $productoActualizado->saveOrFail();
             }
-
-            // El producto que se vende...
-            $productoVendido = new ProductoVendido();
-            $productoVendido->fill([
-                "id_venta" => $idVenta,
-                "descripcion" => $productoAVender->descripcion, //json_decode($producto['descripcion']),
-                "codigo_barras" => $productoAVender->codigo_barras,
-                "precio" => $precio,
-                "cantidad" => json_decode($producto['cantidad']),
-            ]);
-            // Lo guardamos
-            $productoVendido->saveOrFail();
-            // Y restamos la existencia del original
-            $productoActualizado = Producto::where("descripcion", "LIKE", $productoVendido->descripcion)->first();
-            $productoActualizado->existencia -= $productoVendido->cantidad;
-            $productoActualizado->saveOrFail();
+        } catch (\Exception $e) {
+            return false;
         }
-        return redirect()
-            ->route("ventas.index")
-            ->with("mensaje", "Venta terminada");
+        return true;
     }
 
     public function editarVentaAPI(Request $request)

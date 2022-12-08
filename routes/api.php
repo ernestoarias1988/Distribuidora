@@ -98,10 +98,14 @@ Route::group(['prefix' => 'auth'], function () {
         });
         Route::post("/venta", function (Request $request) {
             $venta_controller =  new VenderController;
-            $venta_controller->terminarVentaAPI($request);
-            return response()->json([
-                "data" => "true"
-            ]);
+            $result = false;
+            $result = $venta_controller->terminarVentaAPI($request);
+
+            if ($result) {
+                return  response("true", 200);
+            } else {
+                return  response("false", 401);
+            }
         });
         Route::put("/venta", function (Request $request) {
             $venta_controller =  new VenderController;
