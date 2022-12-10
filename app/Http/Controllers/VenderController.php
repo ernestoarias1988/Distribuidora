@@ -60,7 +60,7 @@ class VenderController extends Controller
         $cliente = $nombre_cliente;
         $lista = $cliente->lista;
         $venta->id_cliente = $cliente->id;
-        $venta->vendedor = auth()->user()->name;
+        $venta->vendedor = auth()->user()->email;
         $venta->saveOrFail();
         $idVenta = $venta->id;
         $productos = $this->obtenerProductos();
