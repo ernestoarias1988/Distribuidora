@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
 use App\ProductoVendido;
 use App\Producto;
+use App\User;
 use Illuminate\Validation\Rules\Exists;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -136,6 +137,17 @@ class VentasController extends Controller
             ->get();
         return view("ventas.ventas_index", [
             "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        ]);
+    }
+    public function acumulados(Request $request)
+    {
+        $vendedores = User::all();
+        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor")
+            ->get();
+        return view("totales.acumulados", [
+            "ventas" => $ventasConTotales, "localidad" => 'Todas', "vendedores" => $vendedores
         ]);
     }
     public function indexShowTodos(Request $request)

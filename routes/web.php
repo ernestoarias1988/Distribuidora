@@ -47,6 +47,9 @@ Route::middleware("auth")
         Route::get('indexNoShowEntregados', 'VentasController@indexNoShowEntregados')->name('ventas.indexNoShowEntregados');
         Route::get('indexSiShowEntregados', 'VentasController@indexSiShowEntregados')->name('ventas.indexSiShowEntregados');
         Route::get('indexShowTodos', 'VentasController@indexShowTodos')->name('ventas.indexShowTodos');
+
+        Route::get('acumulados', 'VentasController@acumulados')->name('ventas.acumulados');
+
         Route::get('ventas-list-pdf', 'VentasController@exportVentasPdf')->name('ventas.pdf');
         Route::get('ventas-vendedor-list-pdf', 'VentasController@exportVentasVendedorPdf')->name('ventasVendedor.pdf');
         Route::get('cancelarpago', 'VentasController@cancelarPago')->name('cancelPago');
