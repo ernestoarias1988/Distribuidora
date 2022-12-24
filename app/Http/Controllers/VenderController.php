@@ -386,11 +386,50 @@ class VenderController extends Controller
 
     public function terminarVentaAPI(Request $request)
     {
-        // Crear una venta
+
+        //protected $fillable = ["nombre", "telefono", "direccion", "localidad", "lista", "vendedor"];
+        /* {
+            "cliente": "clientePrueba7777",
+            "idVenta": 2,
+            "newClient": Array [
+              "clientePrueba7777",
+              "321312",
+              "Salta123",
+              "Salta",
+              1,
+              "Administrador",
+            ],
+            "productos": Array [
+              Object {
+                "cantidad": "1",
+                "codigo_barras": "102",
+                "id": "102",
+                "nombre": "ALFAJOR GENIO TRIPLE NEGRO X24",
+                "precio_venta1": 1350,
+              },
+            ],
+            "totalVenta": 1350,
+            "vendedor": "Administrador",
+          }*/
+        $newClient = ["CLientenuevito", "38745656", "Avenidanueva", "Salta", "1", "Administrador"];
         try {
+            $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
+            if ($cliente == null) {
+                // (new Cliente($request['newClient']))->saveOrFail();
+
+                $clienteCreado = new Cliente;
+                $clienteCreado->nombre = $request->newClient[0];
+                $clienteCreado->telefono = $request->newClient[1];
+                $clienteCreado->direccion = $request->newClient[2];
+                $clienteCreado->localidad = $request->newClient[3];
+                $clienteCreado->lista = $request->newClient[4];
+                $clienteCreado->vendedor = $request->newClient[5];
+                $clienteCreado->saveOrFail();
+                $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
+            }
+            // Crear una venta
             $venta = new Venta();
             // $cliente = Cliente::findOrFail($request->cliente);
-            $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
             $lista = $cliente->lista;
             $venta->id_cliente = $cliente->id;
             $venta->vendedor = $request->vendedor;
@@ -433,7 +472,7 @@ class VenderController extends Controller
                 // Lo guardamos
                 $productoVendido->saveOrFail();
                 // Y restamos la existencia del original
-                $productoActualizado = Producto::where("descripcion", "LIKE", $productoVendido->descripcion)->first();
+                $productoActualizado = Producto::where("descripcion", "=", $productoVendido->descripcion)->first();
                 $productoActualizado->existencia -= $productoVendido->cantidad;
                 $productoActualizado->saveOrFail();
             }

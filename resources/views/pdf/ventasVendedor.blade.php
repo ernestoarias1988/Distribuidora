@@ -40,34 +40,65 @@ $fecha = date("Y-m-d");
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->vendedor==$vendedor) && $venta->entregado != 1)
-            <h5 style="margin-bottom:0% ; margin-top:1%">Venta: #{{$venta->id}}</h5>
-            <u>Vendedor:</u> {{$venta->vendedor}}<br>
-            <u>Cliente:</u> {{$venta->cliente->nombre}} - <u>Direccion:</u> {{$venta->cliente->direccion}} - <u>Localidad:</u> {{$venta->cliente->localidad}}<br>
-            <br>
 
-            <table style="text-align: center; width:100%;">
+            <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
+
+            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:90%;">
+
                 <thead>
                     <tr>
-                        <th>Cantidad</th>
-                        <th style="text-align:left">Descripción</th>
-                        <th>Precio unitario</th>
-                        <th>SubTotal</th>
+                        <th style="text-align: left; border: 1px solid #000;border-right: 1px solid #fff; font-weight:10">Vendedor: {{$venta->vendedor}}</th>
+                        <th style="border: 1px solid #000; border-right: 1px solid #000;"></th>
+                        <th style="border: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #fff;"></th>
+                        <th style="border: 1px solid #000; text-align: rigth;"> Fecha: <?php echo date("d/m/Y"); ?>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; font-weight:10">Cliente: {{$venta->cliente->nombre}}<br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} </th>
+                        <th></th>
+                        <th>
+                            <img style="width:80px; " src="{{url("/img/logo.png")}}">
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; font-weight:10">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; font-weight:10">
+                    </tr>
+                    <tr style="border: 1px solid #000; text-align: left;  font-weight:10">
+                        <th style="border: 1px solid #000;">Cantidad</th>
+                        <th style="text-align:left; border: 1px solid #000;">Descripción</th>
+                        <th style="border: 1px solid #000;">Precio unitario</th>
+                        <th style="border: 1px solid #000;">SubTotal</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="border: 1px solid #000; ">
                     @foreach($venta->productos as $producto)
                     <tr>
-                        <td> {{$producto->cantidad}} U. </td>
-                        <td style="text-align:left">{{$producto->descripcion}} </td>
-                        <td> ${{number_format($producto->precio, 2)}}</td>
-                        <td> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
+                        <td style="border: 1px solid #000"> {{$producto->cantidad}} U. </td>
+                        <td style="text-align:left; border: 1px solid #000">{{$producto->descripcion}} </td>
+                        <td style=" border: 1px solid #000"> ${{number_format($producto->precio, 2)}}</td>
+                        <td style="border: 1px solid #000"> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                     </tr>
                     <?php $total += ($producto->cantidad * $producto->precio); ?>
                     @endforeach
+                    <tr>
+                        <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">Total
+                        </td>
+                        <td style="text-align:center; margin-right: 3%;border: 1px solid #000"></td>
+                        <td style="text-align:center; margin-right: 3%;border: 1px solid #000"></td>
+                        <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">
+                            ${{number_format($total, 2)}}
+                        </td>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <h4 style="text-align:right; margin-right: 3%">Total: ${{number_format($total, 2)}}</h4>
-            <?php $total = 0; ?>
+
             --------------------------------------------------------------------------------------------------<br>
             @php $check++ @endphp
             <!-- Salto de pagina cada 2 ventas -->

@@ -19,10 +19,19 @@
                 <label class="label">Teléfono</label>
                 <input required autocomplete="off" name="telefono" class="form-control" type="number" placeholder="Teléfono">
             </div>
-
             <div class="form-group">
                 <label class="label">Localidad</label>
-                <input required autocomplete="off" name="localidad" class="form-control" type="text" placeholder="Localidad">
+                <select name="localidad" id="localidad" class="form-control @error('lista') is-invalid @enderror" required autocomplete="localidad" autofocus>
+                    <option value="" selected disabled hidden>Seleccione Localidad</option>
+                    <option value="Salta">Salta</option>
+                    <option value="Pichanal">Pichanal</option>
+                    <option value="Orán	">Orán</option>
+                    <option value="Embarcacion/Irigoyen">Embarcacion/Irigoyen</option>
+                    <option value="Chaco">Chaco</option>>
+                    <option value="Colonia Santa Rosa">Colonia Santa Rosa</option>
+                    <option value="Otra">Otra</option>
+
+                </select>
             </div>
             <div class="form-group">
                 <label class="label">Dirección</label>

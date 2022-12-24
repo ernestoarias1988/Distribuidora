@@ -24,7 +24,16 @@
 
             <div class="form-group">
                 <label class="label">Localidad</label>
-                <input required value="{{$cliente->localidad}}" autocomplete="off" name="localidad" class="form-control" type="text" placeholder="Localidad">
+                <select name="localidad" id="localidad" class="form-control @error('lista') is-invalid @enderror" required autocomplete="localidad" autofocus>
+                    <option value="{{$cliente->localidad}}" selected>{{$cliente->localidad}}</option>
+                    <option value="Salta">Salta</option>
+                    <option value="Pichanal">Pichanal</option>
+                    <option value="Orán	">Orán</option>
+                    <option value="Embarcacion/Irigoyen">Embarcacion/Irigoyen</option>
+                    <option value="Chaco">Chaco</option>>
+                    <option value="Colonia Santa Rosa">Colonia Santa Rosa</option>
+                    <option value="Otra">Otra</option>
+                </select>
             </div>
             <div class="form-group">
                 <label class="label">Dirección</label>
@@ -43,7 +52,7 @@
             @csrf
             <div class="form-group">
                 <label for="vendedor">Vendedor</label>
-                <input type="text" autocomplete="off" required class="form-control" name="vendedor" id="vendedor" placeholder="Nombre del Vendedor" />
+                <input value="{{$cliente->vendedor}}" type="text" autocomplete="off" required class="form-control" name="vendedor" id="vendedor" placeholder="Nombre del Vendedor" />
                 <div id="vendedorList">
                 </div>
             </div>

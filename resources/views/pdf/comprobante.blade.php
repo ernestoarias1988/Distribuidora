@@ -12,6 +12,8 @@ $numero = $data['facturaNro'];
 $descuento = $data['descuento'];
 //$porcentajeImpuestos = 16;
 $fecha = date("Y-m-d");
+$subtotal = 0;
+$total = 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,100 +27,71 @@ $fecha = date("Y-m-d");
 </head>
 
 <body>
-    <div class="container-fluid">
-        <!-- <div class="row">
-            <div class="col-xs-10 ">
-                <h1>Distribuidora</h1>
-            </div>
-            <div class="col-xs-2">
-                <img style="max-width:10%;width:auto;height:auto;" class="img img-responsive" src="{{url("/img/vender.png")}}">
-            </div>
-        </div>
-        <hr>   -->
-        <div class="row">
-            <div class="col-xs-10">
-                <h2 class="h6">Comprobante de Pedido</h2>
-            </div>
-            <div class="col-xs-2 text-center">
-                <strong>Fecha:</strong>
-                <?php echo $fecha ?>
-                <br>
-                <strong>Pedido Nro:</strong>
-                <?php echo $numero ?>
-            </div>
-        </div>
-        <hr>
-        <div class="row text-center" style="margin-bottom: 2rem;">
-            <div class="col-xs-6">
-                <h3 style="margin-bottom:-2% ;">Cliente: {{$cliente}} </h3>
-                <h4 style="margin-bottom:-2% ;">Direccion: <?php echo $direccion ?></h4>
-                <div class="col-xs-6">
-                    <h4 class="h2">Vendedor: <strong><?php echo $vendedor ?></strong></h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <table style="text-align: center;" width="100%" class="table table-condensed table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Cantidad</th>
-                                <th style="text-align: left;">Descripción</th>
-                                <th>Precio unitario</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $subtotal = 0;
-                            $request = $data['Request'];
-                            $venta = Venta::findOrFail($request->get("id"));
+    <div>
+        <?php
+        $request = $data['Request'];
+        $venta = Venta::findOrFail($request->get("id"));
+        foreach ($venta->productos as $producto) {
+            $totalProducto = $producto->cantidad * $producto->precio;
+            $subtotal += $totalProducto;
+        }
+        ?>
+    </div>
+    <table style="text-align: center; width:100%; border-collapse: collapse; font-size:90%;">
 
-                            foreach ($venta->productos as $producto) {
-                                $totalProducto = $producto->cantidad * $producto->precio;
-                                $subtotal += $totalProducto;
-                            ?>
-                                <tr>
-                                    <td><?php echo number_format($producto->cantidad, 2) ?></td>
-                                    <td style="text-align: left;"><?php echo $producto->descripcion ?></td>
-                                    <td>$<?php echo number_format($producto->precio, 2) ?></td>
-                                    <td>$<?php echo number_format($totalProducto, 2) ?></td>
-                                </tr>
-                            <?php }
-                            $subtotalConDescuento = $subtotal - $descuento;
-                            //$impuestos = $subtotalConDescuento * ($porcentajeImpuestos / 100);
-                            $total = $subtotalConDescuento /*+ $impuestos*/;
-                            ?>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td style="text-align: left"><strong>Total</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td><strong>$<?php echo number_format($subtotal, 2) ?></strong></td>
-                            </tr>
-                            <!--<tr>
-                    <td colspan="3" class="text-right">Descuento</td>
-                    <td>$<?php echo number_format($descuento, 2) ?></td>
-                </tr> 
-                <tr>
-                    <td colspan="3" class="text-right">Total con descuento</td>
-                    <td>$<?php echo number_format($subtotalConDescuento, 2) ?></td>
-                </tr>-->
-                            <tr>
-                                <!--<td colspan="3" class="text-right">Impuestos</td>-->
-                                <!--<td>$<//?php echo number_format($impuestos, 2) ?></td>-->
-                            </tr>
-
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 text-center">
-                    <p class="h5"><?php echo $mensajePie ?></p>
-                </div>
-            </div>
-        </div>
+        <thead>
+            <tr>
+                <th style="text-align: left; border: 1px solid #000;border-right: 1px solid #fff; font-weight:10">Vendedor: {{$venta->vendedor}}</th>
+                <th style="border: 1px solid #000; border-right: 1px solid #000;"></th>
+                <th style="border: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #fff;"></th>
+                <th style="border: 1px solid #000; text-align: rigth;"> Fecha: <?php echo date("d/m/Y"); ?>
+                </th>
+            </tr>
+            <tr>
+                <th style="text-align: left; font-weight:10">Cliente: {{$venta->cliente->nombre}}<br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} </th>
+                <th></th>
+                <th>
+                    <img style="width:80px; " src="{{url("/img/logo.png")}}">
+                </th>
+                <th>
+                </th>
+            </tr>
+            <tr>
+                <th style="text-align: left; font-weight:10">
+                </th>
+            </tr>
+            <tr>
+                <th style="text-align: left; font-weight:10">
+            </tr>
+            <tr style="border: 1px solid #000; text-align: left;  font-weight:10">
+                <th style="border: 1px solid #000;">Cantidad</th>
+                <th style="text-align:left; border: 1px solid #000;">Descripción</th>
+                <th style="border: 1px solid #000;">Precio unitario</th>
+                <th style="border: 1px solid #000;">SubTotal</th>
+            </tr>
+        </thead>
+        <tbody style="border: 1px solid #000; ">
+            @foreach($venta->productos as $producto)
+            <tr>
+                <td style="border: 1px solid #000"> {{$producto->cantidad}} U. </td>
+                <td style="text-align:left; border: 1px solid #000">{{$producto->descripcion}} </td>
+                <td style=" border: 1px solid #000"> ${{number_format($producto->precio, 2)}}</td>
+                <td style="border: 1px solid #000"> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
+            </tr>
+            <?php $total += ($producto->cantidad * $producto->precio); ?>
+            @endforeach
+            <tr>
+                <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">Total
+                </td>
+                <td style="text-align:center; margin-right: 3%;border: 1px solid #000"></td>
+                <td style="text-align:center; margin-right: 3%;border: 1px solid #000"></td>
+                <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">
+                    ${{number_format($total, 2)}}
+                </td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>
