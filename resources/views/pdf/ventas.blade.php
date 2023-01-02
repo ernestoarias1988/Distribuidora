@@ -41,7 +41,7 @@ $fecha = date("Y-m-d");
 
             <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
 
-            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:90%;">
+            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:85%;">
 
                 <thead>
                     <tr>
@@ -52,12 +52,12 @@ $fecha = date("Y-m-d");
                         </th>
                     </tr>
                     <tr>
-                        <th style="text-align: left; font-weight:10">Cliente: {{$venta->cliente->nombre}}<br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} </th>
+                        <th style="text-align: left; font-weight:10"><strong>Presupuesto</strong><br>Cliente: {{$venta->cliente->nombre}}<br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} </th>
                         <th></th>
                         <th>
-                            <img style="width:80px; " src="{{url("/img/logo.png")}}">
                         </th>
-                        <th>
+                        <th> <img style="width:80px; " src="{{url("/img/logo.png")}}">
+
                         </th>
                     </tr>
                     <tr>

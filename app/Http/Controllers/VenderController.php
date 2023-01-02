@@ -386,32 +386,6 @@ class VenderController extends Controller
 
     public function terminarVentaAPI(Request $request)
     {
-
-        //protected $fillable = ["nombre", "telefono", "direccion", "localidad", "lista", "vendedor"];
-        /* {
-            "cliente": "clientePrueba7777",
-            "idVenta": 2,
-            "newClient": Array [
-              "clientePrueba7777",
-              "321312",
-              "Salta123",
-              "Salta",
-              1,
-              "Administrador",
-            ],
-            "productos": Array [
-              Object {
-                "cantidad": "1",
-                "codigo_barras": "102",
-                "id": "102",
-                "nombre": "ALFAJOR GENIO TRIPLE NEGRO X24",
-                "precio_venta1": 1350,
-              },
-            ],
-            "totalVenta": 1350,
-            "vendedor": "Administrador",
-          }*/
-        $newClient = ["CLientenuevito", "38745656", "Avenidanueva", "Salta", "1", "Administrador"];
         try {
             $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
             if ($cliente == null) {
@@ -427,20 +401,23 @@ class VenderController extends Controller
                 $clienteCreado->saveOrFail();
                 $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
             }
+            foreach ($request['productos'] as $producto) {
+                if (json_decode($producto['cantidad']) == 0) {
+                    return [false, 0];
+                }
+            }
             // Crear una venta
             $venta = new Venta();
             // $cliente = Cliente::findOrFail($request->cliente);
             $lista = $cliente->lista;
             $venta->id_cliente = $cliente->id;
             $venta->vendedor = $request->vendedor;
-            $venta->saveOrFail();
-
+            $venta->saveOrFail(); //REVISAR!!!!!!!
             $idVenta = $venta->id;
-            foreach ($request['productos'] as $producto)
 
             // Recorrer carrito de compras
-            {
-                $productoAVender = Producto::where("codigo_barras", "=", json_decode($producto['codigo_barras']))->first();
+            foreach ($request['productos'] as $producto) {
+                $productoAVender = Producto::where("codigo_barras", "=", $producto['codigo_barras'])->first();
 
                 switch ($lista) {
                     case "1":
@@ -461,6 +438,7 @@ class VenderController extends Controller
                 }
 
                 // El producto que se vende...
+
                 $productoVendido = new ProductoVendido();
                 $productoVendido->fill([
                     "id_venta" => $idVenta,
@@ -477,9 +455,11 @@ class VenderController extends Controller
                 $productoActualizado->saveOrFail();
             }
         } catch (\Exception $e) {
-            return false;
+            //return [false, $idVenta, $e];
+            return [false, $idVenta];
         }
-        return true;
+        //return true;
+        return [true, 0];
     }
 
     public function editarVentaAPI(Request $request)

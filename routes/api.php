@@ -98,12 +98,17 @@ Route::group(['prefix' => 'auth'], function () {
         });
         Route::post("/venta", function (Request $request) {
             $venta_controller =  new VenderController;
-            $result = false;
+            $result[0] = false;
+            $result[1] = 0;
             $result = $venta_controller->terminarVentaAPI($request);
 
-            if ($result) {
+            if ($result[0]) {
                 return  response("true", 200);
             } else {
+                if ($result[1] > 0) {
+                    $venta = Venta::findOrFail($result[1]);
+                    $venta->delete();
+                }
                 return  response("false", 401);
             }
         });
