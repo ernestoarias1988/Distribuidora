@@ -30,7 +30,8 @@
                     <option value="Pichanal">Pichanal</option>
                     <option value="Orán	">Orán</option>
                     <option value="Embarcacion/Irigoyen">Embarcacion/Irigoyen</option>
-                    <option value="Chaco">Chaco</option>>
+                    <option value="Chaco">Chaco</option>
+                    <option value="Morillo">Morillo</option>
                     <option value="Colonia Santa Rosa">Colonia Santa Rosa</option>
                     <option value="Otra">Otra</option>
                 </select>

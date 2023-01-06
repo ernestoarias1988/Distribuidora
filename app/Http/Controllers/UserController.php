@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -77,6 +78,15 @@ class UserController extends Controller
         return view("usuarios.usuarios_edit", [
             "usuario" => $user,
         ]);
+    }
+    public function info(Request $request)
+    {
+        $vendedor = request("usuario");
+        $vendedor = User::where('id', 'LIKE', "%{$vendedor}%")->first();
+        $clientes =  Cliente::where('vendedor', 'LIKE', "%{$vendedor->name}%")->first();
+
+        // echo "EL user: $vendedor";
+        return view("usuarios.usuarios_clients", ["usuario" => $vendedor, "clientes" => Cliente::All()]);
     }
 
     /**

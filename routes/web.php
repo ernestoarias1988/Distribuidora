@@ -49,6 +49,7 @@ Route::middleware("auth")
         Route::get('indexShowTodos', 'VentasController@indexShowTodos')->name('ventas.indexShowTodos');
 
         Route::get('acumulados', 'VentasController@acumulados')->name('ventas.acumulados');
+        Route::get('info', 'UserController@info')->name('usuarios.info');
 
         Route::get('ventas-list-pdf', 'VentasController@exportVentasPdf')->name('ventas.pdf');
         Route::get('ventas-vendedor-list-pdf', 'VentasController@exportVentasVendedorPdf')->name('ventasVendedor.pdf');
