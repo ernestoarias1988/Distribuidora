@@ -5,8 +5,11 @@
 $productosAcum = array();
 $productosAcumCant = array();
 $productosAcumPrecio = array();
+$ventasXVend = array();
+$ventasXVendTotales = array();
 $total = 0;
 for ($i = 0; $i < 1000; $i++) {
+    $ventasXVendTotales[$i] = 0;
     $productosAcum[$i] = null;
     $productosAcumCant[$i] = null;
     $productosAcumPrecio[$i] = null;
@@ -34,33 +37,39 @@ for ($i = 0; $i < 1000; $i++) {
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($ventas as $venta)
                     <?php
-                    if ($venta->vendedor == $vendedor) {
-                        if ($venta->entregado == 0) {
-                            //sort($venta->productos);
-                            foreach ($venta->productos as $producto) {
-                                for ($i = 0; $i < 1000; $i++) {
-                                    if ($producto->descripcion == $productosAcum[$i]) {
-                                        $productosAcumCant[$i] += $producto->cantidad;
-                                        $i = 1000;
-                                    } else {
-                                        if ($productosAcum[$i] == null) {
-                                            $productosAcumCant[$i] = $producto->cantidad;
-                                            $productosAcum[$i] = $producto->descripcion;
-                                            $productosAcumCodigo[$i] = $producto->codigo_barras;
-                                            $productosAcumPrecio[$i] = $producto->precio;
+                    $j = 0;
+                    foreach ($ventas as $venta) {
+                        if ($venta->vendedor == $vendedor) {
+                            if ($venta->entregado == 0) {
+                                // echo "$venta->vendedor";
+                                $ventasXVend[$j] = $venta->cliente->nombre;
+                                foreach ($venta->productos as $producto) {
+                                    for ($i = 0; $i < 1000; $i++) {
+                                        if ($producto->descripcion == $productosAcum[$i]) {
+                                            $productosAcumCant[$i] += $producto->cantidad;
                                             $i = 1000;
+                                        } else {
+                                            if ($productosAcum[$i] == null) {
+                                                $productosAcumCant[$i] = $producto->cantidad;
+                                                $productosAcum[$i] = $producto->descripcion;
+                                                $productosAcumCodigo[$i] = $producto->codigo_barras;
+                                                $productosAcumPrecio[$i] = $producto->precio;
+                                                $i = 1000;
+                                            }
                                         }
                                     }
+                                    //echo "<tr><td>$producto->codigo_barras</td></tr>";
                                 }
-                                //echo "<tr><td>$producto->codigo_barras</td></tr>";
+                                $j++;
                             }
                         }
                     }
+                    $ventasXVend = array_unique($ventasXVend);
+                    $ventasXVend = array_values($ventasXVend);
                     ?>
-                    @endforeach
                     <?php
+
                     $productosAcumCodigoNEW = array_values(array_filter($productosAcumCodigo));
                     sort($productosAcumCodigoNEW, SORT_NUMERIC);
                     for ($i = 0; $i < sizeof($productosAcumCodigoNEW); $i++) {
@@ -84,9 +93,28 @@ for ($i = 0; $i < 1000; $i++) {
                         }
                     }
                     ?>
+
+                    @foreach($ventasXVend as $cliente)
+                    <?php
+                    foreach ($ventas as $venta) {
+                        if ($venta->vendedor == $vendedor && $venta->entregado == 0) {
+                            if ($venta->cliente->nombre == $cliente) {
+                                $indexVend = array_search($cliente, $ventasXVend);
+                                $ventasXVendTotales[$indexVend] += $venta->total;
+                            }
+                        }
+                    }
+                    $ventasInd = 0;
+                    ?>
+                    @endforeach
+
+                    @foreach($ventasXVend as $cliente)
+                    <h5><strong>Cliente:</strong> {{$cliente}} <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}} </h5>
+                    <?php
+                    $ventasInd++;
+                    ?>
+                    @endforeach
                     <h3>Total: ${{$total}}</h3>
         </div>
-
-
     </div>
     @endsection
