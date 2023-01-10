@@ -25,7 +25,7 @@
                     <option value="" selected disabled hidden>Seleccione Localidad</option>
                     <option value="Salta">Salta</option>
                     <option value="Pichanal">Pichanal</option>
-                    <option value="Orán	">Orán</option>
+                    <option value="Orán">Orán</option>
                     <option value="Embarcacion/Irigoyen">Embarcacion/Irigoyen</option>
                     <option value="Chaco">Chaco</option>
                     <option value="Morillo">Morillo</option>

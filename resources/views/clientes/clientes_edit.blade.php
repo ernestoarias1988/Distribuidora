@@ -28,7 +28,7 @@
                     <option value="{{$cliente->localidad}}" selected>{{$cliente->localidad}}</option>
                     <option value="Salta">Salta</option>
                     <option value="Pichanal">Pichanal</option>
-                    <option value="Orán	">Orán</option>
+                    <option value="Orán">Orán</option>
                     <option value="Embarcacion/Irigoyen">Embarcacion/Irigoyen</option>
                     <option value="Chaco">Chaco</option>
                     <option value="Morillo">Morillo</option>
