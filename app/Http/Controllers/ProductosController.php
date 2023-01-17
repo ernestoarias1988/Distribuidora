@@ -33,8 +33,11 @@ class ProductsImport  implements ToModel, WithHeadingRow
             /*   if ($row['cantidad'] == null) {
                 $row['cantidad'] = 1;
             }*/
-            if ($row['precio_real'] == null) {
-                $row['precio_real'] = 0;
+            if ($row['precio1'] == null) {
+                $row['precio1'] = 0;
+            }        
+            if ($row['precio2'] == null) {
+                $row['precio2'] = $row['precio1'];
             }
             /* if ($row['promo'] == null) {
                 $row['promo'] = $row['precio_real'];
@@ -43,19 +46,19 @@ class ProductsImport  implements ToModel, WithHeadingRow
                 return new Producto([
                     'codigo_barras'     => $row['codigo'],
                     'descripcion'    => $row['articulo'],
-                    'precio_compra'    => $row['precio_real'],
-                    'precio_venta1'    => $row['precio_real'],
-                    'precio_venta2'    => $row['precio_real'],
-                    'precio_venta3'    => $row['precio_real'],
+                    'precio_compra'    => $row['precio1'],
+                    'precio_venta1'    => $row['precio1'],
+                    'precio_venta2'    => $row['precio1'],
+                    'precio_venta3'    => $row['precio1'],
                     'existencia'    => 1, //$row['cantidad'],
                 ]);
             } else {
                 $productoActualizando = Producto::where("descripcion", "=", $row['articulo'])->first();
                 $productoActualizando->codigo_barras = $row['codigo'];
-                $productoActualizando->precio_compra = $row['precio_real'];
-                $productoActualizando->precio_venta1 = $row['precio_real'];
-                $productoActualizando->precio_venta2 = $row['precio_real'];
-                $productoActualizando->precio_venta3 = $row['precio_real'];
+                $productoActualizando->precio_compra = $row['precio1'];
+                $productoActualizando->precio_venta1 = $row['precio1'];
+                $productoActualizando->precio_venta2 = $row['precio2'];
+                $productoActualizando->precio_venta3 = $row['precio1'];
                 $productoActualizando->existencia = 1; //$row['cantidad'];
                 $productoActualizando->saveOrFail();
             }
@@ -74,11 +77,11 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
     public function headings(): array
     {
         return [
-            'descripcion',
+            'id',
+            'codigo',
             'articulo',
-            'PRECIO REAL',
-            'cantidad',
-            'codigo'
+            'Precio1',
+            'Precio2'
             /*'Precio compra',
             'precio_venta1',
             'precio_venta2',

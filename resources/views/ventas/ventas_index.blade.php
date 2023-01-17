@@ -12,7 +12,7 @@
             <!--, ["id" => $venta->id]) -->
             <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Localidad
         </a>
-        <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://localhost/Distribuidora/public/exportarv'">Exportar a Excel</button>
+        <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://distribuidoradaxs.com/public/exportarv'">Exportar a Excel</button>
         <a style="margin-left:0.2%" href="{{route("ventas.acumulados",["show"=>$entregadosFlag])}}">Ver todos los acumulados</a>
         <form action="{{route("guardarLocalidad")}}" method="post">
             {{ csrf_field() }}
