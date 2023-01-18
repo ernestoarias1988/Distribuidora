@@ -48,8 +48,8 @@ class ProductsImport  implements ToModel, WithHeadingRow
                     'descripcion'    => $row['articulo'],
                     'precio_compra'    => $row['precio1'],
                     'precio_venta1'    => $row['precio1'],
-                    'precio_venta2'    => $row['precio1'],
-                    'precio_venta3'    => $row['precio1'],
+                    'precio_venta2'    => $row['precio2'],
+                    'precio_venta3'    => $row['precio3'],
                     'existencia'    => 1, //$row['cantidad'],
                 ]);
             } else {
@@ -58,7 +58,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
                 $productoActualizando->precio_compra = $row['precio1'];
                 $productoActualizando->precio_venta1 = $row['precio1'];
                 $productoActualizando->precio_venta2 = $row['precio2'];
-                $productoActualizando->precio_venta3 = $row['precio1'];
+                $productoActualizando->precio_venta3 = $row['precio3'];
                 $productoActualizando->existencia = 1; //$row['cantidad'];
                 $productoActualizando->saveOrFail();
             }
@@ -81,7 +81,8 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
             'codigo',
             'articulo',
             'Precio1',
-            'Precio2'
+            'Precio2',
+            'Precio3'
             /*'Precio compra',
             'precio_venta1',
             'precio_venta2',
