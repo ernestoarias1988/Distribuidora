@@ -22,8 +22,11 @@
             }
         }
     }
+    $i=1;
     foreach ($vendedores as $vendedor) {
         if ($vendedor->total > 0) {
+            echo "$i. ";
+            $i++;
             echo "{$vendedor->name}: $";
             echo "{$vendedor->total}<br>";
         }

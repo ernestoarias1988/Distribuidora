@@ -18,7 +18,10 @@ for ($i = 0; $i < 1000; $i++) {
 ?>
 <div class="row">
     <div class="col-lg-6 col-md-12">
-        <h2>Acumulado de {{$vendedor}}</h2>
+        <h2>Acumulado de {{$vendedor}}<?php $fecha = date("d-m-Y");
+        echo " del $fecha";
+        ?>
+        </h2>
         @include("notificacion")
         <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventasVendedor.pdf", ["id"=>$vendedor])}}">
             <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Vendedor
@@ -26,6 +29,7 @@ for ($i = 0; $i < 1000; $i++) {
         <a class="btn btn-warning" target="blank" style="margin-top:-0.5%" href="{{ route('ventas.index') }}">
             <i class="fa fa-print"></i>&nbsp; Volver a ventas
         </a>
+
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -107,11 +111,14 @@ for ($i = 0; $i < 1000; $i++) {
                     $ventasInd = 0;
                     ?>
                     @endforeach
-
+<?php
+$i= 1;
+?>
                     @foreach($ventasXVend as $cliente)
-                    <h5><strong>Cliente:</strong> {{$cliente}} <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}} </h5>
+                    <h5><strong>{{$i}}. Cliente:</strong> {{$cliente}} <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}} </h5>
                     <?php
                     $ventasInd++;
+                    $i++;
                     ?>
                     @endforeach
                     <h3>Total: ${{$total}}</h3>

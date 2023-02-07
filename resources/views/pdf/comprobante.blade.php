@@ -41,14 +41,14 @@ $total = 0;
 
         <thead>
             <tr>
-                <th style="text-align: left; border: 1px solid #000;border-right: 1px solid #fff; font-weight:10">Vendedor: {{$venta->vendedor}}</th>
+                <th style="text-align: left; border: 1px solid #000;border-right: 1px solid #fff; font-weight:10">Cliente: {{$venta->cliente->nombre}}</th>
                 <th style="border: 1px solid #000; border-right: 1px solid #000;"></th>
                 <th style="border: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #fff;"></th>
                 <th style="border: 1px solid #000; text-align: rigth;"> Fecha: <?php echo date("d/m/Y"); ?>
                 </th>
             </tr>
             <tr>
-                <th style="text-align: left; font-weight:10"><strong>Presupuesto</strong><br>Cliente: {{$venta->cliente->nombre}}<br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} </th>
+                <th style="text-align: left; font-weight:10"><strong>Presupuesto</strong><br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} <br>Vendedor: {{$venta->vendedor}}</th>
                 <th></th>
                 <th>
 
