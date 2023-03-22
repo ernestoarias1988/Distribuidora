@@ -26,7 +26,9 @@
                     <option value="Salta">Salta</option>
                     <option value="Pichanal">Pichanal</option>
                     <option value="Orán">Orán</option>
-                    <option value="Embarcacion/Irigoyen">Embarcacion/Irigoyen</option>
+                    <option value="Irigoyen">Irigoyen</option>
+                    <option value="Embarcacion">Embarcacion</option>
+                    <option value="Isla de Cana">Isla de Cana</option>
                     <option value="Chaco">Chaco</option>
                     <option value="Morillo">Morillo</option>
                     <option value="Colonia Santa Rosa">Colonia Santa Rosa</option>
