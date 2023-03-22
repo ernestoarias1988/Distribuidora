@@ -100,6 +100,8 @@ Route::group(['prefix' => 'auth'], function () {
             $venta_controller =  new VenderController;
             $result[0] = false;
             $result[1] = 0;
+            $message = 'El body recibido fue:';
+            Log::debug($message.' '.$request);
             $result = $venta_controller->terminarVentaAPI($request);
 
             if ($result[0]) {

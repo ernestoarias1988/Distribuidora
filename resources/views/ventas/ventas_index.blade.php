@@ -46,7 +46,7 @@
     <table class="table table-bordered table-striped table-highlight">
         <thead>
             <tr>
-                <th white-space: nowrap;>Fecha</th>
+                <th white-space: nowrap;>Fecha </th>
                 <th>Cliente</th>
                 <th>Localidad</th>
                 <th>Total</th>
@@ -60,7 +60,7 @@
         </thead>
         <tbody>
             @foreach($ventas->sortByDesc('created_at') as $venta)
-            @if (Auth::user()->role_id=="Administrador"||Auth::user()->name==$venta->vendedor)
+            @if (Auth::user()->role_id=="Administrador"||Auth::user()->email==$venta->vendedor)
             @if(($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null) && ($venta->entregado != 1 || $entregadosFlag == 1))
             @if($venta->pagado==0)
             <tr style="background-color: #faa;">
@@ -99,7 +99,7 @@
                     </a>
                     @endif
                 </td>
-                <td><a href="{{route('totales.index', ["vendedor"=>$venta->vendedor])}}"> {{$venta->vendedor}}</a></td>
+                <td><a href="{{route('totales.index', ["vendedor"=>$venta->vendedor, "localidad"=>$localidad])}}"> {{$venta->vendedor}}</a></td>
                 <td>
                     <a class="btn btn-success" href="{{route("ventas.show", $venta)}}">
                         <i class="fa fa-info"></i>

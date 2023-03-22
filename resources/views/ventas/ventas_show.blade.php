@@ -53,7 +53,7 @@
                     <td>
                         @method("post")
                         @csrf
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger" onclick="message($producto);">
                             <i class="fa fa-trash"></i>
                         </button>
 
@@ -73,3 +73,11 @@
     </div>
 </div>
 @endsection
+
+<script>
+    function message($producto) {
+       // $producto->$cantidad = 0;
+        alert("Datos: "+ "s");
+
+    }
+</script>

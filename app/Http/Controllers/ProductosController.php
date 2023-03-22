@@ -38,6 +38,9 @@ class ProductsImport  implements ToModel, WithHeadingRow
             }        
             if ($row['precio2'] == null) {
                 $row['precio2'] = $row['precio1'];
+            }           
+            if ($row['precio3'] == null) {
+                $row['precio3'] = $row['precio1'];
             }
             /* if ($row['promo'] == null) {
                 $row['promo'] = $row['precio_real'];
@@ -137,7 +140,6 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
-        //Artisan::call('key:generate');
         $producto = new Producto($request->input());
 
         $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
@@ -158,8 +160,6 @@ class ProductosController extends Controller
                     "tipo" => "danger"
                 ]);
         }
-
-
 
         if ($producto == Producto::find($producto->id)) {
             return redirect()->route("productos.index")->with("mensaje", "Producto NO guardado");

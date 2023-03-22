@@ -9,7 +9,7 @@ use App\ProductoVendido;
 use App\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 class VenderController extends Controller
 {
 
@@ -55,6 +55,7 @@ class VenderController extends Controller
     {
         // Crear una venta
 
+
         $venta = new Venta();
         $nombre_cliente = $this->obtenercliente();
         $cliente = $nombre_cliente;
@@ -64,6 +65,7 @@ class VenderController extends Controller
         $venta->saveOrFail();
         $idVenta = $venta->id;
         $productos = $this->obtenerProductos();
+
         // Recorrer carrito de compras
         foreach ($productos as $producto) {
 
@@ -289,7 +291,7 @@ class VenderController extends Controller
                 ->get();
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             foreach ($data as $row) {
-                if (auth()->user()->role_id == 'Administrador' || auth()->user()->name == $row->vendedor) {
+                if (auth()->user()->role_id == 'Administrador' || auth()->user()->email == $row->vendedor) {
                     $output .= '
        <li><a href="#">' . $row->nombre . '</a></li>
        ';
@@ -386,7 +388,9 @@ class VenderController extends Controller
 
     public function terminarVentaAPI(Request $request)
     {
+        
         try {
+
             $cliente = Cliente::where('nombre', 'LIKE', "%{$request->cliente}%")->first();
             if ($cliente == null) {
                 // (new Cliente($request['newClient']))->saveOrFail();
@@ -456,6 +460,10 @@ class VenderController extends Controller
             }
         } catch (\Exception $e) {
             //return [false, $idVenta, $e];
+            $message = 'Error Creando Venta de';
+            Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
+            $message = 'El body que fallo fue:';
+            Log::debug($message.' '.$request);
             return [false, $idVenta];
         }
         //return true;

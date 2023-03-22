@@ -100,7 +100,7 @@ class ClientesController extends Controller
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             foreach ($data as $row) {
                 $output .= '
-       <li><a href="#">' . $row->name . '</a></li>
+       <li><a href="#">' . $row->email . '</a></li>
        ';
             }
             $output .= '</ul>';

@@ -75,6 +75,9 @@ $fecha = date("Y-m-d");
                     </tr>
                 </thead>
                 <tbody style="border: 1px solid #000; ">
+                <?php
+                $total = 0;
+                ?>
                     @foreach($venta->productos as $producto)
                     <tr>
                         <td style="border: 1px solid #000"> {{$producto->cantidad}} U. </td>

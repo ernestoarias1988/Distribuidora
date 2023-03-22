@@ -18,7 +18,7 @@ for ($i = 0; $i < 1000; $i++) {
 ?>
 <div class="row">
     <div class="col-lg-6 col-md-12">
-        <h2>Acumulado de {{$vendedor}}<?php $fecha = date("d-m-Y");
+        <h2>Acumulado de {{$vendedor}} de {{$localidad}}<?php $fecha = date("d-m-Y");
         echo " del $fecha";
         ?>
         </h2>
@@ -45,8 +45,8 @@ for ($i = 0; $i < 1000; $i++) {
                     $j = 0;
                     foreach ($ventas as $venta) {
                         if ($venta->vendedor == $vendedor) {
-                            if ($venta->entregado == 0) {
-                                // echo "$venta->vendedor";
+                            if($venta->cliente->localidad == $localidad || $localidad == "Todas"){
+                              if ($venta->entregado == 0) {
                                 $ventasXVend[$j] = $venta->cliente->nombre;
                                 foreach ($venta->productos as $producto) {
                                     for ($i = 0; $i < 1000; $i++) {
@@ -66,7 +66,7 @@ for ($i = 0; $i < 1000; $i++) {
                                     //echo "<tr><td>$producto->codigo_barras</td></tr>";
                                 }
                                 $j++;
-                            }
+                            }}
                         }
                     }
                     $ventasXVend = array_unique($ventasXVend);

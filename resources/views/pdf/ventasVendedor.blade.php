@@ -40,6 +40,7 @@ $fecha = date("Y-m-d");
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->vendedor==$vendedor) && $venta->entregado != 1)
+            
 
             <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
 
@@ -77,6 +78,9 @@ $fecha = date("Y-m-d");
                     </tr>
                 </thead>
                 <tbody style="border: 1px solid #000; ">
+                <?php
+                $total=0;
+                ?>
                     @foreach($venta->productos as $producto)
                     <tr>
                         <td style="border: 1px solid #000"> {{$producto->cantidad}} U. </td>
@@ -84,7 +88,9 @@ $fecha = date("Y-m-d");
                         <td style=" border: 1px solid #000"> ${{number_format($producto->precio, 2)}}</td>
                         <td style="border: 1px solid #000"> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                     </tr>
-                    <?php $total += ($producto->cantidad * $producto->precio); ?>
+                    <?php 
+                    $total += ($producto->cantidad * $producto->precio); 
+                    ?>
                     @endforeach
                     <tr>
                         <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">Total
