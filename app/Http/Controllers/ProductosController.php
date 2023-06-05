@@ -42,6 +42,9 @@ class ProductsImport  implements ToModel, WithHeadingRow
             if ($row['precio3'] == null) {
                 $row['precio3'] = $row['precio1'];
             }
+            if ($row['existencia'] == null) {
+                $row['existencia'] = 1;
+            }
             /* if ($row['promo'] == null) {
                 $row['promo'] = $row['precio_real'];
             }*/
@@ -53,7 +56,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
                     'precio_venta1'    => $row['precio1'],
                     'precio_venta2'    => $row['precio2'],
                     'precio_venta3'    => $row['precio3'],
-                    'existencia'    => 1, //$row['cantidad'],
+                    'existencia'    => $row['existencia'],
                 ]);
             } else {
                 $productoActualizando = Producto::where("descripcion", "=", $row['articulo'])->first();
@@ -62,7 +65,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
                 $productoActualizando->precio_venta1 = $row['precio1'];
                 $productoActualizando->precio_venta2 = $row['precio2'];
                 $productoActualizando->precio_venta3 = $row['precio3'];
-                $productoActualizando->existencia = 1; //$row['cantidad'];
+                $productoActualizando->existencia = $row['existencia'];
                 $productoActualizando->saveOrFail();
             }
         } else {
@@ -80,19 +83,27 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
     public function headings(): array
     {
         return [
-            'id',
             'codigo',
             'articulo',
             'Precio1',
             'Precio2',
             'Precio3',
-            'Precio_compra'
+            'existencia'
         ];
     }
-    public function collection()
+    /*public function collection()
     {
         return Producto::all();
+        
+    }*/
+
+    public function collection()
+    {
+        return Producto::select('codigo_barras','descripcion', 'precio_venta1','precio_venta2','precio_venta3', 'existencia')->get();
     }
+
+
+
 }
 class ProductosController extends Controller
 {
