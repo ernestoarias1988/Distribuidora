@@ -85,14 +85,8 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
             'articulo',
             'Precio1',
             'Precio2',
-            'Precio3'
-            /*'Precio compra',
-            'precio_venta1',
-            'precio_venta2',
-            'precio_venta3',
-            'Cantidad',
-            'Fecha Creado',
-            'Fecha Modificado'*/
+            'Precio3',
+            'Precio_compra'
         ];
     }
     public function collection()
@@ -203,6 +197,18 @@ class ProductosController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $producto->fill($request->input());
+        
+
+
+        $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
+        if ($probando) {
+            return redirect()
+                ->route("productos.index")
+                ->with([
+                    "mensaje" => "Codigo ya existente. Producto no creado",
+                    "tipo" => "danger"
+                ]);
+            }
         $producto->saveOrFail();
         return redirect()->route("productos.index")->with("mensaje", "Producto actualizado");
     }

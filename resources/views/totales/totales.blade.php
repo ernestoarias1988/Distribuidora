@@ -8,7 +8,7 @@ $productosAcumPrecio = array();
 $ventasXVend = array();
 $ventasXVendTotales = array();
 $total = 0;
-for ($i = 0; $i < 1000; $i++) {
+for ($i = 0; $i < 10000; $i++) {
     $ventasXVendTotales[$i] = 0;
     $productosAcum[$i] = null;
     $productosAcumCant[$i] = null;
@@ -23,10 +23,10 @@ for ($i = 0; $i < 1000; $i++) {
         ?>
         </h2>
         @include("notificacion")
-        <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventasVendedor.pdf", ["id"=>$vendedor])}}">
+        <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventasVendedor.pdf", ["id"=>$vendedor,"localidad"=>$localidad])}}">
             <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Vendedor
         </a>
-        <a class="btn btn-warning" target="blank" style="margin-top:-0.5%" href="{{ route('ventas.index') }}">
+        <a class="btn btn-warning" style="margin-top:-0.5%" href="{{ route('ventas.index') }}">
             <i class="fa fa-print"></i>&nbsp; Volver a ventas
         </a>
 
@@ -49,17 +49,17 @@ for ($i = 0; $i < 1000; $i++) {
                               if ($venta->entregado == 0) {
                                 $ventasXVend[$j] = $venta->cliente->nombre;
                                 foreach ($venta->productos as $producto) {
-                                    for ($i = 0; $i < 1000; $i++) {
-                                        if ($producto->descripcion == $productosAcum[$i]) {
+                                    for ($i = 0; $i < 10000; $i++) {
+                                        if ($producto->codigo_barras == $productosAcumCodigo[$i]) {
                                             $productosAcumCant[$i] += $producto->cantidad;
-                                            $i = 1000;
+                                            $i = 10000;
                                         } else {
                                             if ($productosAcum[$i] == null) {
                                                 $productosAcumCant[$i] = $producto->cantidad;
                                                 $productosAcum[$i] = $producto->descripcion;
                                                 $productosAcumCodigo[$i] = $producto->codigo_barras;
                                                 $productosAcumPrecio[$i] = $producto->precio;
-                                                $i = 1000;
+                                                $i = 10000;
                                             }
                                         }
                                     }
@@ -84,7 +84,7 @@ for ($i = 0; $i < 1000; $i++) {
                             $productosAcumCantNEW[$i] = $productosAcumCant[$index];
                         }
                     }
-                    for ($i = 0; $i < 1000; $i++) {
+                    for ($i = 0; $i < 10000; $i++) {
                         if ($productosAcum[$i] != null && $productosAcumCodigo[$i] != null) {
                             $precio = $productosAcumPrecioNEW[$i] * $productosAcumCantNEW[$i];
                             echo "<tr>

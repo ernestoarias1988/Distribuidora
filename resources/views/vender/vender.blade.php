@@ -13,7 +13,6 @@
         <div class="col-12">
             <div class="col-12 col-md-6">
                 <form action="{{route("guardarCliente")}}" method="post">
-                    {{ csrf_field() }}
                     @csrf
                     <div class="form-group">
                         <label for="id_cliente">Cliente</label>

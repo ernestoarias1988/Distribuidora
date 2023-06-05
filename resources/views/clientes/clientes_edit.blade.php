@@ -35,6 +35,7 @@
                     <option value="Chaco">Chaco</option>
                     <option value="Morillo">Morillo</option>
                     <option value="Colonia Santa Rosa">Colonia Santa Rosa</option>
+                    <option value="Lozano">Lozano</option>
                     <option value="Otra">Otra</option>
                 </select>
             </div>

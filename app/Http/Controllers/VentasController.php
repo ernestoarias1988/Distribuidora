@@ -343,7 +343,8 @@ class VentasController extends Controller
     {
         $data = [
             "ventas" => Venta::all(),
-            "vendedor" => $request->get("id")
+            "vendedor" => $request->get("id"),
+            "localidad" => $request->get("localidad")
         ];
         $date = date('Y-m-d');
         $invoice = "2222";

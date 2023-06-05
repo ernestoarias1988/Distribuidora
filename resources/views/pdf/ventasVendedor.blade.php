@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 //$localidad = $data['localidad'];
 $ventas = $data['ventas'];
 $vendedor = $data['vendedor'];
+$localidad = $data['localidad'];
 $total = 0;
 /*
 $cliente = $data['cliente'];
@@ -39,7 +40,7 @@ $fecha = date("Y-m-d");
             </div>
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
-            @if(($venta->vendedor==$vendedor) && $venta->entregado != 1)
+            @if(($venta->vendedor==$vendedor) && $venta->entregado != 1 && ($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null))
             
 
             <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>

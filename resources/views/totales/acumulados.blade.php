@@ -7,7 +7,7 @@
 <div class="row" style="margin-left:1%;">
     <div class="col-12">
         <h1>Acumulados <i class="fa fa-list"></i></h1>
-        <a class="btn btn-warning" target="blank" style="margin-top:-0.5%" href="{{route('ventas.index') }}">
+        <a class="btn btn-warning" style="margin-top:-0.5%" href="{{route('ventas.index') }}">
             <i class="fa fa-print"></i>&nbsp; Volver a ventas
         </a>
     </div>
