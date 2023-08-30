@@ -212,14 +212,16 @@ class ProductosController extends Controller
 
 
         $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
+        
         if ($probando) {
+            if($probando->descripcion!=$producto->descripcion){
             return redirect()
                 ->route("productos.index")
                 ->with([
                     "mensaje" => "Codigo ya existente. Producto no creado",
                     "tipo" => "danger"
                 ]);
-            }
+            }}
         $producto->saveOrFail();
         return redirect()->route("productos.index")->with("mensaje", "Producto actualizado");
     }
