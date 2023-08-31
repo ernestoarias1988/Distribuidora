@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 $ventas = $data['ventas'];
 $localidad = $data['localidad'];
 $total = 0;
+$duplicados = [1,2];
 /*
 $cliente = $data['cliente'];
 $direccion = $data['direccion'];
@@ -34,14 +35,21 @@ $fecha = date("Y-m-d");
 <body>
     <div class="container-fluid">
         <div class="row">
-
+            <div class="col-xs-10 ">
+                <h1></h1>
+            </div>
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null) && $venta->entregado != 1)
+            <table style="text-align: center; width:50%; border-collapse: collapse; font-size:80%; margin: 5px">
+            <tbody >
+<tr>
+    @foreach($duplicados as $duplicadoo)
+    <td style = "margin-left:5px">
 
             <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
 
-            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:85%;">
+            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:80%;">
 
                 <thead>
                 <tr>
@@ -76,7 +84,7 @@ $fecha = date("Y-m-d");
                 </thead>
                 <tbody style="border: 1px solid #000; ">
                 <?php
-                $total = 0;
+                $total=0;
                 ?>
                     @foreach($venta->productos as $producto)
                     <tr>
@@ -85,7 +93,9 @@ $fecha = date("Y-m-d");
                         <td style=" border: 1px solid #000"> ${{number_format($producto->precio, 2)}}</td>
                         <td style="border: 1px solid #000"> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                     </tr>
-                    <?php $total += ($producto->cantidad * $producto->precio); ?>
+                    <?php 
+                    $total += ($producto->cantidad * $producto->precio); 
+                    ?>
                     @endforeach
                     <tr>
                         <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">Total
@@ -99,15 +109,24 @@ $fecha = date("Y-m-d");
                     </tr>
                 </tbody>
             </table>
-            <?php $total = 0; ?>
-            --------------------------------------------------------------------------------------------------<br>
+
+            --------------------------------------------------------------------------------------------------
             @php $check++ @endphp
             <!-- Salto de pagina cada 2 ventas -->
             @if( $check % 2 == 0 )
             @php echo '<div style="page-break-after: always;"></div>'; @endphp
             @endif
+            </td>             @if( $check % 2 != 0 )
+ <td style="color: white">------------------</td>
             @endif
-            @endforeach
+        @endforeach
+        
+</tr>
+</tbody>
+</table>           
+ @endif
+
+@endforeach
 
 </body>
 

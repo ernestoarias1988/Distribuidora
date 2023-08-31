@@ -9,6 +9,7 @@ $ventas = $data['ventas'];
 $vendedor = $data['vendedor'];
 $localidad = $data['localidad'];
 $total = 0;
+$duplicados = [1,2];
 /*
 $cliente = $data['cliente'];
 $direccion = $data['direccion'];
@@ -41,11 +42,15 @@ $fecha = date("Y-m-d");
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->vendedor==$vendedor) && $venta->entregado != 1 && ($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null))
-            
+            <table style="text-align: center; width:50%; border-collapse: collapse; font-size:80%; margin: 5px">
+            <tbody >
+<tr>
+    @foreach($duplicados as $duplicadoo)
+    <td style = "margin-left:5px">
 
             <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
 
-            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:90%;">
+            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:80%;">
 
                 <thead>
                 <tr>
@@ -106,14 +111,23 @@ $fecha = date("Y-m-d");
                 </tbody>
             </table>
 
-            --------------------------------------------------------------------------------------------------<br>
+            --------------------------------------------------------------------------------------------------
             @php $check++ @endphp
             <!-- Salto de pagina cada 2 ventas -->
             @if( $check % 2 == 0 )
             @php echo '<div style="page-break-after: always;"></div>'; @endphp
             @endif
+            </td>             @if( $check % 2 != 0 )
+ <td style="color: white">------------------</td>
             @endif
-            @endforeach
+        @endforeach
+        
+</tr>
+</tbody>
+</table>           
+ @endif
+
+@endforeach
 
 </body>
 

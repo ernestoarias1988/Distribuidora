@@ -336,6 +336,7 @@ class VentasController extends Controller
         $invoice = "2222";
         $view =  \View::make('pdf.ventas', compact('data', 'date', 'invoice'))->render();
         $pdf = \App::make('dompdf.wrapper');
+        $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($view);
         return $pdf->stream('invoice');
     }
@@ -350,6 +351,7 @@ class VentasController extends Controller
         $invoice = "2222";
         $view =  \View::make('pdf.ventasVendedor', compact('data', 'date', 'invoice'))->render();
         $pdf = \App::make('dompdf.wrapper');
+        $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($view);
         return $pdf->stream('invoice');
     }
