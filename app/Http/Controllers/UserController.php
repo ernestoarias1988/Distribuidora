@@ -100,6 +100,7 @@ class UserController extends Controller
     {
         $usuario1 = new User($request->input());
         $user->fill($request->input());
+        $user->passwordApp = $user->password;
         $user->password = Hash::make($user->password);
         $user->saveOrFail();
         return redirect()->route("usuarios.index")->with("mensaje", "Usuario actualizado");

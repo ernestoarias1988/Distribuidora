@@ -3,23 +3,11 @@
 use App\Venta;
 use Illuminate\Http\Request;
 
-//["ventas" => Venta::all()];
-//$localidad = $data['localidad'];
 $ventas = $data['ventas'];
 $localidad = $data['localidad'];
 $total = 0;
 $duplicados = [1,2];
-/*
-$cliente = $data['cliente'];
-$direccion = $data['direccion'];
-$remitente = "Distribuidora";
-$vendedor = $data['vendedor'];
-$mensajePie = "Gracias por su compra!";
-$numero = $data['facturaNro'];
-$descuento = $data['descuento'];
-//$porcentajeImpuestos = 16;
-$fecha = date("Y-m-d");
-*/
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -31,7 +19,12 @@ $fecha = date("Y-m-d");
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pedido</title>
 </head>
-
+<style type="text/css">
+    table { page-break-inside:auto }
+    div   { page-break-inside:avoid; } /* This is the key */
+    thead { display:table-header-group }
+    tfoot { display:table-footer-group } 
+</style>
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -41,15 +34,15 @@ $fecha = date("Y-m-d");
             @php $check=0 @endphp
             @foreach($ventas->sortBy('created_at') as $venta)
             @if(($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null) && $venta->entregado != 1)
-            <table style="text-align: center; width:50%; border-collapse: collapse; font-size:80%; margin: 5px">
+            <table style="text-align: center; width:50%;  font-size:85%; margin: 0px">
             <tbody >
 <tr>
     @foreach($duplicados as $duplicadoo)
-    <td style = "margin-left:5px">
+    <td style = "margin: 0px; margin-left:1px;  ">
 
-            <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
+            <h3 style="text-align: center; margin:0px">Distribuidora Dany</h3>
 
-            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:80%;">
+            <table style="text-align: center; width:100%; border-collapse: collapse; font-size:85%;">
 
                 <thead>
                 <tr>
@@ -64,7 +57,7 @@ $fecha = date("Y-m-d");
                 <th></th>
                 <th>
                         </th>
-                        <th> <img style="width:80px; " src="{{url("/img/logo.png")}}">
+                        <th> <img style="width:80px;" src="{{url("/img/logo.png")}}">
 
                         </th>
                     </tr>
@@ -85,6 +78,7 @@ $fecha = date("Y-m-d");
                 <tbody style="border: 1px solid #000; ">
                 <?php
                 $total=0;
+                $productCount = 0;
                 ?>
                     @foreach($venta->productos as $producto)
                     <tr>
@@ -94,8 +88,12 @@ $fecha = date("Y-m-d");
                         <td style="border: 1px solid #000"> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                     </tr>
                     <?php 
-                    $total += ($producto->cantidad * $producto->precio); 
+                    $total += ($producto->cantidad * $producto->precio);
+                    $productCount++; 
                     ?>
+                    @if($productCount > 10 )
+                    @php echo '<div style="    page-break-after: always;"></div>'; $productCount = 0; @endphp
+                    @endif
                     @endforeach
                     <tr>
                         <td style="text-align:center; margin-right: 3%;border: 1px solid #000; font-weight:bold">Total
@@ -114,16 +112,19 @@ $fecha = date("Y-m-d");
             @php $check++ @endphp
             <!-- Salto de pagina cada 2 ventas -->
             @if( $check % 2 == 0 )
-            @php echo '<div style="page-break-after: always;"></div>'; @endphp
+            @php echo '<div style="page-break-after: always;"></div>';  @endphp
             @endif
-            </td>             @if( $check % 2 != 0 )
- <td style="color: white">------------------</td>
+            </td>             
+            @if( $check % 2 != 0 )
+            <td style="color: white">-----</td>
             @endif
+
         @endforeach
         
 </tr>
 </tbody>
-</table>           
+</table>     
+      
  @endif
 
 @endforeach
