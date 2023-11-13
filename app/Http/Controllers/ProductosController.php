@@ -208,13 +208,11 @@ class ProductosController extends Controller
     public function update(Request $request, Producto $producto)
     {
         $producto->fill($request->input());
-        
 
-
-        $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
+        $probando = Producto::where("id", "=", $producto->id)->first();
         
         if ($probando) {
-            if($probando->descripcion!=$producto->descripcion){
+            if($probando->codigo_barras!=$producto->codigo_barras){
             return redirect()
                 ->route("productos.index")
                 ->with([

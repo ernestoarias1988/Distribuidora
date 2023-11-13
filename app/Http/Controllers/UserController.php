@@ -82,8 +82,8 @@ class UserController extends Controller
     public function info(Request $request)
     {
         $vendedor = request("usuario");
-        $vendedor = User::where('id', 'LIKE', "%{$vendedor}%")->first();
-        $clientes =  Cliente::where('vendedor', 'LIKE', "%{$vendedor->name}%")->first();
+        $vendedor = User::where('id', '=', "{$vendedor}")->first();
+        $clientes =  Cliente::where('vendedor', '=', "{$vendedor->name}")->first();
 
         // echo "EL user: $vendedor";
         return view("usuarios.usuarios_clients", ["usuario" => $vendedor, "clientes" => Cliente::All()]);
