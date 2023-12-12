@@ -1,6 +1,12 @@
 @extends("maestra")
 @section("titulo", "Detalle de venta ")
 @section("contenido")
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
 <div class="row">
     <div class="col-12">
         <h1>Detalle de venta #{{$venta->id}}</h1>
@@ -60,6 +66,7 @@
                     </td>
                 </tr>
                 @endforeach
+    </div>
             </tbody>
             <tfoot>
                 <tr>
@@ -69,15 +76,95 @@
                 </tr>
             </tfoot>
         </table>
-
+        <div class="col-12 col-md-6">
+            <form action="{{route("editaVenta")}}" method="post">
+                @csrf
+                <div class="form-group">
+                 <label for="descripcion">Agregar nuevo producto</label>
+                    <input type="text" name="codigo2" autocomplete="off" id="codigo2" class="form-control" required autofocus name="codigo2" placeholder="Ingrese el producto" />
+                    <div id="descripcionlist">
+                    </div>
+                </div>
+                <div <p id="existencia">
+                    </p>
+                </div>
+                {{ csrf_field() }}
+                @csrf
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" step="0.1" min="0" name="cantidad" autocomplete="off" id="cantidad" class="form-control" required autofocus name="cantidad" placeholder="Cantidad" />
+                </div>
+                {{ csrf_field() }}
+                <button type="submit" class="btn btn-primary">Agregar Producto &nbsp;
+                    <i class="fa fa-plus-square fa-2x" aria-hidden="true"></i> </button>
+                <input type="text" readonly name="idventa" id="idventa"  style = "width:10%; border-color:white; color:white;     border-width:0px " required  name="idventa" value= "{{$venta->id}}"  />
+                <input type="text" readonly name="lista" id="lista" required style = "width:10%; border-color:white; color:white; border-width:0px" name="lista" value= "{{$venta->cliente->lista}}"  />
+                   
+            </form>
+        </div>
     </div>
 </div>
 @endsection
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
+
+    
     function message($producto) {
        // $producto->$cantidad = 0;
         alert("Datos: "+ "s");
 
     }
+
+    $('#codigo2').ready(function() {
+
+        $('#codigo2').keyup(function() {
+            var query = $(this).val();
+            if (query != '') {
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url: "{{ route('autocomplete.fetchVentas')}}",
+                    method: "POST",
+                    data: {
+                        query: query,
+                        _token: _token
+                    },
+                    success: function(data) {
+                        $('#descripcionlist').fadeIn();
+                        $('#descripcionlist').html(data);
+                    }
+                });
+            }
+        });
+
+        $('#descripcionlist').on('click', 'li', function() {
+            $('#codigo2').val($(this).text());
+            $('#descripcionlist').fadeOut();
+        });
+
+
+    });
+
+
+    </script>
+
+    <script>
+
+
+    $('#descripcionlist').on('click', function() {
+        var query = $(document.getElementById("codigo2")).val();
+        var _token = $('input[name="_token"]').val();
+        $.ajax({
+            url: "{{ route('autocomplete.fetchcantidadVentas')}}",
+            method: "POST",
+            data: {
+                query: query,
+                _token: _token
+            },
+            success: function(data) {
+                document.getElementById("existencia").textContent = data;
+            }
+        });
+    });
 </script>
+

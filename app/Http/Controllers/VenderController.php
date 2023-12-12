@@ -283,6 +283,24 @@ class VenderController extends Controller
     }
 
 
+    public function fetchVentas(Request $request)
+    {
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
+                ->get();
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            foreach ($data as $row) {
+                $output .= '
+       <li><a href="#">' . $row->descripcion . '</a></li>
+       ';
+            }
+            $output .= '</ul>';
+            echo $output;
+        }
+    }
+
+
     function fetchcliente(Request $request)
     {
         if ($request->get('query')) {
@@ -322,6 +340,32 @@ class VenderController extends Controller
             $output = "";
         }
         echo $output;
+    }
+
+
+    
+    public function fetchcantidadVentas(Request $request)
+    {
+        echo 'aaaaaaaaaaa';
+
+        $output = 'STOCK!PRIMERO';
+
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $producto = Producto::where("descripcion", "LIKE", $query)->first();
+            if ($producto) {
+                $data = Producto::where('descripcion', 'LIKE', "%{$query}%")
+                    ->get();
+                foreach ($data as $row) {
+                    $output = 'Stock Disponible: ' . $row->existencia . ''; //'     Precio: $'.$row->precio_venta1;
+                }
+            } else {
+                $output = 'STOCK!';
+            }
+        } else {
+            $output = "OTROSTOCK";
+        }
+        echo 'aaaaaaaaaaa';
     }
 
 
@@ -391,7 +435,7 @@ class VenderController extends Controller
         
         try {
 
-            $cliente = Cliente::where('nombre', '=', "%{$request->cliente}%")->first();
+            $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
             if ($cliente == null) {
                 // (new Cliente($request['newClient']))->saveOrFail();
 
@@ -403,7 +447,7 @@ class VenderController extends Controller
                 $clienteCreado->lista = $request->newClient[4];
                 $clienteCreado->vendedor = $request->newClient[5];
                 $clienteCreado->saveOrFail();
-                $cliente = Cliente::where('nombre', '=', "%{$request->cliente}%")->first();
+                $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
             }
             foreach ($request['productos'] as $producto) {
                 if (json_decode($producto['cantidad']) == 0) {
@@ -460,9 +504,15 @@ class VenderController extends Controller
             }
         } catch (\Exception $e) {
             //return [false, $idVenta, $e];
-            $message = 'Error Creando Venta de';
+            $message = '
+            
+            
+            
+            
+            Error Creando Venta de';
             Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
-            $message = 'El body que fallo fue:';
+            $message = '
+            El body que fallo fue:';
             Log::debug($message.' '.$request);
             return [false, $idVenta];
         }
@@ -480,4 +530,78 @@ class VenderController extends Controller
             ->route("ventas.index")
             ->with("mensaje", "Venta terminada");
     }
+
+
+    public function editarVenta(Request $request)
+    {
+
+    $codigo = $request->post("codigo2");
+    $nro = $request->post("cantidad");
+    $venta = $request->post("idventa");
+    $lista = $request->post("lista");
+    $cantidad = $request->post("cantidad");
+    if (!is_numeric($nro)) {
+        return redirect()->route("ventas.index")
+            ->with([
+                "mensaje" => "Ingrese un numero en el campo cantidad",
+                "tipo" => "danger"
+            ]);
+    }
+    $producto = Producto::where("descripcion", "=", $codigo)->first();
+    if (!$producto || $producto->precio_venta1 == 0) {
+        return redirect()
+            ->route("ventas.index")
+            ->with([
+                "mensaje" => "Producto no encontrado o precio = 0, el codigo es: $codigo $nro lista: $lista $producto",
+                "tipo" => "danger"
+            ]);
+    }
+
+
+
+
+    switch ($lista) {
+        case "1":
+            $precio = $producto->precio_venta1;
+            break;
+
+        case "2":
+            $precio = $producto->precio_venta2;
+            break;
+
+        case "3":
+            $precio = $producto->precio_venta3;
+            break;
+
+        default:
+            $precio = 9999;
+            break;
+    }
+
+    // El producto que se vende...
+    $productoVendido = new ProductoVendido();
+    $productoVendido->fill([
+        "id_venta" => $venta,
+        "descripcion" => $producto->descripcion,
+        "codigo_barras" => $producto->codigo_barras,
+        "precio" => $precio,
+        "cantidad" => $cantidad,
+    ]);
+    // Lo guardamos
+    $productoVendido->saveOrFail();
+    // Y restamos la existencia del original
+    $productoActualizado = Producto::find($producto->id);
+    $productoActualizado->existencia -= $productoVendido->cantidad;
+    $productoActualizado->saveOrFail();
+
+
+
+
+    return redirect()
+        ->route("ventas.index");
 }
+}
+
+
+
+

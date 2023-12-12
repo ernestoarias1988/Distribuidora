@@ -60,7 +60,7 @@
         </thead>
         <tbody>
             @foreach($ventas->sortByDesc('created_at') as $venta)
-            @if (Auth::user()->role_id=="Administrador"||Auth::user()->email==$venta->vendedor)
+            @if ((Auth::user()->role_id=="Administrador"||Auth::user()->email==$venta->vendedor) && $venta->created_at > '2023-10-16 11:15:35')
             @if(($venta->cliente->localidad==$localidad || $localidad==='Todas' || $localidad==null) && ($venta->entregado != 1 || $entregadosFlag == 1))
             @if($venta->pagado==0)
             <tr style="background-color: #faa;">

@@ -63,15 +63,18 @@ Route::middleware("auth")
 
 
         Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');
+        Route::post('editarventa', 'VenderController@editarVenta')->name('editaVenta');
 
         Route::post('import', 'ProductosController@importar')->name('import');
         Route::get('/delete', 'ProductosController@deleteAll')->name('delete');
 
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
+        Route::post('/autocomplete/fetchVentas', 'VenderController@fetchVentas')->name('autocomplete.fetchVentas');
         Route::post('/autocomplete/fetchcliente', 'VenderController@fetchcliente')->name('autocomplete.fetchcliente');
         Route::post('/autocomplete/fetchvendedor', 'ClientesController@fetchvendedor')->name('autocomplete.fetchvendedor');
         Route::post('/autocomplete/fetchlocalidad', 'VentasController@fetchlocalidad')->name('autocomplete.fetchlocalidad');
         Route::post('/autocomplete/fetchcantidad', 'VenderController@fetchcantidad')->name('autocomplete.fetchcantidad');
+        Route::post('/autocomplete/fetchcantidadVentas', 'VenderController@fetchcantidadVentas')->name('autocomplete.fetchcantidadVentas');
         Route::get("/totales", "TotalesController@index")->name("totales.index");
 
         Route::post("/ventas", "VentasController@destroyProducto")->name("destroyProducto");

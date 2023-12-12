@@ -101,7 +101,10 @@ Route::group(['prefix' => 'auth'], function () {
             $result[0] = false;
             $result[1] = 0;
             $message = 'El body recibido fue:';
-            Log::debug($message.' '.$request);
+            Log::debug($message.' '.$request.'
+            
+            
+            ');
             $result = $venta_controller->terminarVentaAPI($request);
 
             if ($result[0]) {
