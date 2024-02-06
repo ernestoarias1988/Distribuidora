@@ -312,6 +312,8 @@ class VentasController extends Controller
 
 
 
+
+
     public function getData(Request $request)
     {
         $venta = Venta::findOrFail($request->get("id"));
@@ -350,6 +352,22 @@ class VentasController extends Controller
         $date = date('Y-m-d');
         $invoice = "2222";
         $view =  \View::make('pdf.ventasVendedor', compact('data', 'date', 'invoice'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($view);
+        return $pdf->stream('invoice');
+    }
+
+    public function exportAcumuladoVendedorPdf(Request $request)
+    {
+        $data = [
+            "ventas" => Venta::all(),
+            "vendedor" => $request->get("id"),
+            "localidad" => $request->get("localidad")
+        ];
+        $date = date('Y-m-d');
+        $invoice = "2222";
+        $view =  \View::make('pdf.acumuladoVendedor', compact('data', 'date', 'invoice'))->render();
         $pdf = \App::make('dompdf.wrapper');
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($view);

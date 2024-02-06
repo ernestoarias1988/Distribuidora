@@ -13,7 +13,9 @@
             <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Localidad
         </a>
         <button style="text-align:center" class="btn btn-success mb-2" onClick="window.location.href='https://distribuidoradaxs.com/public/exportarv'">Exportar a Excel</button>
+        @if (Auth::user()->role_id=="Administrador")
         <a style="margin-left:0.2%" href="{{route("ventas.acumulados",["show"=>$entregadosFlag])}}">Ver todos los acumulados</a>
+        @endif
         <form action="{{route("guardarLocalidad")}}" method="post">
             {{ csrf_field() }}
             @csrf

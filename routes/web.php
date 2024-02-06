@@ -53,6 +53,7 @@ Route::middleware("auth")
 
         Route::get('ventas-list-pdf', 'VentasController@exportVentasPdf')->name('ventas.pdf');
         Route::get('ventas-vendedor-list-pdf', 'VentasController@exportVentasVendedorPdf')->name('ventasVendedor.pdf');
+        Route::get('acumulado-vendedor-list-pdf', 'VentasController@exportAcumuladoVendedorPdf')->name('acumuladoVendedor.pdf');
         Route::get('cancelarpago', 'VentasController@cancelarPago')->name('cancelPago');
         Route::get('cancelarentrega', 'VentasController@cancelarEntrega')->name('cancelEntrega');
         Route::post('cargarpago', 'VentasController@cargarPago')->name('cargaPago');

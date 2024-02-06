@@ -1,7 +1,16 @@
-@extends("maestra")
-@section("titulo", "Acumulado")
-@section("contenido")
 <?php
+
+
+use App\Venta;
+use Illuminate\Http\Request;
+
+//["ventas" => Venta::all()];
+//$localidad = $data['localidad'];
+$ventas = $data['ventas'];
+$vendedor = $data['vendedor'];
+$localidad = $data['localidad'];
+$total = 0;
+$duplicados = [1,2];
 $productosAcum = array();
 $productosAcumCant = array();
 $productosAcumPrecio = array();
@@ -22,18 +31,9 @@ for ($i = 0; $i < 10000; $i++) {
         echo " del $fecha";
         ?>
         </h2>
-        @include("notificacion")
-        <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("ventasVendedor.pdf", ["id"=>$vendedor,"localidad"=>$localidad])}}">
-            <i class="fa fa-print"></i>&nbsp; Imprimir tickets por Vendedor
-        </a>
-        <a class="btn btn-primary" target="blank" style="margin-top:-0.5%" href="{{route("acumuladoVendedor.pdf", ["id"=>$vendedor,"localidad"=>$localidad])}}">
-            <i class="fa fa-print"></i>&nbsp; Imprimir Totales del Vendedor
-        </a>
-        <a class="btn btn-warning" style="margin-top:-0.5%" href="{{ route('ventas.index') }}">
-            <i class="fa fa-print"></i>&nbsp; Volver a ventas
-        </a>
 
         <div class="table-responsive">
+            
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -117,14 +117,7 @@ for ($i = 0; $i < 10000; $i++) {
 <?php
 $i= 1;
 ?>
-                    @foreach($ventasXVend as $cliente)
-                    <h5><strong>{{$i}}. Cliente:</strong> {{$cliente}} <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}} </h5>
-                    <?php
-                    $ventasInd++;
-                    $i++;
-                    ?>
-                    @endforeach
-                    <h3>Total: ${{$total}}</h3>
+ 
         </div>
+        
     </div>
-    @endsection
