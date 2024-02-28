@@ -432,9 +432,21 @@ class VenderController extends Controller
 
     public function terminarVentaAPI(Request $request)
     {
-        
         try {
+            
+            $idAppnueva = $request->id;
+            $ventaexiste = Venta::where("idApp", "=", $idAppnueva)->first();
+            if($ventaexiste != NULL)
+            {
+                return [false, $idAppnueva];
+            }
 
+
+
+           /* if($request['version']!=25)
+            {
+                return [false, $idVenta];
+            }*/
             $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
             if ($cliente == null) {
                 // (new Cliente($request['newClient']))->saveOrFail();
@@ -460,8 +472,10 @@ class VenderController extends Controller
             $lista = $cliente->lista;
             $venta->id_cliente = $cliente->id;
             $venta->vendedor = $request->vendedor;
+            $venta->idApp = $request->id;
             $venta->saveOrFail(); //REVISAR!!!!!!!
             $idVenta = $venta->id;
+
 
             // Recorrer carrito de compras
             foreach ($request['productos'] as $producto) {
