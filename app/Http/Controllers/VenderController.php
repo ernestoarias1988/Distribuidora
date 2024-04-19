@@ -443,11 +443,33 @@ class VenderController extends Controller
 
 
 
-           /* if($request['version']!=25)
+           /* if($request['version']!=34)
             {
                 return [false, $idVenta];
-            }*/
-            $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
+            }
+            */
+            $cliente = Cliente::where('id', '=', $request->idCliente)->first();
+            if ($cliente != null) {
+                $message = '
+            
+            
+            
+            
+            ';
+            Log::debug($message.'ID SI FUNCIONAA! '.$message);
+                $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
+            }            
+            if ($cliente == null) {
+                $message = '
+            
+            
+            
+            
+            Error Creando CLIENTE POR ID';
+            Log::debug($message.'ID NO FUNCIONAA! '.$message);
+                $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
+            }
+
             if ($cliente == null) {
                 // (new Cliente($request['newClient']))->saveOrFail();
 
@@ -459,7 +481,8 @@ class VenderController extends Controller
                 $clienteCreado->lista = $request->newClient[4];
                 $clienteCreado->vendedor = $request->newClient[5];
                 $clienteCreado->saveOrFail();
-                $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
+                //$cliente = Cliente::where('nombre', '=', $request->cliente)->first();
+                $cliente = $clienteCreado;
             }
             foreach ($request['productos'] as $producto) {
                 if (json_decode($producto['cantidad']) == 0) {

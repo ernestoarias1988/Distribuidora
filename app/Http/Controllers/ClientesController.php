@@ -39,7 +39,12 @@ class ClientesController extends Controller
         $cliente_existente = Cliente::where('nombre', '=', "{$request->nombre}")->first();
         if ($cliente_existente != null)
             return redirect()->route("clientes.index")->with("mensaje", "Cliente NO CREADO, Nombre ya existente");
-        (new Cliente($request->input()))->saveOrFail();
+        
+        $cliente_existente = Cliente::where('direccion', '=', "{$request->direccion}")->first();
+        if ($cliente_existente != null)
+            return redirect()->route("clientes.index")->with("mensaje", "Cliente NO CREADO, Direccion ya existente");
+        
+            (new Cliente($request->input()))->saveOrFail();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente agregado");
     }
 
