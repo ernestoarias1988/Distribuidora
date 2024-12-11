@@ -33,6 +33,7 @@ Route::get('/exportarv', 'VentasController@export');
 
 Route::middleware("auth")
     ->group(function () {
+        Route::get('/logs', [VentasController::class, 'showLogs'])->name('logs.show');
         Route::resource("clientes", "ClientesController");
         Route::resource("usuarios", "UserController")->parameters(["usuarios" => "user"]);
         Route::resource("productos", "ProductosController");

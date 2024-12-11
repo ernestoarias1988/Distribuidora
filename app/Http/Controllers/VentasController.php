@@ -514,7 +514,12 @@ class VentasController extends Controller
         return $localidad;
     }
 
-
+    public function showLogs()
+    {
+        $logFile = storage_path('logs/laravel.log'); // Adjust the path if your log file is different
+        $logs = file_get_contents($logFile);
+        return view('logs.show', compact('logs'));
+    }
 
     public function cargarCantidadShow(Request $request)
     {
