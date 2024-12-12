@@ -155,32 +155,38 @@
     }
 </script>
 <script>
-    $('#id_localidad').ready(function() {
+    $(document).ready(function() {
+        let debounceTimer;
 
-        $('#id_localidad').keyup(function() {
-            var query = $(this).val();
-            if (query != '') {
-                var _token2 = $('input[name="_token"]').val();
-                $.ajax({
-                    url: "{{ route('autocomplete.fetchlocalidad') }}",
-                    method: "POST",
-                    data: {
-                        query: query,
-                        _token: _token2
-                    },
-                    success: function(data) {
-                        $('#localidadlist').fadeIn();
-                        $('#localidadlist').html(data);
-                    }
-                });
-            }
+        $('#id_localidad').on('keyup', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                var query = $('#id_localidad').val();
+                if (query != '') {
+                    var _token2 = $('meta[name="csrf-token"]').attr('content');
+                    $.ajax({
+                        url: "{{ route('autocomplete.fetchlocalidad') }}",
+                        method: "POST",
+                        data: {
+                            query: query,
+                            _token: _token2
+                        },
+                        success: function(data) {
+                            $('#localidadlist').fadeIn();
+                            $('#localidadlist').html(data);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching data:', textStatus, errorThrown);
+                        }
+                    });
+                }
+            }, 300); // Adjust the debounce delay as needed
         });
 
         $('#localidadlist').on('click', 'li', function() {
             $('#id_localidad').val($(this).text());
             $('#localidadlist').fadeOut();
         });
-
     });
 </script>
 @endsection

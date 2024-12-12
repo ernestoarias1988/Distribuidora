@@ -454,32 +454,28 @@ class VentasController extends Controller
         }
         return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
     }
-
-    function fetchlocalidad(Request $request)
+    public function fetchlocalidad(Request $request)
     {
+        $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+        $localidades = [];
+    
         if ($request->get('query')) {
             $query = $request->get('query');
-            $data = Cliente::where('localidad', 'LIKE', "%{$query}%")
-                ->get();
-            if ($data !== null) {
-
-                $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            $data = Cliente::where('localidad', 'LIKE', "%{$query}%")->get();
+    
+            if ($data->isNotEmpty()) {
                 foreach ($data as $row) {
                     $localidades[] = $row->localidad;
                 }
                 $localidades = array_unique($localidades);
                 foreach ($localidades as $row) {
-                    $output .= '
-       <li><a href="#">' . $row . '</a></li>
-       ';
+                    $output .= '<li><a href="#">' . $row . '</a></li>';
                 }
-                $output .= '</ul>';
-            } else {
-                $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
-                $output .= '</ul>';
             }
-            echo $output;
         }
+    
+        $output .= '</ul>';
+        return response()->json(['output' => $output, 'localidades' => $localidades]);
     }
 
     public function guardarLocalidad(Request $request)
