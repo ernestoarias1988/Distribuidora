@@ -398,10 +398,11 @@ class VentasController extends Controller
 
     public function cancelarEntrega(Request $request)
     {
+        error_log('Cancelada');
         $venta = Venta::findOrFail($request->get("id"));
-        $venta->entregado = 1;
+        $venta->entregado = 0;
         $venta->save();
-        return redirect()->route("ventas.index")->with("mensaje", "Venta Entregada");
+        return redirect()->route("ventas.indexSiShowEntregados")->with("mensaje", "Venta No Entregada");
     }
 
     public function cargarPago(Request $request)
@@ -415,10 +416,11 @@ class VentasController extends Controller
 
     public function cargarEntrega(Request $request)
     {
+        error_log('Hello');
         $venta = Venta::findOrFail($request->get("id"));
-        $venta->entregado = 0;
+        $venta->entregado = 1;
         $venta->save();
-        return redirect()->route("ventas.index")->with("mensaje", "Venta NO Entregada");
+        return redirect()->route("ventas.index")->with("mensaje", "Venta Entregada");
     }
 
     public function cargarCantidad(Request $request)
@@ -487,6 +489,11 @@ class VentasController extends Controller
             session([
                 "localidad" => 'Todas'
             ]);
+            if($localidad_cliente == "Todas")
+            {
+                return redirect()
+                ->route("ventas.index");
+            }
             return redirect()
                 ->route("ventas.index")
                 ->with("mensaje", "Localidad no encontrada");
@@ -495,8 +502,8 @@ class VentasController extends Controller
                 "localidad" => $cliente->localidad,
             ]);
             return redirect()
-                ->route("ventas.index")
-                ->with("mensaje", "Localidad Guardada:$cliente->localidad");
+                ->route("ventas.index");
+               // ->with("mensaje", "Localidad Guardada:$cliente->localidad");
         }
     }
 
