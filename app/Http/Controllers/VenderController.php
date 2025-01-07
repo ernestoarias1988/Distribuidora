@@ -631,11 +631,8 @@ class VenderController extends Controller
     $productoActualizado->existencia -= $productoVendido->cantidad;
     $productoActualizado->saveOrFail();
 
-
-
-
     return redirect()
-        ->route("ventas.index");
+        ->route("ventas.show", $venta);
 }
 }
 
