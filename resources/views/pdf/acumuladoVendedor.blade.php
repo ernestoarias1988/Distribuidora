@@ -10,10 +10,12 @@ $ventas = $data['ventas'];
 $vendedor = $data['vendedor'];
 $localidad = $data['localidad'];
 $total = 0;
+$totalDeVenta = 0;
 $duplicados = [1,2];
 $productosAcum = array();
 $productosAcumCant = array();
 $productosAcumPrecio = array();
+$productosAcumCodigo = array();
 $ventasXVend = array();
 $ventasXVendTotales = array();
 $total = 0;
@@ -106,18 +108,31 @@ for ($i = 0; $i < 10000; $i++) {
                     foreach ($ventas as $venta) {
                         if ($venta->vendedor == $vendedor && $venta->entregado == 0) {
                             if ($venta->cliente->nombre == $cliente) {
+                                $totalDeVenta = 0;
+                                foreach ($venta->productos as $producto) {
+                                    $precio = $producto->precio * $producto->cantidad;
+                                    $totalDeVenta += $precio;
+                                }
                                 $indexVend = array_search($cliente, $ventasXVend);
-                                $ventasXVendTotales[$indexVend] += $venta->total;
+                                $ventasXVendTotales[$indexVend] += $totalDeVenta;
                             }
                         }
                     }
-                    $ventasInd = 0;
                     ?>
+
                     @endforeach
 <?php
 $i= 1;
+$ventasInd = 0;
 ?>
- 
+                    @foreach($ventasXVend as $cliente)
+                    <h5><strong>{{$i}}. Cliente:</strong> {{$cliente}} <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}} </h5>
+                    <?php
+                    $ventasInd++;
+                    $i++;
+                    ?>
+                    @endforeach
+                    <h3>Total: ${{$total}}</h3>
         </div>
-        
     </div>
+</div>

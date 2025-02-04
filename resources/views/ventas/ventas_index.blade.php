@@ -37,7 +37,7 @@
             @csrf
             <div class="form-group">
                 <label for="id_localidad">Seleccione una localidad</label>
-                <select class="form-control select2" name="id_localidad" id="id_localidad" style="width: 180px;" required>
+                <select class="form-control select2" name="id_localidad" id="id_localidad" style="width: 300px;" required>
                     <option value="" disabled selected>Seleccione una localidad</option>
                     <option value="Todas" {{ old('id_localidad', $localidad) == 'Todas' ? 'selected' : '' }}>Todas</option>
                     <option value="Salta" {{ old('id_localidad', $localidad) == 'Salta' ? 'selected' : '' }}>Salta</option>
@@ -58,10 +58,10 @@
 </div>
 
 @if(session("localidad") !== null && session("localidad") != "Todas")
-<h5>Localidad: {{$localidad}} <a style="margin-left:0.2%" href="{{route("ventas.indexShowTodos",["show"=>$entregadosFlag])}}">Mostrar todas las localidades</a></h5>
+<h4>Localidad: {{$localidad}} <a style="margin-left:0.2%" href="{{route("ventas.indexShowTodos",["show"=>$entregadosFlag])}}">Mostrar todas las localidades</a></h4>
 @endif
 
-<div class="row" style="margin: 0.2%; margin-bottom: 1rem; margin-left:-1%">
+<div class="row" style="margin: 0.2%; margin-bottom: 1rem;">
     <div class="col-12">
         <form class="form-inline">
             <label for="entregadosDropdown" class="mr-2">Mostrando Entregados:</label>
@@ -81,7 +81,7 @@
                 <th>Cliente</th>
                 <th>Localidad</th>
                 <th>Total</th>
-                <th style="width: 100px;">Pagado</th>
+                <th style="width: 150px;">Pagado</th>
                 <th>Diferencia</th>
                 <th>Entregado</th>
                 <th>Vendedor</th>
@@ -148,7 +148,7 @@
     $(document).ready(function() {
         $('.select2').select2({
             placeholder: 'Seleccione una localidad',
-            allowClear: false
+            allowClear: true
         });
 
         $('#id_localidad').on('change', function() {
@@ -165,6 +165,7 @@
         });
 
         $('#ventasTable').DataTable({
+            "pageLength": 50, // Set default number of rows to display
             "order": [[0, "desc"]], // Sort by the 1st column (Fecha) in descending order
             "language": {
                 "lengthMenu": "Mostrar _MENU_ ventas",
