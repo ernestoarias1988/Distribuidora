@@ -65,7 +65,7 @@
     <div class="col-12">
         <form class="form-inline">
             <label for="entregadosDropdown" class="mr-2">Mostrando Entregados:</label>
-            <select class="form-control select2" id="entregadosDropdown" style="width: 60px;">
+            <select class="form-control select2" id="entregadosDropdown" style="width: 67px;">
                 <option value="0" {{ $entregadosFlag == 0 ? 'selected' : '' }}>No</option>
                 <option value="1" {{ $entregadosFlag == 1 ? 'selected' : '' }}>Sí</option>
             </select>
@@ -124,10 +124,10 @@
                     </a>
                 </td>
                 <td>
-                    <form action="{{route("ventas.destroy", [$venta])}}" method="post">
+                    <form action="{{route("ventas.destroy", [$venta])}}" method="post" class="delete-form" data-cliente="{{$venta->cliente->nombre}}">
                         @method("delete")
                         @csrf
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger delete-button">
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>
@@ -213,6 +213,17 @@
         $('#localidadlist').on('click', 'li', function() {
             $('#id_localidad').val($(this).text());
             $('#localidadlist').fadeOut();
+        });
+
+        // Add confirmation dialog for delete buttons
+        $('.delete-form').on('submit', function(e) {
+            var form = this;
+            e.preventDefault();
+            var cliente = $(this).data('cliente');
+            var confirmed = confirm('¿Estás seguro de que deseas eliminar esta venta?\nCliente: ' + cliente);
+            if (confirmed) {
+                form.submit();
+            }
         });
     });
 </script>
