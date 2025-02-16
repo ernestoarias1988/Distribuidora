@@ -73,6 +73,6 @@ Login
 @endsection
 <script>
     function message() {
-        alert("Datos descargados!");
+        alert("Datos descargasadasdos!");
     }
 </script>

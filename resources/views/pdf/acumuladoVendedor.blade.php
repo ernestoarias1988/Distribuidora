@@ -1,11 +1,8 @@
 <?php
 
-
 use App\Venta;
 use Illuminate\Http\Request;
 
-//["ventas" => Venta::all()];
-//$localidad = $data['localidad'];
 $ventas = $data['ventas'];
 $vendedor = $data['vendedor'];
 $localidad = $data['localidad'];
@@ -35,12 +32,16 @@ for ($i = 0; $i < 10000; $i++) {
         </h2>
 
         <div class="table-responsive">
-            
+            <style>
+                @page {
+                    size: A4 portrait;
+                }
+            </style>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Cantidad</th>
-                        <th>Descripción</th>
+                        <th style="width: 40%;">Descripción</th>
                         <th>Precio Unitario</th>
                         <th>Precio X Cantidad</th>
                     </tr>
@@ -119,20 +120,37 @@ for ($i = 0; $i < 10000; $i++) {
                         }
                     }
                     ?>
-
                     @endforeach
-<?php
-$i= 1;
-$ventasInd = 0;
-?>
-                    @foreach($ventasXVend as $cliente)
-                    <h5><strong>{{$i}}. Cliente:</strong> {{$cliente}} <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}} </h5>
-                    <?php
-                    $ventasInd++;
-                    $i++;
-                    ?>
-                    @endforeach
-                    <h3>Total: ${{$total}}</h3>
+                </tbody>
+            </table>
         </div>
+    </div>
+</div>
+<div style="page-break-before: always;">
+    <style>
+        @page {
+            size: A4 landscape;
+        }
+        .two-column {
+            column-count: 2;
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+        }
+    </style>
+    <div class="two-column">
+        <?php
+        $i = 1;
+        $ventasInd = 0;
+        ?>
+        @foreach($ventasXVend as $cliente)
+            <h5><strong>{{$i}}. Cliente:</strong> {{$cliente}}
+                <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}}
+            </h5>
+            <?php
+            $ventasInd++;
+            $i++;
+            ?>
+        @endforeach
+        <h3>Total: ${{$total}}</h3>
     </div>
 </div>

@@ -97,12 +97,13 @@ Route::group(['prefix' => 'auth'], function () {
             return response()->json(Venta::with(["productos", "cliente"])->get());
         });
         Route::post("/venta", function (Request $request) {
+            Log::debug('ACA');
             $venta_controller =  new VenderController;
             $result[0] = false;
             $result[1] = 0;
             $message = 'El body recibido fue:';
             Log::debug($message.' '.$request.'
-            
+
             
             ');
             $result = $venta_controller->terminarVentaAPI($request);
