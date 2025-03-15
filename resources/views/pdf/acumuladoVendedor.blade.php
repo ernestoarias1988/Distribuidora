@@ -30,23 +30,26 @@ for ($i = 0; $i < 10000; $i++) {
         echo " del $fecha";
         ?>
         </h2>
-
         <div class="table-responsive">
             <style>
-                @page {
-                    size: A4 portrait;
-                }
+            @page {
+                size: A4 landscape;
+            }
+            table {
+                font-size: 14px;
+                width: 100%; /* Make the table use all the width of the page */
+            }
             </style>
             <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Cantidad</th>
-                        <th style="width: 40%;">Descripción</th>
-                        <th>Precio Unitario</th>
-                        <th>Precio X Cantidad</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <thead>
+                <tr>
+                <th style="width: 10%;">Cantidad</th>
+                <th style="width: 50%;">Descripción</th>
+                <th style="width: 20%;">Precio Unitario</th>
+                <th style="width: 20%;">Precio X Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
                     <?php
                     $j = 0;
                     foreach ($ventas as $venta) {
@@ -94,10 +97,10 @@ for ($i = 0; $i < 10000; $i++) {
                         if ($productosAcum[$i] != null && $productosAcumCodigo[$i] != null) {
                             $precio = $productosAcumPrecioNEW[$i] * $productosAcumCantNEW[$i];
                             echo "<tr>
-                                <td>$productosAcumCantNEW[$i]</td> 
-                                <td>$productosAcumNEW[$i]</td>
-                                <td>$$productosAcumPrecioNEW[$i]</td>
-                                <td>$$precio</td> 
+                                <td style='width: 10%; text-align: center;'>$productosAcumCantNEW[$i]</td> 
+                                <td style='width: 50%; text-align: center;'>$productosAcumNEW[$i]</td>
+                                <td style='width: 20%; text-align: center;'>$$productosAcumPrecioNEW[$i]</td>
+                                <td style='width: 20%; text-align: center;'>$$precio</td> 
                                 </tr>";
                             $total += $precio;
                         }
@@ -125,32 +128,60 @@ for ($i = 0; $i < 10000; $i++) {
             </table>
         </div>
     </div>
-</div>
-<div style="page-break-before: always;">
-    <style>
-        @page {
-            size: A4 landscape;
-        }
-        .two-column {
-            column-count: 2;
-            -webkit-column-count: 2;
-            -moz-column-count: 2;
-        }
-    </style>
-    <div class="two-column">
-        <?php
-        $i = 1;
-        $ventasInd = 0;
-        ?>
-        @foreach($ventasXVend as $cliente)
-            <h5><strong>{{$i}}. Cliente:</strong> {{$cliente}}
-                <strong>Total:</strong> ${{$ventasXVendTotales[$ventasInd]}}
-            </h5>
-            <?php
-            $ventasInd++;
-            $i++;
-            ?>
-        @endforeach
-        <h3>Total: ${{$total}}</h3>
-    </div>
+
+
+
+<style>
+    .container {
+        width: 100%;
+    }
+    .client-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .client-table td {
+        width: 50%; /* Each column takes 50% */
+        vertical-align: top;
+        padding: 4px;
+        font-size: 14px;
+
+    }
+    .client-item {
+        margin-bottom: 8px;
+        page-break-inside: avoid;
+    }
+</style>
+<style>
+    .page-break {
+        page-break-after: always;
+    }
+</style>
+<div class="page-break"></div>
+<div class="container">
+    <?php
+    $half = ceil(count($ventasXVend) / 2);
+    ?>
+
+    <table class="client-table">
+        <tr>
+
+            <td>
+                @for ($i = 0; $i < $half; $i++)
+                    <p class="client-item"><strong>{{ $i + 1 }}. Cliente:</strong> {{ $ventasXVend[$i] }}
+                        <strong>Total:</strong> ${{ $ventasXVendTotales[$i] }}
+                    </p>
+                    
+                @endfor
+            </td>
+            <td>
+                @for ($i = $half; $i < count($ventasXVend); $i++)
+                    <p class="client-item"><strong>{{ $i + 1 }}. Cliente:</strong> {{ $ventasXVend[$i] }}
+                        <strong>Total:</strong> ${{ $ventasXVendTotales[$i] }}
+                    </p>
+                @endfor
+            </td>
+        </tr>
+    </table>
+
+    <h3>Total: ${{ $total }}</h3>
 </div>
