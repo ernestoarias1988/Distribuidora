@@ -39,7 +39,7 @@
                     <input type="file" name="file" class="custom-file-input" id="customFile">
                     <label class="custom-file-label" for="customFile">Seleccionar archivo</label>
                 </div>
-                <button class="btn btn-success btn-sm">Importar Productos</button>
+                <button class="btn btn-success btn-sm" id="importButton" disabled>Importar Productos</button>
             </form>
         </div>
         <div class="table-responsive">
@@ -114,6 +114,13 @@
             $(inputFile).parent()
                 .find('.custom-file-label')
                 .html(inputFile.files[0].name);
+
+            // Enable the import button if a file is selected
+            if (inputFile.files.length > 0) {
+                $('#importButton').prop('disabled', false);
+            } else {
+                $('#importButton').prop('disabled', true);
+            }
         });
     });
 </script>
