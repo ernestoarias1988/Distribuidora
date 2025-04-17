@@ -524,6 +524,13 @@ class VentasController extends Controller
         return view('logs.show', compact('logs'));
     }
 
+
+    public function showPolicy()
+    {
+        return view('policy.show');
+    }
+
+
     public function cargarCantidadShow(Request $request)
     {
         $venta = Venta::findOrFail($request->get("id"));

@@ -29,6 +29,7 @@ Route::get("/logout", function () {
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/exportarp', 'ProductosController@export');
 Route::get('/exportarv', 'VentasController@export');
+Route::get('/policy', [VentasController::class, 'showPolicy'])->name('policy.show');
 
 
 Route::middleware("auth")
