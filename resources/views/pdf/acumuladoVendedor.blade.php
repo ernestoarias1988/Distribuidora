@@ -39,6 +39,14 @@ for ($i = 0; $i < 10000; $i++) {
                 font-size: 14px;
                 width: 100%; /* Make the table use all the width of the page */
             }
+            table, th, td {
+                border: 1px solid #333 !important;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 8px;
+                text-align: center;
+            }
             </style>
             <table class="table table-bordered">
             <thead>
@@ -138,13 +146,17 @@ for ($i = 0; $i < 10000; $i++) {
     .client-table {
         width: 100%;
         border-collapse: collapse;
+        border: 1px solid #333;
+    }
+    .client-table tr {
+        border: 1px solid #333;
     }
     .client-table td {
-        width: 50%; /* Each column takes 50% */
+        width: 50%;
         vertical-align: top;
         padding: 4px;
         font-size: 14px;
-
+        border: 1px solid #333;
     }
     .client-item {
         margin-bottom: 8px;
@@ -153,35 +165,73 @@ for ($i = 0; $i < 10000; $i++) {
 </style>
 <style>
     .page-break {
-        page-break-after: always;
+        page-break-after: avoid;
     }
 </style>
 <div class="page-break"></div>
 <div class="container">
-    <?php
-    $half = ceil(count($ventasXVend) / 2);
-    ?>
+<?php
+$half = ceil(count($ventasXVend) / 2);
 
-    <table class="client-table">
+if ($half > 23) {
+    $third = ceil(count($ventasXVend) / 3);
+    $left = array_slice($ventasXVend, 0, $third);
+    $middle = array_slice($ventasXVend, $third, $third);
+    $right = array_slice($ventasXVend, $third * 2);
+    $leftTotals = array_slice($ventasXVendTotales, 0, $third);
+    $middleTotals = array_slice($ventasXVendTotales, $third, $third);
+    $rightTotals = array_slice($ventasXVendTotales, $third * 2);
+    $maxRows = max(count($left), count($middle), count($right));
+} else {
+    $left = array_slice($ventasXVend, 0, $half);
+    $right = array_slice($ventasXVend, $half);
+    $leftTotals = array_slice($ventasXVendTotales, 0, $half);
+    $rightTotals = array_slice($ventasXVendTotales, $half);
+    $maxRows = max(count($left), count($right));
+}
+?>
+
+<table class="client-table">
+    @for ($i = 0; $i < $maxRows; $i++)
         <tr>
-
             <td>
-                @for ($i = 0; $i < $half; $i++)
-                    <p class="client-item"><strong>{{ $i + 1 }}. Cliente:</strong> {{ $ventasXVend[$i] }}
-                        <strong>Total:</strong> ${{ $ventasXVendTotales[$i] }}
-                    </p>
-                    
-                @endfor
+                @if(isset($left[$i]))
+                    <strong>{{ $i + 1 }}. Cliente:</strong> {{ $left[$i] }}<br>
+                    <strong>Total:</strong> ${{ $leftTotals[$i] }}
+                @endif
             </td>
+            @if ($half > 23)
+                <td>
+                    @if(isset($middle[$i]))
+                        <strong>{{ $i + 1 + count($left) }}. Cliente:</strong> {{ $middle[$i] }}<br>
+                        <strong>Total:</strong> ${{ $middleTotals[$i] }}
+                    @endif
+                </td>
+            @endif
             <td>
-                @for ($i = $half; $i < count($ventasXVend); $i++)
-                    <p class="client-item"><strong>{{ $i + 1 }}. Cliente:</strong> {{ $ventasXVend[$i] }}
-                        <strong>Total:</strong> ${{ $ventasXVendTotales[$i] }}
-                    </p>
-                @endfor
+                @if(isset($right[$i]))
+                    <strong>{{ $i + 1 + ($half > 23 ? count($left) + count($middle) : count($left)) }}. Cliente:</strong> {{ $right[$i] }}<br>
+                    <strong>Total:</strong> ${{ $rightTotals[$i] }}
+                @endif
             </td>
         </tr>
-    </table>
+    @endfor
+</table>
 
     <h3>Total: ${{ $total }}</h3>
 </div>
+
+<style>
+    .client-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 24px;
+        text-align: left;
+    }
+    .client-table td, .client-table th {
+        border: 1px solid #333;
+        padding: 8px;
+        vertical-align: top;
+        font-size: 15px;
+    }
+</style>
