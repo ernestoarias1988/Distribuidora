@@ -634,6 +634,36 @@ class VenderController extends Controller
     return redirect()
         ->route("ventas.show", $venta);
 }
+
+public function fetchPrecio(Request $request)
+{
+    $codigo = $request->input('query');
+    $clienteId = $request->input('client');
+    $cliente = \App\Cliente::where('id', $clienteId)->first();
+    $producto = \App\Producto::where('descripcion', $codigo)->first();
+
+    if ($cliente) {
+        $lista = $cliente->lista;
+        switch ($lista) {
+            case "1":
+                return $producto ? $producto->precio_venta1 : '';
+                break;
+
+            case "2":
+                return $producto ? $producto->precio_venta2 : '';
+                break;
+
+            case "3":
+                return $producto ? $producto->precio_venta3 : '';
+                break;
+
+            default:
+                return 0;
+                break;
+        }
+    }
+    return $producto ? $producto->precio_venta1 : $codigo;
+}
 }
 
 
