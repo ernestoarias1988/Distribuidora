@@ -44,7 +44,7 @@ for ($i = 0; $i < 10000; $i++) {
                 border-collapse: collapse;
             }
             th, td {
-                padding: 8px;
+                padding: 3px;
                 text-align: center;
             }
             </style>
@@ -165,7 +165,7 @@ for ($i = 0; $i < 10000; $i++) {
 </style>
 <style>
     .page-break {
-        page-break-after: avoid;
+        page-break-after: always;
     }
 </style>
 <div class="page-break"></div>
@@ -194,24 +194,24 @@ if ($half > 23) {
 <table class="client-table">
     @for ($i = 0; $i < $maxRows; $i++)
         <tr>
-            <td>
+            <td style="text-align: left;padding:4px;">
                 @if(isset($left[$i]))
-                    <strong>{{ $i + 1 }}. Cliente:</strong> {{ $left[$i] }}<br>
-                    <strong>Total:</strong> ${{ $leftTotals[$i] }}
+                    <strong>{{ $i + 1 }}. Cliente:</strong> {{ $left[$i] }}
+                    <strong> - </strong> ${{ $leftTotals[$i] }}
                 @endif
             </td>
             @if ($half > 23)
                 <td>
                     @if(isset($middle[$i]))
-                        <strong>{{ $i + 1 + count($left) }}. Cliente:</strong> {{ $middle[$i] }}<br>
-                        <strong>Total:</strong> ${{ $middleTotals[$i] }}
+                        <strong>{{ $i + 1 + count($left) }}. Cliente:</strong> {{ $middle[$i] }}
+                        <strong> - </strong> ${{ $middleTotals[$i] }}
                     @endif
                 </td>
             @endif
             <td>
                 @if(isset($right[$i]))
-                    <strong>{{ $i + 1 + ($half > 23 ? count($left) + count($middle) : count($left)) }}. Cliente:</strong> {{ $right[$i] }}<br>
-                    <strong>Total:</strong> ${{ $rightTotals[$i] }}
+                    <strong>{{ $i + 1 + ($half > 23 ? count($left) + count($middle) : count($left)) }}. Cliente:</strong> {{ $right[$i] }}
+                    <strong> - </strong> ${{ $rightTotals[$i] }}
                 @endif
             </td>
         </tr>
