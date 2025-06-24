@@ -448,25 +448,21 @@ class VenderController extends Controller
                 return [false, $idVenta];
             }
             */
-            $cliente = Cliente::where('id', '=', $request->idCliente)->first();
+            $cliente =  Cliente::where('id', '=', $request->idCliente)->first();
             if ($cliente != null) {
                 $message = '
             
             
             
-            
             ';
-            Log::debug($message.'ID SI FUNCIONAA! '.$message);
-                $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
+            Log::debug($message.'ID SI FUNCIONAA! posta '.$message);
             }            
             if ($cliente == null) {
-                $message = '
-            
-            
+                $message = '            
             
             
             Error Creando CLIENTE POR ID';
-            Log::debug($message.'ID NO FUNCIONAA! '.$message);
+            Log::debug($message.'ID NO FUNCIONAAasd! '.$message .' CLientId = '.$request->idCliente .' Cliente = '.$cliente);
                 $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
             }
 
@@ -542,16 +538,16 @@ class VenderController extends Controller
         } catch (\Exception $e) {
             //return [false, $idVenta, $e];
             $message = '
+        
             
             
             
-            
-            Error Creando Venta de';
-            Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
+            Error Creando Venta de' ;
+            //Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
             $message = '
-            El body que fallo fue:';
+            El body que fallo fuess:' .$e->getMessage();
             Log::debug($message.' '.$request);
-            return [false, $idVenta];
+            return [false, $message];
         }
         //return true;
         return [true, 0];

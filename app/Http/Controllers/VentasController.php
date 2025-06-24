@@ -344,10 +344,25 @@ class VentasController extends Controller
     }
     public function exportVentasVendedorPdf(Request $request)
     {
+        $vendedor = $request->get("id");
+        $localidad = $request->get("localidad");
+        $ventas = Venta::where('vendedor', $vendedor)
+            ->where(function($query) use ($localidad) {
+                if ($localidad !== 'Todas' && $localidad !== null) {
+                    $query->whereHas('cliente', function($q) use ($localidad) {
+                        $q->where('localidad', $localidad);
+                    });
+                }
+            })
+            ->where('entregado', '!=', 1)
+            ->get()
+            ->filter(function($venta) {
+                return $venta->productos && $venta->productos->count() > 0;
+            });
         $data = [
-            "ventas" => Venta::all(),
-            "vendedor" => $request->get("id"),
-            "localidad" => $request->get("localidad")
+            "ventas" => $ventas,
+            "vendedor" => $vendedor,
+            "localidad" => $localidad
         ];
         $date = date('Y-m-d');
         $invoice = "2222";
