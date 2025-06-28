@@ -9,6 +9,7 @@ $ventas = $data['ventas'];
 $vendedor = $data['vendedor'];
 $localidad = $data['localidad'];
 $total = 0;
+$totalACum = 0;
 $duplicados = [1,2];
 /*
 $cliente = $data['cliente'];
@@ -21,6 +22,18 @@ $descuento = $data['descuento'];
 //$porcentajeImpuestos = 16;
 $fecha = date("Y-m-d");
 */
+?>
+<?php
+if (!function_exists('splitProductosColumns')) {
+    function splitProductosColumns($productos, $page, $perPage = 40, $perCol = 20) {
+        $all = $productos->all();
+        $start = $page * $perPage;
+        $pageSlice = array_slice($all, $start, $perPage);
+        $left = array_slice($pageSlice, 0, $perCol);
+        $right = array_slice($pageSlice, $perCol, $perCol);
+        return [$left, $right];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -44,76 +57,70 @@ $fecha = date("Y-m-d");
                     No hay ventas para este vendedor y localidad.
                 </div>
             @else
-                @php $check=0 @endphp
                 @foreach($ventas->sortBy('created_at') as $venta)
                     @if($venta->cliente && $venta->productos && $venta->productos->count() > 0)
-                        <table style="text-align: center; width:50%; border-collapse: collapse; font-size:80%; margin: 5px">
-                            <tbody>
+                        @php
+                            $total = 0;
+                            $productos = $venta->productos->all();
+                            foreach($productos as $producto) {
+                                $total += ($producto->cantidad * $producto->precio);
+                            }
+                            $rowsPerTable = 25;
+                            $numPages = ceil(count($productos) / $rowsPerTable);
+                        @endphp
+                        @for($page = 0; $page < $numPages; $page++)
+                            @php
+                                $slice = array_slice($productos, $page * $rowsPerTable, $rowsPerTable);
+                            @endphp
+                            <table width="100%" style="table-layout: fixed; page-break-inside: avoid; border-spacing: 0;">
                                 <tr>
-                                    @foreach($duplicados as $duplicadoo)
-                                        <td style="margin-left:5px">
-                                            <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
-                                            @if($venta->productos->count() > 25)
-                                                <table style="text-align: center; width:100%; border-collapse: collapse; font-size:70%;">
-                                            @endif
-                                            @if($venta->productos->count() <= 25)
-                                                <table style="text-align: center; width:100%; border-collapse: collapse; font-size:80%;">
-                                            @endif
-                                                <thead>
+                                    @for($col = 0; $col < 2; $col++)
+                                    <td style="vertical-align: top; width: 50%; padding: 0 8px; box-sizing: border-box;">
+                                        <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
+                                        <table style="width:100%; border-collapse: collapse; font-size:80%;">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="4" style="text-align: left; border: 1px solid #000;">
+                                                        Cliente: {{$venta->cliente->nombre}}<br>
+                                                        Dirección: {{$venta->cliente->direccion}}<br>
+                                                        Localidad: {{$venta->cliente->localidad}}<br>
+                                                        Vendedor: {{$venta->vendedor}}<br>
+                                                        Fecha: {{ date("d/m/Y") }}<img style="width:80px; position:relative; bottom:60px; float:right;" src="{{ url('/img/logo.png') }}">
+                                                    </th>
+                                                </tr>
+                                                <tr style="border: 1px solid #000; text-align: left; font-weight:10">
+                                                    <th style="border: 1px solid #000; width: 3%">Cantidad</th>
+                                                    <th style="text-align:left; border: 1px solid #000; width: 60%">Descripción</th>
+                                                    <th style="border: 1px solid #000; width: 22%">Precio unitario</th>
+                                                    <th style="border: 1px solid #000; width: 15%">SubTotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($slice as $producto)
                                                     <tr>
-                                                        <th style="text-align: left; border: 1px solid #000;border-right: 1px solid #fff; font-weight:10">Cliente: {{$venta->cliente->nombre}}</th>
-                                                        <th style="border: 1px solid #000; border-right: 1px solid #000;"></th>
-                                                        <th style="border: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #fff;"></th>
-                                                        <th style="border: 1px solid #000; text-align: rigth;"> Fecha: <?php echo date("d/m/Y"); ?></th>
+                                                        <td style="border: 1px solid #000;">{{$producto->cantidad}} U.</td>
+                                                        <td style="text-align:left; border: 1px solid #000;">{{$producto->descripcion}}</td>
+                                                        <td style="border: 1px solid #000;">${{number_format($producto->precio, 2)}}</td>
+                                                        <td style="border: 1px solid #000;">${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <th style="text-align: left; font-weight:10"><strong>Presupuesto</strong><br>{{$venta->cliente->direccion}}<br>Localidad: {{$venta->cliente->localidad}} <br>Vendedor: {{$venta->vendedor}}</th>
-                                                        <th></th>
-                                                        <th></th>
-                                                        <th> <img style="width:80px; " src="{{url("/img/logo.png")}}"></th>
-                                                    </tr>
-                                                    <tr><th style="text-align: left; font-weight:10"></th></tr>
-                                                    <tr><th style="text-align: left; font-weight:10"></th></tr>
-                                                    <tr style="border: 1px solid #000; text-align: left;  font-weight:10">
-                                                        <th style="border: 1px solid #000; width: 3%;">Cantidad</th>
-                                                        <th style="text-align:left; border: 1px solid #000; width: 60%;">Descripción</th>
-                                                        <th style="border: 1px solid #000; width: 22%;">Precio unitario</th>
-                                                        <th style="border: 1px solid #000; width: 15%;">SubTotal</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="border: 1px solid #000; ">
-                                                    <?php $total=0; ?>
-                                                    @foreach($venta->productos as $producto)
-                                                        <tr>
-                                                            <td style="border: 1px solid #000; width: 3%;"> {{$producto->cantidad}} U. </td>
-                                                            <td style="text-align:left; border: 1px solid #000; width: 60%;">{{$producto->descripcion}} </td>
-                                                            <td style="border: 1px solid #000; width: 22%;"> ${{number_format($producto->precio, 2)}}</td>
-                                                            <td style="border: 1px solid #000; width: 15%;"> ${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
-                                                        </tr>
-                                                        <?php $total += ($producto->cantidad * $producto->precio); ?>
-                                                    @endforeach
-                                                    <tr>
-                                                        <td style="text-align:center; width: 3%; margin-right: 3%;border: 1px solid #000; font-weight:bold">Total</td>
-                                                        <td style="text-align:center; width: 60%; margin-right: 3%;border: 1px solid #000"></td>
-                                                        <td style="text-align:center; width: 22%; margin-right: 3%;border: 1px solid #000"></td>
-                                                        <td style="text-align:center; width: 15%; margin-right: 3%;border: 1px solid #000; font-weight:bold">${{number_format($total, 2)}}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            --------------------------------------------------------------------------------------------------
-                                            @php $check++ @endphp
-                                            <!-- Salto de pagina cada 2 ventas -->
-                                            @if( $check % 2 == 0 )
-                                                @php echo '<div style="page-break-after: always;"></div>'; @endphp
-                                            @endif
-                                        </td>
-                                        @if( $check % 2 != 0 )
-                                            <td style="color: white">------------------</td>
-                                        @endif
-                                    @endforeach
+                                                @endforeach
+                                                @if($page == $numPages-1)
+                                                <tr>
+                                                    <td colspan="3" style="text-align:right; border: 1px solid #000; font-weight:bold">Total</td>
+                                                    <td style="border: 1px solid #000; font-weight:bold">${{number_format($total, 2)}}</td>
+                                                </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    @endfor
+                                    
                                 </tr>
-                            </tbody>
-                        </table>
+                            </table>
+                            @if($page < $numPages - 1)
+                                <div style="page-break-after: always;"></div>
+                            @endif
+                        @endfor
                     @endif
                 @endforeach
             @endif
