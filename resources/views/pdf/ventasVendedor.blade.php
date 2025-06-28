@@ -58,70 +58,69 @@ if (!function_exists('splitProductosColumns')) {
                 </div>
             @else
                 @foreach($ventas->sortBy('created_at') as $venta)
-                    @if($venta->cliente && $venta->productos && $venta->productos->count() > 0)
-                        @php
-                            $total = 0;
-                            $productos = $venta->productos->all();
-                            foreach($productos as $producto) {
-                                $total += ($producto->cantidad * $producto->precio);
-                            }
-                            $rowsPerTable = 25;
-                            $numPages = ceil(count($productos) / $rowsPerTable);
-                        @endphp
-                        @for($page = 0; $page < $numPages; $page++)
-                            @php
-                                $slice = array_slice($productos, $page * $rowsPerTable, $rowsPerTable);
-                            @endphp
-                            <table width="100%" style="table-layout: fixed; page-break-inside: avoid; border-spacing: 0;">
+@if($venta->cliente && $venta->productos && $venta->productos->count() > 0)
+    @php
+        $total = 0;
+        $productos = $venta->productos->all();
+        foreach($productos as $producto) {
+            $total += ($producto->cantidad * $producto->precio);
+        }
+        $rowsPerTable = 25;
+        $numPages = ceil(count($productos) / $rowsPerTable);
+    @endphp
+    @for($page = 0; $page < $numPages; $page++)
+        @php
+            $slice = array_slice($productos, $page * $rowsPerTable, $rowsPerTable);
+        @endphp
+        <table width="100%" style="table-layout: fixed; page-break-inside: avoid; border-spacing: 0;">
+            <tr>
+                @for($col = 0; $col < 2; $col++)
+                    <td style="vertical-align: top; width: 50%; padding: 0 8px; box-sizing: border-box;">
+                        <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
+                        <table style="width:100%; border-collapse: collapse; font-size:80%;">
+                            <thead>
                                 <tr>
-                                    @for($col = 0; $col < 2; $col++)
-                                    <td style="vertical-align: top; width: 50%; padding: 0 8px; box-sizing: border-box;">
-                                        <h3 style="text-align: center; margin:2px">Distribuidora Dany</h3>
-                                        <table style="width:100%; border-collapse: collapse; font-size:80%;">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="4" style="text-align: left; border: 1px solid #000;">
-                                                        Cliente: {{$venta->cliente->nombre}}<br>
-                                                        Dirección: {{$venta->cliente->direccion}}<br>
-                                                        Localidad: {{$venta->cliente->localidad}}<br>
-                                                        Vendedor: {{$venta->vendedor}}<br>
-                                                        Fecha: {{ date("d/m/Y") }}<img style="width:80px; position:relative; bottom:60px; float:right;" src="{{ url('/img/logo.png') }}">
-                                                    </th>
-                                                </tr>
-                                                <tr style="border: 1px solid #000; text-align: left; font-weight:10">
-                                                    <th style="border: 1px solid #000; width: 3%">Cantidad</th>
-                                                    <th style="text-align:left; border: 1px solid #000; width: 60%">Descripción</th>
-                                                    <th style="border: 1px solid #000; width: 22%">Precio unitario</th>
-                                                    <th style="border: 1px solid #000; width: 15%">SubTotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($slice as $producto)
-                                                    <tr>
-                                                        <td style="border: 1px solid #000;">{{$producto->cantidad}} U.</td>
-                                                        <td style="text-align:left; border: 1px solid #000;">{{$producto->descripcion}}</td>
-                                                        <td style="border: 1px solid #000;">${{number_format($producto->precio, 2)}}</td>
-                                                        <td style="border: 1px solid #000;">${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
-                                                    </tr>
-                                                @endforeach
-                                                @if($page == $numPages-1)
-                                                <tr>
-                                                    <td colspan="3" style="text-align:right; border: 1px solid #000; font-weight:bold">Total</td>
-                                                    <td style="border: 1px solid #000; font-weight:bold">${{number_format($total, 2)}}</td>
-                                                </tr>
-                                                @endif
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    @endfor
-                                    
+                                    <th colspan="4" style="text-align: left; border: 1px solid #000;">
+                                        Cliente: {{$venta->cliente->nombre}}<br>
+                                        Dirección: {{$venta->cliente->direccion}}<br>
+                                        Localidad: {{$venta->cliente->localidad}}<br>
+                                        Vendedor: {{$venta->vendedor}}<br>
+                                        Fecha: {{ date("d/m/Y") }}<img style="width:80px; position:relative; bottom:60px; float:right;" src="{{ url('/img/logo.png') }}">
+                                    </th>
                                 </tr>
-                            </table>
-                            @if($page < $numPages - 1)
-                                <div style="page-break-after: always;"></div>
-                            @endif
-                        @endfor
-                    @endif
+                                <tr style="border: 1px solid #000; text-align: left; font-weight:10">
+                                    <th style="border: 1px solid #000; width: 3%">Cantidad</th>
+                                    <th style="text-align:left; border: 1px solid #000; width: 60%">Descripción</th>
+                                    <th style="border: 1px solid #000; width: 22%">Precio unitario</th>
+                                    <th style="border: 1px solid #000; width: 15%">SubTotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($slice as $producto)
+                                    <tr>
+                                        <td style="border: 1px solid #000;">{{$producto->cantidad}} U.</td>
+                                        <td style="text-align:left; border: 1px solid #000;">{{$producto->descripcion}}</td>
+                                        <td style="border: 1px solid #000;">${{number_format($producto->precio, 2)}}</td>
+                                        <td style="border: 1px solid #000;">${{number_format($producto->cantidad * $producto->precio, 2)}}</td>
+                                    </tr>
+                                @endforeach
+                                @if($page == $numPages-1)
+                                    <tr>
+                                        <td colspan="3" style="text-align:center; border: 1px solid #000;font-size: 15px; font-weight:bold">Total</td>
+                                        <td style="border: 1px solid #000; font-weight:bold">${{number_format($total, 2)}}</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </td>
+                @endfor
+            </tr>
+        </table>
+        @if($page < $numPages - 1)
+            <div style="page-break-after: always;"></div>
+        @endif
+    @endfor
+@endif
                 @endforeach
             @endif
         </div>
