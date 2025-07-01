@@ -121,8 +121,9 @@ if (!function_exists('splitProductosColumns')) {
         @endif
     @endfor
 @endif
-                @endforeach
-            @endif
+<div style="page-break-after: always;"></div>
+@endforeach
+@endif
         </div>
     </div>
 </body>
