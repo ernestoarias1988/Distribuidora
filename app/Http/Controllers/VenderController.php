@@ -346,9 +346,7 @@ class VenderController extends Controller
     
     public function fetchcantidadVentas(Request $request)
     {
-        echo 'aaaaaaaaaaa';
 
-        $output = 'STOCK!PRIMERO';
 
         if ($request->get('query')) {
             $query = $request->get('query');
@@ -439,6 +437,7 @@ class VenderController extends Controller
             if($ventaexiste != NULL)
             {
                 return [false, $idAppnueva];
+                Log::debug('Venta con idApp '.$idAppnueva.' ya existe, no se puede crear otra.');
             }
 
 
@@ -449,22 +448,8 @@ class VenderController extends Controller
             }
             */
             $cliente =  Cliente::where('id', '=', $request->idCliente)->first();
-            if ($cliente != null) {
-                $message = '
+                    
             
-            
-            
-            ';
-            Log::debug($message.'ID SI FUNCIONAA! posta '.$message);
-            }            
-            if ($cliente == null) {
-                $message = '            
-            
-            
-            Error Creando CLIENTE POR ID';
-            Log::debug($message.'ID NO FUNCIONAAasd! '.$message .' CLientId = '.$request->idCliente .' Cliente = '.$cliente);
-                $cliente = Cliente::where('nombre', '=', $request->cliente)->first();
-            }
 
             if ($cliente == null) {
                 // (new Cliente($request['newClient']))->saveOrFail();
@@ -537,13 +522,10 @@ class VenderController extends Controller
             }
         } catch (\Exception $e) {
             //return [false, $idVenta, $e];
-            $message = '
-        
-            
-            
+            $message = '     
             
             Error Creando Venta de' ;
-            //Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
+            Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
             $message = '
             El body que fallo fuess:' .$e->getMessage();
             Log::debug($message.' '.$request);
