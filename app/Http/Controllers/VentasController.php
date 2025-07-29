@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
 use App\ProductoVendido;
@@ -257,7 +258,10 @@ class VentasController extends Controller
                 $productoActualizado->saveOrFail();
             }
         }
+        $message = 'Eliminando Venta de' ;
+        Log::debug($message.' '.$venta->vendedor.' La venta era: '.$venta);
         $venta->delete();
+
         return redirect()->route("ventas.index")
             ->with("mensaje", "Venta eliminada");
     }
