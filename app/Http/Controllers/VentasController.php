@@ -19,6 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Illuminate\Support\Facades\Auth;
 
 class VentasExport implements FromCollection, WithStrictNullComparison, WithHeadings
 {
@@ -258,7 +259,8 @@ class VentasController extends Controller
                 $productoActualizado->saveOrFail();
             }
         }
-        $message = 'Eliminando Venta de' ;
+        $usuario = Auth::user()->role_id;
+        $message = $usuario.' Esta eliminando Venta de' ;
         Log::debug($message.' '.$venta->vendedor.' La venta era: '.$venta);
         $venta->delete();
 
