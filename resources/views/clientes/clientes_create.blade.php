@@ -44,9 +44,14 @@
             <div class="form-group">
                 <label class="label">Lista</label>
                 <select name="lista" id="lista" class="form-control @error('lista') is-invalid @enderror" required autocomplete="lista" autofocus>
+                   
+                @if(Auth::user()->role_id == "Administrador")
                     <option value="1">Lista 1</option>
                     <option value="2">Lista 2</option>
                     <option value="3">Lista 3</option>
+                @else
+                    <option value="2">Lista 2</option>
+                @endif
                 </select>
             </div>
             {{ csrf_field() }}
