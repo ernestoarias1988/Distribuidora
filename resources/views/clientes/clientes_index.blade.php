@@ -1,23 +1,3 @@
-{{--
-
-____          _____               _ _           _
-|  _ \        |  __ \             (_) |         | |
-| |_) |_   _  | |__) |_ _ _ __ _____| |__  _   _| |_ ___
-|  _ <| | | | |  ___/ _` | '__|_  / | '_ \| | | | __/ _ \
-| |_) | |_| | | |  | (_| | |   / /| | |_) | |_| | ||  __/
-|____/ \__, | |_|   \__,_|_|  /___|_|_.__/ \__, |\__\___|
-       __/ |                               __/ |
-      |___/                               |___/
-
-  Blog:       https://parzibyte.me/blog
-  Ayuda:      https://parzibyte.me/blog/contrataciones-ayuda/
-  Contacto:   https://parzibyte.me/blog/contacto/
-
-  Copyright (c) 2020 Luis Cabrera Benito
-  Licenciado bajo la licencia MIT
-
-  El texto de arriba debe ser incluido en cualquier redistribucion
---}}
 @extends("maestra")
 @section("titulo", "Clientes")
 @section("contenido")
@@ -28,7 +8,7 @@ ____          _____               _ _           _
         @include("notificacion")
         @if (Auth::user()->role_id=="Administrador")
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table id="clientesTable" class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -73,4 +53,30 @@ ____          _____               _ _           _
         @endif
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
+<script>
+    $(document).ready(function() {
+        $('#clientesTable').DataTable({
+            "order": [[0, "asc"]],
+            "pageLength": 25,
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ clientes",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ clientes",
+                "infoEmpty": "Mostrando 0 a 0 de 0 clientes",
+                "infoFiltered": "(filtrado de _MAX_ clientes totales)",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+    });
+</script>
 @endsection
