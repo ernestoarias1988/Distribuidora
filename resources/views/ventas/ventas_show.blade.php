@@ -6,6 +6,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+<style>
+    .sin-stock-row {
+        background-color: #f8d7da;
+    }
+    .sin-stock-badge {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #721c24;
+        background-color: #f5c6cb;
+        border: 1px solid #f1aeb5;
+    }
+</style>
+
 
 <div class="row">
     <div class="col-12">
@@ -43,8 +59,17 @@
             </thead>
             <tbody>
                 @foreach($venta->productos as $producto)
-                <tr>
-                    <td>{{$producto->descripcion}}</td>
+                @php
+                    $stockActual = $stockPorCodigo[$producto->codigo_barras] ?? null;
+                    $sinStock = $venta->entregado == 0 && $stockActual !== null && $stockActual < 0;
+                @endphp
+                <tr class="{{ $sinStock ? 'sin-stock-row' : '' }}">
+                    <td>
+                        {{$producto->descripcion}}
+                        @if($sinStock)
+                        <span class="sin-stock-badge">SIN STOCK ({{$stockActual}})</span>
+                        @endif
+                    </td>
                     <td>{{$producto->codigo_barras}}</td>
                     <td>${{number_format($producto->precio, 2)}}</td>
                     <td>

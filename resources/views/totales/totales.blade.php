@@ -1,6 +1,22 @@
 @extends("maestra")
 @section("titulo", "Acumulado")
 @section("contenido")
+<style>
+    .sin-stock-row {
+        background-color: #f8d7da;
+    }
+    .sin-stock-badge {
+        display: inline-block;
+        margin-left: 0.4rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #721c24;
+        background-color: #f5c6cb;
+        border: 1px solid #f1b0b7;
+    }
+</style>
 <?php
 $productosAcum = array();
 $productosAcumCant = array();
@@ -90,9 +106,16 @@ for ($i = 0; $i < 10000; $i++) {
                     for ($i = 0; $i < 10000; $i++) {
                         if ($productosAcum[$i] != null && $productosAcumCodigo[$i] != null) {
                             $precio = $productosAcumPrecioNEW[$i] * $productosAcumCantNEW[$i];
-                            echo "<tr>
+                            $stockActual = $stockPorCodigo[$productosAcumCodigoNEW[$i]] ?? null;
+                            $sinStock = $stockActual !== null && $stockActual < 0;
+                            $rowClass = $sinStock ? ' class="sin-stock-row"' : '';
+                            $descripcion = $productosAcumNEW[$i];
+                            if ($sinStock) {
+                                $descripcion .= ' <span class="sin-stock-badge">SIN STOCK: ' . $stockActual . '</span>';
+                            }
+                            echo "<tr$rowClass>
                                 <td>$productosAcumCantNEW[$i]</td> 
-                                <td>$productosAcumNEW[$i]</td>
+                                <td>$descripcion</td>
                                 <td>$$productosAcumPrecioNEW[$i]</td>
                                 <td>$$precio</td> 
                                 </tr>";

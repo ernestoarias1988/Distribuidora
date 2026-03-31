@@ -413,6 +413,7 @@ class VenderController extends Controller
             // }
             $producto->cantidad = $nro;
             array_push($productos, $producto);
+            $cantidadEnCarrito = $nro;
         } else {
             // if ($productos[$posibleIndice]->cantidad + $nro > $producto->existencia) {
             //     return redirect()->route("vender.index")
@@ -422,8 +423,20 @@ class VenderController extends Controller
             //         ]);
             // }
             $productos[$posibleIndice]->cantidad += $nro;
+            $cantidadEnCarrito = $productos[$posibleIndice]->cantidad;
         }
+
+        $stockProyectado = $producto->existencia - $cantidadEnCarrito;
         $this->guardarProductos($productos);
+
+        if ($stockProyectado < 0) {
+            return redirect()
+                ->route("vender.index")
+                ->with([
+                    "stock_warning" => "Advertencia: el producto \"{$producto->descripcion}\" quedaria sin stock (stock proyectado: {$stockProyectado}). La venta puede continuar.",
+                ]);
+        }
+
         return redirect()
             ->route("vender.index");
     }

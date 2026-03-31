@@ -196,9 +196,21 @@ class VentasController extends Controller
         foreach ($venta->productos as $producto) {
             $total += $producto->cantidad * $producto->precio;
         }
+
+        $codigosBarras = $venta->productos
+            ->pluck('codigo_barras')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $stockPorCodigo = Producto::whereIn('codigo_barras', $codigosBarras)
+            ->pluck('existencia', 'codigo_barras')
+            ->toArray();
+
         return view("ventas.ventas_show", [
             "venta" => $venta,
             "total" => $total,
+            "stockPorCodigo" => $stockPorCodigo,
         ]);
     }
 

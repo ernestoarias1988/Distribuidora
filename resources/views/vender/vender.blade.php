@@ -74,6 +74,19 @@
         margin-top: 32px;
         text-align: center;
     }
+    .stock-warning-row {
+        background-color: #fff3cd !important;
+    }
+    .stock-warning-badge {
+        display: inline-block;
+        margin-top: 4px;
+        padding: 2px 6px;
+        font-size: 0.75rem;
+        border-radius: 12px;
+        color: #856404;
+        background-color: #ffe8a1;
+        border: 1px solid #f5c06f;
+    }
     @media (max-width: 768px) {
         .venta-card { padding: 10px 4px; }
         .venta-header h1 { font-size: 1.5rem; }
@@ -156,9 +169,17 @@
                         </thead>
                         <tbody>
                             @foreach(session("productos") as $producto)
-                            <tr>
+                            @php
+                                $stockProyectado = $producto->existencia - $producto->cantidad;
+                            @endphp
+                            <tr class="{{ $stockProyectado < 0 ? 'stock-warning-row' : '' }}">
                                 <td>{{$producto->codigo_barras}}</td>
-                                <td>{{$producto->descripcion}}</td>
+                                <td>
+                                    {{$producto->descripcion}}
+                                    @if($stockProyectado < 0)
+                                    <div class="stock-warning-badge">Sin stock (proyectado: {{$stockProyectado}})</div>
+                                    @endif
+                                </td>
                                 <td>
                                     <?php $precioactual = 0; ?>
                                     @if(session("cliente") !== null)
@@ -222,6 +243,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(function() {
+        @if(session('stock_warning'))
+        alert(@json(session('stock_warning')));
+        @endif
+
         // Autocomplete for cliente
         $('#id_cliente').keyup(function() {
             var query = $(this).val();
