@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Icono de reportes</title>
+  <desc id="desc">Documento con grafico circular, barras y flecha de crecimiento</desc>
+  <rect x="28" y="12" width="196" height="232" rx="16" ry="16" fill="#f1f1f4"/>
+  <path d="M28 12h44v42H28z" fill="#de6b72"/>
+  <path d="M72 12L28 54V12z" fill="#bfc0c7" opacity="0.45"/>
+
+  <circle cx="96" cy="78" r="34" fill="#dadbe2"/>
+  <path d="M96 78L96 44a34 34 0 0 1 29.44 17z" fill="#f3c453"/>
+  <path d="M96 78l29.44-17A34 34 0 0 1 126 95.5z" fill="#6fb2e5"/>
+  <path d="M96 78l30 17.5A34 34 0 0 1 93 112z" fill="#8ec768"/>
+  <path d="M96 78L93 112A34 34 0 0 1 67 58z" fill="#dd676f"/>
+  <path d="M96 78L67 58A34 34 0 0 1 96 44z" fill="#b09acb"/>
+  <circle cx="96" cy="78" r="13" fill="#f1f1f4"/>
+
+  <rect x="149" y="49" width="53" height="6" rx="3" fill="#6e6d87"/>
+  <rect x="149" y="68" width="53" height="6" rx="3" fill="#6e6d87"/>
+  <rect x="149" y="87" width="53" height="6" rx="3" fill="#6e6d87"/>
+
+  <rect x="49" y="124" width="74" height="6" rx="3" fill="#6e6d87"/>
+  <rect x="49" y="142" width="74" height="6" rx="3" fill="#6e6d87"/>
+  <rect x="49" y="160" width="74" height="6" rx="3" fill="#6e6d87"/>
+
+  <rect x="66" y="172" width="22" height="52" rx="5" fill="#9bc86f"/>
+  <rect x="95" y="154" width="22" height="70" rx="5" fill="#de6b72"/>
+  <rect x="124" y="138" width="22" height="86" rx="5" fill="#f2c24d"/>
+  <rect x="153" y="148" width="22" height="76" rx="5" fill="#67aee2"/>
+  <rect x="182" y="132" width="22" height="92" rx="5" fill="#8f6cae"/>
+
+  <path d="M117 126l33-31 21 18 33-28" fill="none" stroke="#6e6d87" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M198 78h30v30" fill="none" stroke="#6e6d87" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

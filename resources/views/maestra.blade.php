@@ -34,7 +34,7 @@
 
             @else
 
-            @if (Auth::user()->role_id=="Administrador")
+            @if (Auth::user()->role_id=="Administrador" || Auth::user()->role_id=="1")
                 <li class="nav-item">
                     <a class="nav-link" href="{{route("home")}}">Inicio&nbsp;<i class="fa fa-home"></i></a>
                 </li>
@@ -46,6 +46,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route("ventas.index")}}">Ventas&nbsp;<i class="fa fa-list"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route("reportes.index")}}">Reportes&nbsp;<i class="fa fa-chart-bar"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route("usuarios.index")}}">Usuarios&nbsp;<i class="fa fa-users"></i></a>
