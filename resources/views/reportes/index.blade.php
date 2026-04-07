@@ -216,20 +216,21 @@
             $datos = $reporte['datos'] ?? collect();
             $totalRegistros = $reporte['total_registros'] ?? 0;
             $tituloAgrupacion = $agruparPor === 'localidad' ? 'Localidad' : 'Vendedor';
+            $totalMontoPeriodo = (float) $datos->sum('total_monto');
         @endphp
 
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card report-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Cantidad vendida por {{ strtolower($tituloAgrupacion) }} - Ultimos {{ $dias }} dias</span>
+                        <span>Ingresos ($) por {{ strtolower($tituloAgrupacion) }} - Ultimos {{ $dias }} dias</span>
                         <span class="badge badge-info badge-title">Top {{ $topN ?? 8 }} + Otros</span>
                     </div>
                     <div class="card-body">
                         @if($datos->count() > 0)
                             @if($totalRegistros > ($topN ?? 8))
                                 <p class="text-muted small mb-3">
-                                    Se muestran los {{ $topN ?? 8 }} con mayor cantidad y el resto se agrupa como <strong>Otros</strong>.
+                                    Se muestran los {{ $topN ?? 8 }} con mayor monto vendido y el resto se agrupa como <strong>Otros</strong>.
                                 </p>
                             @endif
                             <div class="row">
@@ -244,14 +245,21 @@
                                             <thead>
                                                 <tr>
                                                     <th>{{ $tituloAgrupacion }}</th>
-                                                    <th>Cantidad vendida</th>
+                                                    <th>Monto vendido</th>
+                                                    <th>% del total</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach($datos as $fila)
+                                                    @php
+                                                        $porcentaje = $totalMontoPeriodo > 0
+                                                            ? ((float) $fila->total_monto / $totalMontoPeriodo) * 100
+                                                            : 0;
+                                                    @endphp
                                                     <tr>
                                                         <td>{{ $fila->etiqueta }}</td>
-                                                        <td>{{ number_format($fila->total_vendido, 0, ',', '.') }}</td>
+                                                        <td>${{ number_format($fila->total_monto, 2, ',', '.') }}</td>
+                                                        <td>{{ number_format($porcentaje, 2, ',', '.') }}%</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -276,7 +284,7 @@
     window.addEventListener('load', function() {
         var tipoReporte = document.getElementById('tipo_reporte');
         var filtrosProductos = document.querySelectorAll('.js-filtro-productos');
-        var filtroCantidad = document.querySelector('.js-filtro-cantidad');
+        var filtrosCantidad = document.querySelectorAll('.js-filtro-cantidad');
 
         function toggleFiltros() {
             var esCantidad = tipoReporte && tipoReporte.value === 'cantidad_vendida';
@@ -285,9 +293,9 @@
                 item.style.display = esCantidad ? 'none' : '';
             });
 
-            if (filtroCantidad) {
-                filtroCantidad.style.display = esCantidad ? '' : 'none';
-            }
+            filtrosCantidad.forEach(function(item) {
+                item.style.display = esCantidad ? '' : 'none';
+            });
         }
 
         if (tipoReporte) {
@@ -314,7 +322,7 @@
                     var canvas{{ $dias }} = document.getElementById('pieChart{{ $dias }}');
                     if (canvas{{ $dias }}) {
                         var etiquetas{{ $dias }} = {!! json_encode($datos->pluck('etiqueta')->toArray()) !!};
-                        var valores{{ $dias }} = {!! json_encode($datos->pluck('total_vendido')->map(function ($item) { return (float) $item; })->toArray()) !!};
+                        var valores{{ $dias }} = {!! json_encode($datos->pluck('total_monto')->map(function ($item) { return (float) $item; })->toArray()) !!};
                         var colores{{ $dias }} = etiquetas{{ $dias }}.map(function(_, i) {
                             return coloresBase[i % coloresBase.length];
                         });
@@ -336,6 +344,26 @@
                                 plugins: {
                                     legend: {
                                         position: 'bottom'
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                var data = context.dataset.data || [];
+                                                var total = data.reduce(function(sum, val) {
+                                                    return sum + Number(val || 0);
+                                                }, 0);
+                                                var current = Number(context.raw || 0);
+                                                var porcentaje = total > 0 ? ((current / total) * 100) : 0;
+
+                                                return context.label + ': $' + current.toLocaleString('es-AR', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }) + ' (' + porcentaje.toLocaleString('es-AR', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }) + '%)';
+                                            }
+                                        }
                                     }
                                 }
                             }

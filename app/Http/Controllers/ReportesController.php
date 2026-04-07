@@ -25,7 +25,7 @@ class ReportesController extends Controller
 
         $tiposReporte = [
             "productos_mas_menos" => "Productos mas y menos vendidos",
-            "cantidad_vendida" => "Cantidad vendida por vendedor o localidad",
+            "cantidad_vendida" => "Ingresos por vendedor o localidad",
         ];
 
         $tipoReporte = $request->get("tipo_reporte");
@@ -118,7 +118,7 @@ class ReportesController extends Controller
                         ->where("clientes.localidad", "!=", "")
                         ->select(
                             "clientes.localidad as etiqueta",
-                            DB::raw("SUM(productos_vendidos.cantidad) as total_vendido")
+                            DB::raw("SUM(productos_vendidos.cantidad * productos_vendidos.precio) as total_monto")
                         )
                         ->groupBy("clientes.localidad");
                 } else {
@@ -126,20 +126,20 @@ class ReportesController extends Controller
                         ->where("ventas.vendedor", "!=", "")
                         ->select(
                             "ventas.vendedor as etiqueta",
-                            DB::raw("SUM(productos_vendidos.cantidad) as total_vendido")
+                            DB::raw("SUM(productos_vendidos.cantidad * productos_vendidos.precio) as total_monto")
                         )
                         ->groupBy("ventas.vendedor");
                 }
 
-                $datosOriginales = $query->orderByDesc("total_vendido")->get();
+                $datosOriginales = $query->orderByDesc("total_monto")->get();
 
                 $datos = $datosOriginales->take($topN)->values();
-                $resto = $datosOriginales->slice($topN)->sum("total_vendido");
+                $restoMonto = $datosOriginales->slice($topN)->sum("total_monto");
 
-                if ($resto > 0) {
+                if ($restoMonto > 0) {
                     $datos->push((object) [
                         "etiqueta" => "Otros",
-                        "total_vendido" => (float) $resto,
+                        "total_monto" => (float) $restoMonto,
                     ]);
                 }
 
