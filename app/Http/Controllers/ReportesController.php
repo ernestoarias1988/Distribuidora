@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class ReportesController extends Controller
 {
@@ -22,6 +24,8 @@ class ReportesController extends Controller
         if (!$this->esAdmin(auth()->user())) {
             abort(403, "No autorizado");
         }
+            $message = 'Acceso a reportes con parámetros:';
+            Log::debug($message.' '.$request);
 
         $tiposReporte = [
             "productos_mas_menos" => "Productos mas y menos vendidos",
