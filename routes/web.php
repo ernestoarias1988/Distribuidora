@@ -35,6 +35,7 @@ Route::get('/policy', [VentasController::class, 'showPolicy'])->name('policy.sho
 Route::middleware("auth")
     ->group(function () {
         Route::get('/logs', [VentasController::class, 'showLogs'])->name('logs.show');
+        Route::post('/logs/archive', [VentasController::class, 'archiveLog'])->name('logs.archive');
         Route::get('/reportes', 'ReportesController@index')->name('reportes.index');
         Route::resource("clientes", "ClientesController");
         Route::resource("usuarios", "UserController")->parameters(["usuarios" => "user"]);

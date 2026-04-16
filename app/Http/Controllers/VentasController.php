@@ -552,9 +552,19 @@ class VentasController extends Controller
 
     public function showLogs()
     {
-        $logFile = storage_path('logs/laravel.log'); // Adjust the path if your log file is different
-        $logs = file_get_contents($logFile);
+        $logFile = storage_path('logs/laravel.log');
+        $logs = file_exists($logFile) ? file_get_contents($logFile) : '';
         return view('logs.show', compact('logs'));
+    }
+
+    public function archiveLog()
+    {
+        $logFile = storage_path('logs/laravel.log');
+        if (file_exists($logFile)) {
+            $newName = storage_path('logs/logs_' . date('Y-m-d_H-i-s') . '.txt');
+            rename($logFile, $newName);
+        }
+        return redirect()->route('logs.show')->with('status', 'Log archived successfully.');
     }
 
 
