@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class VentasExport implements FromCollection, WithStrictNullComparison, WithHeadings
 {
@@ -103,42 +104,26 @@ class VentasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $localidad = $this->obtenerlocalidad();
-        $entregadosFlag = 0;
-        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
-            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor","ventas.idApp")
-            ->get();
-        return view("ventas.ventas_index", [
-            "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
-        ]);
+        return view("ventas.ventas_index", $this->buildVentasIndexData($request));
     }
 
     public function indexNoShowEntregados(Request $request)
     {
-        $localidad = $request->get("localidad");
-        $entregadosFlag = 0;
-        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
-            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor","ventas.idApp")
-            ->get();
-        return view("ventas.ventas_index", [
-            "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        return redirect()->route("ventas.index", [
+            "localidad" => $request->get("localidad", $this->obtenerlocalidad()),
+            "entregados" => 0,
+            "periodo" => $this->sanitizePeriodo($request->get("periodo", "mes")),
         ]);
     }
 
     public function indexSiShowEntregados(Request $request)
     {
-        $localidad = $request->get("localidad");
-        $entregadosFlag = 1;
-        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
-            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor","ventas.idApp")
-            ->get();
-        return view("ventas.ventas_index", [
-            "ventas" => $ventasConTotales, "localidad" => $localidad, "entregadosFlag" => $entregadosFlag
+        return redirect()->route("ventas.index", [
+            "localidad" => $request->get("localidad", $this->obtenerlocalidad()),
+            "entregados" => 1,
+            "periodo" => $this->sanitizePeriodo($request->get("periodo", "mes")),
         ]);
     }
     public function acumulados(Request $request)
@@ -154,13 +139,10 @@ class VentasController extends Controller
     }
     public function indexShowTodos(Request $request)
     {
-        $show = $request->get("show");
-        $ventasConTotales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
-            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor","ventas.idApp")
-            ->get();
-        return view("ventas.ventas_index", [
-            "ventas" => $ventasConTotales, "localidad" => 'Todas', "entregadosFlag" => $show
+        return redirect()->route("ventas.index", [
+            "localidad" => "Todas",
+            "entregados" => (int) $request->get("show", 0),
+            "periodo" => $this->sanitizePeriodo($request->get("periodo", "mes")),
         ]);
     }
     /**
@@ -348,9 +330,14 @@ class VentasController extends Controller
     }
     public function exportVentasPdf(Request $request)
     {
+        $localidad = $request->get("id", $request->get("localidad", $this->obtenerlocalidad()));
+        $periodo = $this->sanitizePeriodo($request->get("periodo", "mes"));
+        $entregadosFlag = (int) $request->get("entregados", 0);
+
         $data = [
-            "ventas" => Venta::all(),
-            "localidad" => $request->get("id")
+            "ventas" => $this->getVentasFiltradas($localidad, $periodo, $entregadosFlag),
+            "localidad" => $localidad,
+            "periodo" => $periodo,
         ];
         $date = date('Y-m-d');
         $invoice = "2222";
@@ -426,7 +413,7 @@ class VentasController extends Controller
         $venta = Venta::findOrFail($request->get("id"));
         $venta->pagado = 1;
         $venta->save();
-        return redirect()->route("ventas.index")->with("mensaje", "Venta Pagada");
+        return redirect()->route("ventas.index", $this->ventasIndexRedirectParams($request))->with("mensaje", "Venta Pagada");
     }
 
     public function cancelarEntrega(Request $request)
@@ -435,7 +422,7 @@ class VentasController extends Controller
         $venta = Venta::findOrFail($request->get("id"));
         $venta->entregado = 0;
         $venta->save();
-        return redirect()->route("ventas.indexSiShowEntregados")->with("mensaje", "Venta No Entregada");
+        return redirect()->route("ventas.index", $this->ventasIndexRedirectParams($request))->with("mensaje", "Venta No Entregada");
     }
 
     public function cargarPago(Request $request)
@@ -444,7 +431,7 @@ class VentasController extends Controller
         $pago = $request->get("pago");
         $venta->pagado = $pago;
         $venta->save();
-        return redirect()->route("ventas.index")->with("mensaje", "Venta Actualizada");
+        return redirect()->route("ventas.index", $this->ventasIndexRedirectParams($request))->with("mensaje", "Venta Actualizada");
     }
 
     public function cargarEntrega(Request $request)
@@ -453,7 +440,7 @@ class VentasController extends Controller
         $venta = Venta::findOrFail($request->get("id"));
         $venta->entregado = 1;
         $venta->save();
-        return redirect()->route("ventas.index")->with("mensaje", "Venta Entregada");
+        return redirect()->route("ventas.index", $this->ventasIndexRedirectParams($request))->with("mensaje", "Venta Entregada");
     }
 
     public function cargarCantidad(Request $request)
@@ -517,6 +504,11 @@ class VentasController extends Controller
     {
         $localidad_cliente = "NombreList";
         $localidad_cliente = $request->post("id_localidad");
+        $filtros = [
+            "periodo" => $this->sanitizePeriodo($request->post("periodo", "mes")),
+            "entregados" => (int) $request->post("entregados", 0),
+        ];
+
         $cliente = Cliente::where("localidad", 'LIKE', $localidad_cliente)->first();
         if (!$cliente) {
             session([
@@ -525,19 +517,109 @@ class VentasController extends Controller
             if($localidad_cliente == "Todas")
             {
                 return redirect()
-                ->route("ventas.index");
+                ->route("ventas.index", array_merge($filtros, ["localidad" => "Todas"]));
             }
             return redirect()
-                ->route("ventas.index")
+                ->route("ventas.index", $filtros)
                 ->with("mensaje", "Localidad no encontrada");
         } else {
             session([
                 "localidad" => $cliente->localidad,
             ]);
             return redirect()
-                ->route("ventas.index");
+                ->route("ventas.index", array_merge($filtros, ["localidad" => $cliente->localidad]));
                // ->with("mensaje", "Localidad Guardada:$cliente->localidad");
         }
+    }
+
+    private function buildVentasIndexData(Request $request)
+    {
+        $localidad = $request->query("localidad", $this->obtenerlocalidad());
+        $periodo = $this->sanitizePeriodo($request->query("periodo", "mes"));
+        $entregadosFlag = (int) $request->query("entregados", 0);
+        $periodoRango = $this->resolvePeriodoRango($periodo);
+
+        $ventasConTotales = $this->getVentasFiltradas($localidad, $periodo, $entregadosFlag);
+
+        return [
+            "ventas" => $ventasConTotales,
+            "localidad" => $localidad,
+            "entregadosFlag" => $entregadosFlag,
+            "periodo" => $periodo,
+            "periodoLabel" => $periodoRango["label"],
+        ];
+    }
+
+    private function getVentasFiltradas($localidad, $periodo, $entregadosFlag)
+    {
+        $periodoRango = $this->resolvePeriodoRango($periodo);
+
+        return Venta::with(["cliente", "productos"])
+            ->join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
+            ->where("ventas.created_at", ">", "2023-10-16 11:15:35")
+            ->whereBetween("ventas.created_at", [$periodoRango["inicio"], $periodoRango["fin"]])
+            ->when(Auth::user()->role_id != "Administrador", function ($query) {
+                $query->where("ventas.vendedor", Auth::user()->email);
+            })
+            ->when($localidad && $localidad !== "Todas", function ($query) use ($localidad) {
+                $query->whereHas("cliente", function ($clienteQuery) use ($localidad) {
+                    $clienteQuery->where("localidad", $localidad);
+                });
+            })
+            ->when($entregadosFlag !== 1, function ($query) {
+                $query->where("ventas.entregado", "!=", 1);
+            })
+            ->select("ventas.*", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor", "ventas.idApp")
+            ->orderBy("ventas.created_at", "desc")
+            ->get();
+    }
+
+    private function sanitizePeriodo($periodo)
+    {
+        $periodosValidos = ["semana", "mes", "anio"];
+
+        if (!in_array($periodo, $periodosValidos, true)) {
+            return "mes";
+        }
+
+        return $periodo;
+    }
+
+    private function resolvePeriodoRango($periodo)
+    {
+        $ahora = Carbon::now();
+
+        if ($periodo === "semana") {
+            return [
+                "inicio" => $ahora->copy()->startOfWeek(Carbon::MONDAY),
+                "fin" => $ahora->copy()->endOfWeek(Carbon::SUNDAY),
+                "label" => "Semana actual",
+            ];
+        }
+
+        if ($periodo === "anio") {
+            return [
+                "inicio" => $ahora->copy()->startOfYear(),
+                "fin" => $ahora->copy()->endOfYear(),
+                "label" => "Año actual",
+            ];
+        }
+
+        return [
+            "inicio" => $ahora->copy()->startOfMonth(),
+            "fin" => $ahora->copy()->endOfMonth(),
+            "label" => "Mes actual",
+        ];
+    }
+
+    private function ventasIndexRedirectParams(Request $request)
+    {
+        return [
+            "localidad" => $request->get("localidad", $this->obtenerlocalidad()),
+            "periodo" => $this->sanitizePeriodo($request->get("periodo", "mes")),
+            "entregados" => (int) $request->get("entregados", 0),
+        ];
     }
 
 

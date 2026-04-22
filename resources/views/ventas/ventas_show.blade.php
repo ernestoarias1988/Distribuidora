@@ -162,8 +162,9 @@
             }
         });
 
-        $('#descripcionlist').on('click', 'li', function() {
-            $('#codigo2').val($(this).text());
+        $('#descripcionlist').on('click', 'li, li a', function(e) {
+            e.preventDefault();
+            $('#codigo2').val($(this).closest('li').text());
             $('#descripcionlist').fadeOut();
         });
 
