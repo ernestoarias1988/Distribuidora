@@ -5,6 +5,17 @@
     <div class="col-12">
         <h1>Clientes <i class="fa fa-users"></i></h1>
         <a href="{{route("clientes.create")}}" class="btn btn-success mb-2">Agregar</a>
+        @if (Auth::user()->role_id=="Administrador")
+        <form method="GET" action="{{route('clientes.index')}}" class="form-inline mb-2">
+            <label for="estado" class="mr-2">Filtrar estado</label>
+            <select name="estado" id="estado" class="form-control mr-2">
+                <option value="todos" {{($estadoFiltro ?? 'todos') === 'todos' ? 'selected' : ''}}>Todos</option>
+                <option value="habilitados" {{($estadoFiltro ?? 'todos') === 'habilitados' ? 'selected' : ''}}>Habilitados</option>
+                <option value="deshabilitados" {{($estadoFiltro ?? 'todos') === 'deshabilitados' ? 'selected' : ''}}>Deshabilitados</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Aplicar</button>
+        </form>
+        @endif
         @include("notificacion")
         @if (Auth::user()->role_id=="Administrador")
         <div class="table-responsive">
@@ -16,7 +27,9 @@
                         <th>Dirección</th>
                         <th>Localidad</th>
                         <th>Lista</th>
+                        <th>Estado</th>
                         <th>Vendedor</th>
+                        <th>Habilitar/Deshabilitar</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
@@ -30,7 +43,22 @@
                         <td>{{$cliente->direccion}}</td>
                         <td>{{$cliente->localidad}}</td>
                         <td>{{$cliente->lista}}</td>
+                        <td>
+                            @if($cliente->estado)
+                                <span class="badge badge-success">Habilitado</span>
+                            @else
+                                <span class="badge badge-secondary">Deshabilitado</span>
+                            @endif
+                        </td>
                         <td>{{$cliente->vendedor}}</td>
+                        <td>
+                            <form action="{{route("clientes.toggleEstado", [$cliente])}}" method="post">
+                                @csrf
+                                <button type="submit" class="btn {{$cliente->estado ? 'btn-secondary' : 'btn-success'}}">
+                                    {{$cliente->estado ? 'Deshabilitar' : 'Habilitar'}}
+                                </button>
+                            </form>
+                        </td>
                         <td>
                             <a class="btn btn-warning" href="{{route("clientes.edit",[$cliente])}}">
                                 <i class="fa fa-edit"></i>

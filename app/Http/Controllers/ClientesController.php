@@ -15,7 +15,21 @@ class ClientesController extends Controller
      */
     public function index()
     {
-        return view("clientes.clientes_index", ["clientes" => Cliente::all()]);
+        $estado = request('estado', 'todos');
+
+        $clientesQuery = Cliente::query();
+        if ($estado === 'habilitados') {
+            $clientesQuery->where('estado', true);
+        } elseif ($estado === 'deshabilitados') {
+            $clientesQuery->where('estado', false);
+        } else {
+            $estado = 'todos';
+        }
+
+        return view("clientes.clientes_index", [
+            "clientes" => $clientesQuery->get(),
+            "estadoFiltro" => $estado,
+        ]);
     }
 
     /**
@@ -43,8 +57,13 @@ class ClientesController extends Controller
         $cliente_existente = Cliente::where('direccion', '=', "{$request->direccion}")->first();
         if ($cliente_existente != null)
             return redirect()->route("clientes.index")->with("mensaje", "Cliente NO CREADO, Direccion ya existente");
-        
-            (new Cliente($request->input()))->saveOrFail();
+
+        $data = $request->input();
+        if (!isset($data['estado'])) {
+            $data['estado'] = 1;
+        }
+
+        (new Cliente($data))->saveOrFail();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente agregado");
     }
 
@@ -82,6 +101,19 @@ class ClientesController extends Controller
         $cliente->fill($request->input());
         $cliente->saveOrFail();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente actualizado");
+    }
+
+    public function toggleEstado(Cliente $cliente)
+    {
+        if (auth()->user()->role_id !== "Administrador") {
+            abort(403);
+        }
+
+        $cliente->estado = !$cliente->estado;
+        $cliente->saveOrFail();
+
+        return redirect()->route("clientes.index")
+            ->with("mensaje", $cliente->estado ? "Cliente habilitado" : "Cliente deshabilitado");
     }
 
     /**

@@ -66,7 +66,7 @@ Route::group(['prefix' => 'auth'], function () {
         // Clientes
 
         Route::get("clientes", function () {
-            return response()->json(Cliente::all());
+            return response()->json(Cliente::where('estado', true)->get());
         });
         Route::post("/cliente", function (Request $request) {
             $cliente_existente = Cliente::where('nombre', 'LIKE', "%{$request->nombre}%")->first();

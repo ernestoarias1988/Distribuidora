@@ -31,6 +31,10 @@ class VenderController extends Controller
             return redirect()
                 ->route("vender.index")
                 ->with("mensaje", "Cliente no encontrado");
+        } elseif (!$cliente->estado) {
+            return redirect()
+                ->route("vender.index")
+                ->with("mensaje", "Cliente deshabilitado");
         } else {
             session([
                 "cliente" => $cliente,
@@ -259,7 +263,7 @@ class VenderController extends Controller
             "vender.vender",
             [
                 "total" => $total,
-                "clientes" => Cliente::all(),
+                "clientes" => Cliente::where('estado', true)->get(),
                 "cliente" => $cliente
             ]
         );
@@ -306,6 +310,7 @@ class VenderController extends Controller
         if ($request->get('query')) {
             $query = $request->get('query');
             $data = Cliente::where('nombre', 'LIKE', "%{$query}%")
+                ->where('estado', true)
                 ->get();
             $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
             foreach ($data as $row) {

@@ -37,6 +37,7 @@ Route::middleware("auth")
         Route::get('/logs', [VentasController::class, 'showLogs'])->name('logs.show');
         Route::post('/logs/archive', [VentasController::class, 'archiveLog'])->name('logs.archive');
         Route::get('/reportes', 'ReportesController@index')->name('reportes.index');
+        Route::post('clientes/{cliente}/toggle-estado', 'ClientesController@toggleEstado')->name('clientes.toggleEstado');
         Route::resource("clientes", "ClientesController");
         Route::resource("usuarios", "UserController")->parameters(["usuarios" => "user"]);
         Route::resource("productos", "ProductosController");
