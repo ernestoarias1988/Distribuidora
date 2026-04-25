@@ -30,11 +30,31 @@ class ReportesController extends Controller
         $tiposReporte = [
             "productos_mas_menos" => "Productos mas y menos vendidos",
             "cantidad_vendida" => "Ingresos por vendedor o localidad",
+            "ingresos_categoria" => "Ingresos por categoria",
         ];
 
         $tipoReporte = $request->get("tipo_reporte");
         $vendedor = $request->get("vendedor");
         $localidad = $request->get("localidad");
+        $categoriasSeleccionadas = $request->input("categorias", []);
+        if (!is_array($categoriasSeleccionadas)) {
+            $categoriasSeleccionadas = [$categoriasSeleccionadas];
+        }
+        $categoriasSeleccionadas = collect($categoriasSeleccionadas)
+            ->filter(function ($item) {
+                return $item !== null && trim((string) $item) !== '';
+            })
+            ->map(function ($item) {
+                return trim((string) $item);
+            })
+            ->unique()
+            ->values()
+            ->all();
+
+        // Compatibilidad con enlaces viejos que usen ?categoria=...
+        if (empty($categoriasSeleccionadas) && $request->filled("categoria")) {
+            $categoriasSeleccionadas = [trim((string) $request->get("categoria"))];
+        }
         $agruparPor = $request->get("agrupar_por", "vendedor");
         $topN = (int) $request->get("top_n", 8);
         if ($topN < 3) {
@@ -64,6 +84,12 @@ class ReportesController extends Controller
             ->orderBy("localidad")
             ->pluck("localidad");
 
+        $categorias = DB::table("productos_vendidos")
+            ->select(DB::raw("COALESCE(NULLIF(categoria, ''), 'General') as categoria"))
+            ->distinct()
+            ->orderBy("categoria")
+            ->pluck("categoria");
+
         if ($tipoReporte === "productos_mas_menos") {
             foreach ($periodos as $dias) {
                 $desde = now()->subDays($dias);
@@ -88,6 +114,13 @@ class ReportesController extends Controller
                     $baseQuery->where("clientes.localidad", $localidad);
                 }
 
+                if (!empty($categoriasSeleccionadas)) {
+                    $baseQuery->whereIn(
+                        DB::raw("COALESCE(NULLIF(productos_vendidos.categoria, ''), 'General')"),
+                        $categoriasSeleccionadas
+                    );
+                }
+
                 $masVendidos = (clone $baseQuery)
                     ->orderByDesc("total_vendido")
                     ->limit(15)
@@ -104,7 +137,7 @@ class ReportesController extends Controller
                     "menosVendidos" => $menosVendidos,
                 ];
             }
-        } elseif ($tipoReporte === "cantidad_vendida") {
+        } elseif ($tipoReporte === "cantidad_vendida" || $tipoReporte === "ingresos_categoria") {
             if (!in_array($agruparPor, ["vendedor", "localidad"], true)) {
                 $agruparPor = "vendedor";
             }
@@ -117,7 +150,20 @@ class ReportesController extends Controller
                     ->join("clientes", "clientes.id", "=", "ventas.id_cliente")
                     ->where("ventas.created_at", ">=", $desde);
 
-                if ($agruparPor === "localidad") {
+                if (!empty($categoriasSeleccionadas)) {
+                    $query->whereIn(
+                        DB::raw("COALESCE(NULLIF(productos_vendidos.categoria, ''), 'General')"),
+                        $categoriasSeleccionadas
+                    );
+                }
+
+                if ($tipoReporte === "ingresos_categoria") {
+                    $query->select(
+                            DB::raw("COALESCE(NULLIF(productos_vendidos.categoria, ''), 'General') as etiqueta"),
+                            DB::raw("SUM(productos_vendidos.cantidad * productos_vendidos.precio) as total_monto")
+                        )
+                        ->groupBy("productos_vendidos.categoria");
+                } elseif ($agruparPor === "localidad") {
                     $query->whereNotNull("clientes.localidad")
                         ->where("clientes.localidad", "!=", "")
                         ->select(
@@ -160,9 +206,11 @@ class ReportesController extends Controller
             "tipoReporte" => $tipoReporte,
             "vendedorSeleccionado" => $vendedor,
             "localidadSeleccionada" => $localidad,
+            "categoriasSeleccionadas" => $categoriasSeleccionadas,
             "agruparPor" => $agruparPor,
             "vendedores" => $vendedores,
             "localidades" => $localidades,
+            "categorias" => $categorias,
             "topN" => $topN,
             "reportes" => $reportes,
             "periodos" => $periodos,

@@ -97,6 +97,7 @@ class VenderController extends Controller
             $productoVendido->fill([
                 "id_venta" => $idVenta,
                 "descripcion" => $producto->descripcion,
+                "categoria" => $producto->categoria ?: 'General',
                 "codigo_barras" => $producto->codigo_barras,
                 "precio" => $precio,
                 "cantidad" => $producto->cantidad,
@@ -527,6 +528,7 @@ class VenderController extends Controller
                 $productoVendido->fill([
                     "id_venta" => $idVenta,
                     "descripcion" => $productoAVender->descripcion, //json_decode($producto['descripcion']),
+                    "categoria" => $productoAVender->categoria ?: 'General',
                     "codigo_barras" => $productoAVender->codigo_barras,
                     "precio" => $precio,
                     "cantidad" => json_decode($producto['cantidad']),
@@ -616,6 +618,7 @@ class VenderController extends Controller
     $productoVendido->fill([
         "id_venta" => $venta,
         "descripcion" => $producto->descripcion,
+        "categoria" => $producto->categoria ?: 'General',
         "codigo_barras" => $producto->codigo_barras,
         "precio" => $precio,
         "cantidad" => $cantidad,

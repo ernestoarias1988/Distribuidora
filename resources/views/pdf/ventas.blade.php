@@ -129,6 +129,13 @@ $itemsPorHoja = 23;
             color: #4b5563;
             text-align: right;
         }
+        .item-category {
+            margin-top: 1px;
+            color: #4b5563;
+            font-size: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
         .empty-state {
             margin-top: 30px;
             text-align: center;
@@ -205,7 +212,10 @@ $itemsPorHoja = 23;
                                             @foreach($productosBloque as $producto)
                                                 <tr>
                                                     <td style="width: 10%;">{{ $producto->cantidad }} U.</td>
-                                                    <td style="width: 84%;">{{ $producto->descripcion }}</td>
+                                                    <td style="width: 84%;">
+                                                        {{ $producto->descripcion }}
+                                                        <div class="item-category">Categoria: {{ $producto->categoria ?? 'General' }}</div>
+                                                    </td>
                                                     <td class="number" style="width: 3%;">${{ number_format($producto->precio, 2) }}</td>
                                                     <td class="number" style="width: 3%;">${{ number_format($producto->cantidad * $producto->precio, 2) }}</td>
                                                 </tr>

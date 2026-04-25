@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 use Barryvdh\DomPDF\Facade as PDF;
 use FontLib\Table\Type\post;
 use App\ProductoVendido;
@@ -634,19 +635,138 @@ class VentasController extends Controller
 
     public function showLogs()
     {
+        if (!$this->canManageLogs()) {
+            abort(403);
+        }
+
         $logFile = storage_path('logs/laravel.log');
         $logs = file_exists($logFile) ? file_get_contents($logFile) : '';
-        return view('logs.show', compact('logs'));
+        $deployResults = session('deploy_results', []);
+
+        return view('logs.show', compact('logs', 'deployResults'));
     }
 
     public function archiveLog()
     {
+        if (!$this->canManageLogs()) {
+            abort(403);
+        }
+
         $logFile = storage_path('logs/laravel.log');
         if (file_exists($logFile)) {
             $newName = storage_path('logs/logs_' . date('Y-m-d_H-i-s') . '.txt');
             rename($logFile, $newName);
         }
         return redirect()->route('logs.show')->with('status', 'Log archived successfully.');
+    }
+
+    public function runDeployMaintenance()
+    {
+        if (!$this->canManageLogs()) {
+            abort(403);
+        }
+
+        $results = [];
+
+        foreach ($this->deploymentCommands() as $command) {
+            $results[] = $this->runDeploymentCommand($command);
+        }
+
+        $failed = collect($results)->contains(function ($result) {
+            return !$result['ok'];
+        });
+
+        return redirect()
+            ->route('logs.show')
+            ->with('deploy_results', $results)
+            ->with('status', $failed ? 'El mantenimiento termino con errores. Revisar detalle abajo.' : 'Mantenimiento ejecutado correctamente.');
+    }
+
+    private function canManageLogs()
+    {
+        $role = Auth::user()->role_id ?? null;
+
+        return $role === 'Administrador' || $role === '1' || $role === 1;
+    }
+
+    private function deploymentCommands()
+    {
+        return [
+            [
+                'label' => 'Composer install',
+                'type' => 'shell',
+                'command' => $this->resolveComposerCommand(),
+            ],
+            ['label' => 'Migraciones', 'type' => 'artisan', 'command' => 'migrate', 'parameters' => ['--force' => true]],
+            ['label' => 'Limpiar optimizaciones', 'type' => 'artisan', 'command' => 'optimize:clear', 'parameters' => []],
+            ['label' => 'Cache config', 'type' => 'artisan', 'command' => 'config:cache', 'parameters' => []],
+            ['label' => 'Cache rutas', 'type' => 'artisan', 'command' => 'route:cache', 'parameters' => []],
+            ['label' => 'Cache vistas', 'type' => 'artisan', 'command' => 'view:cache', 'parameters' => []],
+            ['label' => 'Reiniciar colas', 'type' => 'artisan', 'command' => 'queue:restart', 'parameters' => []],
+        ];
+    }
+
+    private function resolveComposerCommand()
+    {
+        $composerPhar = base_path('composer.phar');
+        $phpBinary = PHP_BINARY ?: 'php';
+
+        if (file_exists($composerPhar)) {
+            return '"' . $phpBinary . '" "' . $composerPhar . '" install --no-dev --optimize-autoloader';
+        }
+
+        return 'composer install --no-dev --optimize-autoloader';
+    }
+
+    private function runDeploymentCommand(array $definition)
+    {
+        if ($definition['type'] === 'artisan') {
+            try {
+                Artisan::call($definition['command'], $definition['parameters'] ?? []);
+
+                return [
+                    'label' => $definition['label'],
+                    'ok' => true,
+                    'output' => trim(Artisan::output()) ?: 'OK',
+                ];
+            } catch (\Throwable $exception) {
+                return [
+                    'label' => $definition['label'],
+                    'ok' => false,
+                    'output' => $exception->getMessage(),
+                ];
+            }
+        }
+
+        if (!function_exists('exec')) {
+            return [
+                'label' => $definition['label'],
+                'ok' => false,
+                'output' => 'La funcion exec no esta disponible en este servidor.',
+            ];
+        }
+
+        $output = [];
+        $exitCode = 0;
+        $cwd = getcwd();
+
+        try {
+            chdir(base_path());
+            exec($definition['command'] . ' 2>&1', $output, $exitCode);
+        } catch (\Throwable $exception) {
+            $output[] = $exception->getMessage();
+            $exitCode = 1;
+        } finally {
+            if ($cwd !== false) {
+                chdir($cwd);
+            }
+        }
+
+        return [
+            'label' => $definition['label'],
+            'ok' => $exitCode === 0,
+            'output' => trim(implode(PHP_EOL, $output)) ?: ($exitCode === 0 ? 'OK' : 'Sin salida'),
+        ];
     }
 
 

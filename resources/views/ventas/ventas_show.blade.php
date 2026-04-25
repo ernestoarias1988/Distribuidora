@@ -10,6 +10,16 @@
     .sin-stock-row {
         background-color: #f8d7da;
     }
+    .categoria-badge {
+        display: inline-flex;
+        margin-top: 6px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: #1d4ed8;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+    }
     .sin-stock-badge {
         display: inline-block;
         margin-left: 8px;
@@ -66,6 +76,7 @@
                 <tr class="{{ $sinStock ? 'sin-stock-row' : '' }}">
                     <td>
                         {{$producto->descripcion}}
+                        <div class="categoria-badge">{{$producto->categoria ?: 'General'}}</div>
                         @if($sinStock)
                         <span class="sin-stock-badge">SIN STOCK ({{$stockActual}})</span>
                         @endif

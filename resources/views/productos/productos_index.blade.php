@@ -10,6 +10,60 @@
     body {
         font-size: 0.9rem;
     }
+    .productos-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 1rem;
+    }
+    .productos-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 1rem;
+    }
+    .summary-card {
+        border: 1px solid #dbe4ea;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #ffffff, #f7fafc);
+        padding: 0.85rem 1rem;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+    .summary-card small {
+        display: block;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.35rem;
+    }
+    .summary-card strong {
+        color: #0f172a;
+        font-size: 1.35rem;
+    }
+    .categoria-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: #e8f3ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+    }
+    .categoria-filter {
+        min-width: 220px;
+    }
+    .import-help {
+        margin-top: 0.75rem;
+        padding: 0.75rem 0.9rem;
+        border: 1px dashed #bfdbfe;
+        border-radius: 12px;
+        background: #f8fbff;
+        color: #334155;
+    }
     .table-highlight tbody tr {
         transition: background-color 0.3s;
     }
@@ -25,13 +79,52 @@
     }
 </style>
 
+@php
+    $resumenCategorias = $productos
+        ->groupBy(function ($producto) {
+            return $producto->categoria ?: 'General';
+        })
+        ->map(function ($items) {
+            return $items->count();
+        })
+        ->sortDesc();
+@endphp
+
 <div class="row">
     <div class="col-12">
         <h1>Productos <i class="fa fa-box"></i></h1>
-        <a href="{{route("productos.create")}}" class="btn btn-success btn-sm mb-2">Agregar</a>
+        <div class="productos-toolbar">
+            <div>
+                <a href="{{route("productos.create")}}" class="btn btn-success btn-sm mb-2">Agregar</a>
+                <a href="{{route("categorias.index")}}" class="btn btn-outline-secondary btn-sm mb-2">Categorias</a>
+                <button style="text-align:center" class="btn btn-primary btn-sm mb-2" onClick="window.print()">Imprimir Productos</button>
+                <button style="text-align:center" class="btn btn-success btn-sm mb-2" onClick="window.location.href='{{ url('/exportarp') }}'">Exportar a Excel</button>
+            </div>
+            <div class="categoria-filter">
+                <label for="filtroCategoria" class="mb-1"><strong>Filtrar por categoría</strong></label>
+                <select id="filtroCategoria" class="form-control form-control-sm">
+                    <option value="">Todas las categorías</option>
+                    @foreach($resumenCategorias as $categoria => $cantidad)
+                    <option value="{{$categoria}}">{{$categoria}} ({{$cantidad}})</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
         @include("notificacion")
-        <button style="text-align:center" class="btn btn-primary btn-sm mb-2" onClick="window.print()">Imprimir Productos</button>
-        <button style="text-align:center" class="btn btn-success btn-sm mb-2" onClick="window.location.href='https://distribuidoradaxs.com/public/exportarp'">Exportar a Excel</button>
+        <div class="productos-summary">
+            <div class="summary-card">
+                <small>Total de productos</small>
+                <strong>{{$productos->count()}}</strong>
+            </div>
+            <div class="summary-card">
+                <small>Categorías activas</small>
+                <strong>{{$resumenCategorias->count()}}</strong>
+            </div>
+            <div class="summary-card">
+                <small>Categoría principal</small>
+                <strong>{{$resumenCategorias->keys()->first() ?? 'Sin datos'}}</strong>
+            </div>
+        </div>
         <div class="card-body">
             <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -48,6 +141,7 @@
                     <tr>
                         <th>Código</th>
                         <th>Descripción</th>
+                        <th>Categoría</th>
                         <th>Precio Lista 1</th>
                         <th>Precio Lista 2</th>
                         <th>Precio Lista 3</th>
@@ -60,6 +154,7 @@
                     <tr>
                         <td>{{$producto->codigo_barras}}</td>
                         <td>{{$producto->descripcion}}</td>
+                        <td><span class="categoria-badge">{{$producto->categoria ?: 'General'}}</span></td>
                         <td>${{number_format($producto->precio_venta1, 2)}}</td>
                         <td>${{number_format($producto->precio_venta2, 2)}}</td>
                         <td>${{number_format($producto->precio_venta3, 2)}}</td>
@@ -90,7 +185,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#productosTable').DataTable({
+        var tablaProductos = $('#productosTable').DataTable({
             "order": [[0, "asc"]], // Sort by the 1st column (Código) in ascending order
             "language": {
                 "lengthMenu": "Mostrar _MENU_ productos",
@@ -106,6 +201,14 @@
                     "previous": "Anterior"
                 }
             }
+        });
+
+        $('#filtroCategoria').on('change', function() {
+            var value = $.fn.dataTable.util.escapeRegex($(this).val());
+            tablaProductos
+                .column(2)
+                .search(value ? '^' + value + '$' : '', true, false)
+                .draw();
         });
 
         // Update the label of the file input when a file is selected

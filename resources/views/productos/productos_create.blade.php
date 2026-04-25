@@ -37,6 +37,18 @@
                            type="text" placeholder="Descripción">
                 </div>
                 <div class="form-group">
+                    <label class="label">Categoría</label>
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                        <select required name="categoria" class="form-control">
+                            <option value="">Seleccionar categoría</option>
+                            @foreach($categorias as $categoria)
+                            <option value="{{$categoria->nombre}}">{{$categoria->nombre}}</option>
+                            @endforeach
+                        </select>
+                        <a class="btn btn-outline-secondary mt-2" href="{{route("categorias.index")}}">Administrar categorías</a>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="label">Precio de compra</label>
                     <input required autocomplete="off" name="precio_compra" class="form-control"
                            type="decimal(9,2)" placeholder="Precio de compra">

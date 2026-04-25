@@ -36,11 +36,13 @@ Route::middleware("auth")
     ->group(function () {
         Route::get('/logs', [VentasController::class, 'showLogs'])->name('logs.show');
         Route::post('/logs/archive', [VentasController::class, 'archiveLog'])->name('logs.archive');
+        Route::post('/logs/deploy-maintenance', [VentasController::class, 'runDeployMaintenance'])->name('logs.deployMaintenance');
         Route::get('/reportes', 'ReportesController@index')->name('reportes.index');
         Route::post('clientes/{cliente}/toggle-estado', 'ClientesController@toggleEstado')->name('clientes.toggleEstado');
         Route::resource("clientes", "ClientesController");
         Route::resource("usuarios", "UserController")->parameters(["usuarios" => "user"]);
         Route::resource("productos", "ProductosController");
+        Route::resource("categorias", "CategoriasController")->except(['create', 'show', 'edit']);
         Route::get("/ventas/ticket", "VentasController@ticket")->name("ventas.ticket");
         Route::resource("ventas", "VentasController");
         Route::get("/vender", "VenderController@index")->name("vender.index");

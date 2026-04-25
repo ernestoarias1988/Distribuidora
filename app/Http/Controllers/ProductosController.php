@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Categoria;
 use App\Producto;
 use Illuminate\Http\Request;
 
@@ -19,6 +20,38 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 class ProductsImport  implements ToModel, WithHeadingRow
 {
     use Importable;
+
+    private $categoryHeaders = [
+        'categoria',
+        'categor_a',
+        'category',
+        'rubro',
+    ];
+
+    private function normalizarCategoria($categoria)
+    {
+        $categoria = trim((string) $categoria);
+
+        if ($categoria === '') {
+            $categoria = 'General';
+        }
+
+        Categoria::firstOrCreate(['nombre' => $categoria]);
+
+        return $categoria;
+    }
+
+    private function obtenerCategoriaDesdeFila(array $row)
+    {
+        foreach ($this->categoryHeaders as $header) {
+            if (array_key_exists($header, $row) && trim((string) $row[$header]) !== '') {
+                return $row[$header];
+            }
+        }
+
+        return '';
+    }
+
     /**
      * @param array $row
      *
@@ -30,6 +63,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
         print_r($row);
         echo '</pre>';*/
         if ($row['articulo'] != null) {
+            $categoria = $this->normalizarCategoria($this->obtenerCategoriaDesdeFila($row));
             /*   if ($row['cantidad'] == null) {
                 $row['cantidad'] = 1;
             }*/
@@ -52,6 +86,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
                 return new Producto([
                     'codigo_barras'     => $row['codigo'],
                     'descripcion'    => $row['articulo'],
+                    'categoria'    => $categoria,
                     'precio_compra'    => $row['precio1'],
                     'precio_venta1'    => $row['precio1'],
                     'precio_venta2'    => $row['precio2'],
@@ -61,6 +96,7 @@ class ProductsImport  implements ToModel, WithHeadingRow
             } else {
                 $productoActualizando = Producto::where("descripcion", "=", $row['articulo'])->first();
                 $productoActualizando->codigo_barras = $row['codigo'];
+                $productoActualizando->categoria = $categoria;
                 $productoActualizando->precio_compra = $row['precio1'];
                 $productoActualizando->precio_venta1 = $row['precio1'];
                 $productoActualizando->precio_venta2 = $row['precio2'];
@@ -85,6 +121,7 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
         return [
             'codigo',
             'articulo',
+            'categoria',
             'Precio1',
             'Precio2',
             'Precio3',
@@ -99,7 +136,7 @@ class ProductosExport implements FromCollection, WithStrictNullComparison, WithH
 
     public function collection()
     {
-        return Producto::select('codigo_barras','descripcion', 'precio_venta1','precio_venta2','precio_venta3', 'existencia')->get();
+        return Producto::select('codigo_barras','descripcion', 'categoria', 'precio_venta1','precio_venta2','precio_venta3', 'existencia')->get();
     }
 
 
@@ -134,7 +171,9 @@ class ProductosController extends Controller
      */
     public function create()
     {
-        return view("productos.productos_create");
+        return view("productos.productos_create", [
+            'categorias' => Categoria::orderBy('nombre')->get(),
+        ]);
     }
 
     /**
@@ -145,6 +184,10 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'categoria' => $this->normalizarCategoria($request->input('categoria')),
+        ]);
+
         $producto = new Producto($request->input());
 
         $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
@@ -195,6 +238,7 @@ class ProductosController extends Controller
     {
         return view("productos.productos_edit", [
             "producto" => $producto,
+            'categorias' => Categoria::orderBy('nombre')->get(),
         ]);
     }
 
@@ -207,6 +251,10 @@ class ProductosController extends Controller
      */
     public function update(Request $request, Producto $producto)
     {
+        $request->merge([
+            'categoria' => $this->normalizarCategoria($request->input('categoria')),
+        ]);
+
         $producto->fill($request->input());
 
         $probando = Producto::where("id", "=", $producto->id)->first();
@@ -222,6 +270,19 @@ class ProductosController extends Controller
             }}
         $producto->saveOrFail();
         return redirect()->route("productos.index")->with("mensaje", "Producto actualizado");
+    }
+
+    private function normalizarCategoria($categoria)
+    {
+        $categoria = trim((string) $categoria);
+
+        if ($categoria === '') {
+            $categoria = 'General';
+        }
+
+        Categoria::firstOrCreate(['nombre' => $categoria]);
+
+        return $categoria;
     }
 
     /**

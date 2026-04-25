@@ -43,6 +43,74 @@
         width: 100% !important;
         height: 320px !important;
     }
+    .categorias-hint {
+        display: block;
+        margin-top: 4px;
+        font-size: 0.78rem;
+        color: #6b7280;
+    }
+    .categorias-panel {
+        border: 1px solid #dbe4ea;
+        border-radius: 10px;
+        background: #f8fafc;
+        padding: 10px;
+    }
+    .categorias-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+    .categorias-toolbar button {
+        border: 0;
+        background: transparent;
+        color: #1d4ed8;
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 0;
+    }
+    .categorias-toolbar button:hover {
+        text-decoration: underline;
+    }
+    .categorias-grid {
+        max-height: 150px;
+        overflow: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 6px;
+        padding-right: 4px;
+    }
+    .categoria-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 6px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 0.86rem;
+    }
+    .categoria-item input {
+        accent-color: #1d4ed8;
+    }
+    .report-filters-row + .report-filters-row {
+        margin-top: 0.4rem;
+    }
+    .report-filters .form-group {
+        margin-bottom: 0.8rem;
+    }
+    .report-submit-wrap {
+        display: flex;
+        align-items: flex-end;
+    }
+    .report-submit-wrap .btn {
+        min-height: 42px;
+    }
+    .report-filters .form-control {
+        min-height: 42px;
+    }
 </style>
 
 <div class="row mb-3">
@@ -59,62 +127,89 @@
         @include("notificacion")
         <div class="card report-card">
             <div class="card-body">
-                <form method="GET" action="{{ route('reportes.index') }}" class="form-row align-items-end">
-                    <div class="form-group col-md-4">
-                        <label for="tipo_reporte"><strong>Tipo de reporte</strong></label>
-                        <select class="form-control" id="tipo_reporte" name="tipo_reporte" required>
-                            <option value="" disabled {{ !$tipoReporte ? 'selected' : '' }}>Seleccionar...</option>
-                            @foreach($tiposReporte as $valor => $etiqueta)
-                                <option value="{{ $valor }}" {{ $tipoReporte === $valor ? 'selected' : '' }}>{{ $etiqueta }}</option>
-                            @endforeach
-                        </select>
+                <form method="GET" action="{{ route('reportes.index') }}" class="report-filters">
+                    <div class="form-row report-filters-row">
+                        <div class="form-group col-lg-4 col-md-6">
+                            <label for="tipo_reporte"><strong>Tipo de reporte</strong></label>
+                            <select class="form-control" id="tipo_reporte" name="tipo_reporte" required>
+                                <option value="" disabled {{ !$tipoReporte ? 'selected' : '' }}>Seleccionar...</option>
+                                @foreach($tiposReporte as $valor => $etiqueta)
+                                    <option value="{{ $valor }}" {{ $tipoReporte === $valor ? 'selected' : '' }}>{{ $etiqueta }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group col-lg-4 col-md-6 js-filtro-productos">
+                            <label for="vendedor"><strong>Vendedor</strong></label>
+                            <select class="form-control" id="vendedor" name="vendedor">
+                                <option value="">Todos</option>
+                                @foreach($vendedores as $itemVendedor)
+                                    <option value="{{ $itemVendedor }}" {{ $vendedorSeleccionado === $itemVendedor ? 'selected' : '' }}>{{ $itemVendedor }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group col-lg-4 col-md-6 js-filtro-productos">
+                            <label for="localidad"><strong>Localidad</strong></label>
+                            <select class="form-control" id="localidad" name="localidad">
+                                <option value="">Todas</option>
+                                @foreach($localidades as $itemLocalidad)
+                                    <option value="{{ $itemLocalidad }}" {{ $localidadSeleccionada === $itemLocalidad ? 'selected' : '' }}>{{ $itemLocalidad }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group col-lg-4 col-md-6 js-filtro-cantidad" style="display: none;">
+                            <label for="agrupar_por"><strong>Agrupar por</strong></label>
+                            <select class="form-control" id="agrupar_por" name="agrupar_por">
+                                <option value="vendedor" {{ $agruparPor === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
+                                <option value="localidad" {{ $agruparPor === 'localidad' ? 'selected' : '' }}>Localidad</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-lg-2 col-md-4 js-filtro-top" style="display: none;">
+                            <label for="top_n"><strong>Top N</strong></label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="top_n"
+                                name="top_n"
+                                min="3"
+                                max="20"
+                                value="{{ $topN ?? 8 }}"
+                            >
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-3 js-filtro-productos">
-                        <label for="vendedor"><strong>Vendedor</strong></label>
-                        <select class="form-control" id="vendedor" name="vendedor">
-                            <option value="">Todos</option>
-                            @foreach($vendedores as $itemVendedor)
-                                <option value="{{ $itemVendedor }}" {{ $vendedorSeleccionado === $itemVendedor ? 'selected' : '' }}>{{ $itemVendedor }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <div class="form-row report-filters-row">
+                            <div class="form-group col-lg-10 js-filtro-categoria" style="display: none;">
+                            <label><strong>Categorias</strong></label>
+                            <div class="categorias-panel">
+                                <div class="categorias-toolbar">
+                                    <span class="text-muted small">Filtrar por una o varias</span>
+                                    <div>
+                                        <button type="button" id="categoriasSelectAll">Seleccionar todas</button>
+                                        <span class="text-muted mx-1">|</span>
+                                        <button type="button" id="categoriasClearAll">Limpiar</button>
+                                    </div>
+                                </div>
+                                <div class="categorias-grid">
+                                    @foreach($categorias as $itemCategoria)
+                                        <label class="categoria-item">
+                                            <input type="checkbox" class="js-categoria-checkbox" name="categorias[]" value="{{ $itemCategoria }}" {{ in_array($itemCategoria, $categoriasSeleccionadas ?? [], true) ? 'checked' : '' }}>
+                                            <span>{{ $itemCategoria }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <small class="categorias-hint">Si no marcas ninguna, se consideran todas las categorias.</small>
+                        </div>
 
-                    <div class="form-group col-md-3 js-filtro-productos">
-                        <label for="localidad"><strong>Localidad</strong></label>
-                        <select class="form-control" id="localidad" name="localidad">
-                            <option value="">Todas</option>
-                            @foreach($localidades as $itemLocalidad)
-                                <option value="{{ $itemLocalidad }}" {{ $localidadSeleccionada === $itemLocalidad ? 'selected' : '' }}>{{ $itemLocalidad }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group col-md-3 js-filtro-cantidad" style="display: none;">
-                        <label for="agrupar_por"><strong>Agrupar por</strong></label>
-                        <select class="form-control" id="agrupar_por" name="agrupar_por">
-                            <option value="vendedor" {{ $agruparPor === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
-                            <option value="localidad" {{ $agruparPor === 'localidad' ? 'selected' : '' }}>Localidad</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group col-md-2 js-filtro-cantidad" style="display: none;">
-                        <label for="top_n"><strong>Top N</strong></label>
-                        <input
-                            type="number"
-                            class="form-control"
-                            id="top_n"
-                            name="top_n"
-                            min="3"
-                            max="20"
-                            value="{{ $topN ?? 8 }}"
-                        >
-                    </div>
-
-                    <div class="form-group col-md-2">
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fa fa-cogs"></i> Generar reporte
-                        </button>
+                        <div class="form-group col-lg-2 col-md-4 report-submit-wrap">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fa fa-cogs"></i> Generar reporte
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -209,13 +304,15 @@
     @endforeach
 @endif
 
-@if($tipoReporte === 'cantidad_vendida')
+@if(in_array($tipoReporte, ['cantidad_vendida', 'ingresos_categoria'], true))
     @foreach($periodosCantidad as $dias)
         @php
             $reporte = $reportesCantidad[$dias] ?? null;
             $datos = $reporte['datos'] ?? collect();
             $totalRegistros = $reporte['total_registros'] ?? 0;
-            $tituloAgrupacion = $agruparPor === 'localidad' ? 'Localidad' : 'Vendedor';
+            $tituloAgrupacion = $tipoReporte === 'ingresos_categoria'
+                ? 'Categoria'
+                : ($agruparPor === 'localidad' ? 'Localidad' : 'Vendedor');
             $totalMontoPeriodo = (float) $datos->sum('total_monto');
         @endphp
 
@@ -276,7 +373,7 @@
         </div>
     @endforeach
 @endif
-@if($tipoReporte === 'cantidad_vendida')
+@if(in_array($tipoReporte, ['cantidad_vendida', 'ingresos_categoria'], true))
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endif
 
@@ -285,16 +382,31 @@
         var tipoReporte = document.getElementById('tipo_reporte');
         var filtrosProductos = document.querySelectorAll('.js-filtro-productos');
         var filtrosCantidad = document.querySelectorAll('.js-filtro-cantidad');
+        var filtrosTop = document.querySelectorAll('.js-filtro-top');
+        var filtrosCategoria = document.querySelectorAll('.js-filtro-categoria');
+        var categoriasCheckboxes = document.querySelectorAll('.js-categoria-checkbox');
+        var categoriasSelectAll = document.getElementById('categoriasSelectAll');
+        var categoriasClearAll = document.getElementById('categoriasClearAll');
 
         function toggleFiltros() {
-            var esCantidad = tipoReporte && tipoReporte.value === 'cantidad_vendida';
+            var valorActual = tipoReporte ? tipoReporte.value : '';
+            var esCantidad = valorActual === 'cantidad_vendida';
+            var esIngresosCategoria = valorActual === 'ingresos_categoria';
 
             filtrosProductos.forEach(function(item) {
-                item.style.display = esCantidad ? 'none' : '';
+                item.style.display = (esCantidad || esIngresosCategoria) ? 'none' : '';
             });
 
             filtrosCantidad.forEach(function(item) {
                 item.style.display = esCantidad ? '' : 'none';
+            });
+
+            filtrosTop.forEach(function(item) {
+                item.style.display = (esCantidad || esIngresosCategoria) ? '' : 'none';
+            });
+
+            filtrosCategoria.forEach(function(item) {
+                item.style.display = valorActual ? '' : 'none';
             });
         }
 
@@ -303,7 +415,23 @@
             toggleFiltros();
         }
 
-        @if($tipoReporte === 'cantidad_vendida')
+        if (categoriasSelectAll) {
+            categoriasSelectAll.addEventListener('click', function() {
+                categoriasCheckboxes.forEach(function(item) {
+                    item.checked = true;
+                });
+            });
+        }
+
+        if (categoriasClearAll) {
+            categoriasClearAll.addEventListener('click', function() {
+                categoriasCheckboxes.forEach(function(item) {
+                    item.checked = false;
+                });
+            });
+        }
+
+        @if(in_array($tipoReporte, ['cantidad_vendida', 'ingresos_categoria'], true))
             if (typeof Chart === 'undefined') {
                 return;
             }

@@ -87,6 +87,16 @@
         background-color: #ffe8a1;
         border: 1px solid #f5c06f;
     }
+    .categoria-badge {
+        display: inline-flex;
+        margin-top: 6px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        color: #155e75;
+        background: #ecfeff;
+        border: 1px solid #a5f3fc;
+    }
     @media (max-width: 768px) {
         .venta-card { padding: 10px 4px; }
         .venta-header h1 { font-size: 1.5rem; }
@@ -176,6 +186,7 @@
                                 <td>{{$producto->codigo_barras}}</td>
                                 <td>
                                     {{$producto->descripcion}}
+                                    <div class="categoria-badge">{{$producto->categoria ?: 'General'}}</div>
                                     @if($stockProyectado < 0)
                                     <div class="stock-warning-badge">Sin stock (proyectado: {{$stockProyectado}})</div>
                                     @endif
