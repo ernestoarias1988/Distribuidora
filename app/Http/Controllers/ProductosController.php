@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\Categoria;
 use App\Producto;
 use Illuminate\Http\Request;
 
-
+use Artisan;
+use Illuminate\Support\Composer;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -15,82 +18,140 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
 
 class ProductsImport  implements ToModel, WithHeadingRow
-{ 
+{
     use Importable;
+
+    private $categoryHeaders = [
+        'categoria',
+        'categor_a',
+        'category',
+        'rubro',
+    ];
+
+    private function normalizarCategoria($categoria)
+    {
+        $categoria = trim((string) $categoria);
+
+        if ($categoria === '') {
+            $categoria = 'General';
+        }
+
+        Categoria::firstOrCreate(['nombre' => $categoria]);
+
+        return $categoria;
+    }
+
+    private function obtenerCategoriaDesdeFila(array $row)
+    {
+        foreach ($this->categoryHeaders as $header) {
+            if (array_key_exists($header, $row) && trim((string) $row[$header]) !== '') {
+                return $row[$header];
+            }
+        }
+
+        return '';
+    }
+
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
-        if($row['descripcion']!=null && $row['existencia']!=null)
-        {
-            if(Producto::where("descripcion", "=", $row['descripcion'])->first()==null)            
-            {
+        /* echo '<pre>';
+        print_r($row);
+        echo '</pre>';*/
+        if ($row['articulo'] != null) {
+            $categoria = $this->normalizarCategoria($this->obtenerCategoriaDesdeFila($row));
+            /*   if ($row['cantidad'] == null) {
+                $row['cantidad'] = 1;
+            }*/
+            if ($row['precio1'] == null) {
+                $row['precio1'] = 0;
+            }        
+            if ($row['precio2'] == null) {
+                $row['precio2'] = $row['precio1'];
+            }           
+            if ($row['precio3'] == null) {
+                $row['precio3'] = $row['precio1'];
+            }
+            if ($row['existencia'] == null) {
+                $row['existencia'] = 1;
+            }
+            /* if ($row['promo'] == null) {
+                $row['promo'] = $row['precio_real'];
+            }*/
+            if (Producto::where("descripcion", "=", $row['articulo'])->first() == null) {
                 return new Producto([
-                    'codigo_barras'     => $row['codigo_barras'],
-                    'descripcion'    => $row['descripcion'], 
-                    'precio_compra'    => $row['precio_compra'], 
-                    'precio_venta1'    => $row['precio_venta1'], 
-                    'precio_venta2'    => $row['precio_venta2'], 
-                    'precio_venta3'    => $row['precio_venta3'], 
-                    'existencia'    => $row['existencia'], 
-                    ]);
-            }else{
-                $productoActualizando = Producto::where("descripcion", "=", $row['descripcion'])->first();
-                $productoActualizando->precio_compra = $row['precio_compra']; 
-                $productoActualizando->precio_venta1 = $row['precio_venta1']; 
-                $productoActualizando->precio_venta2 = $row['precio_venta2']; 
-                $productoActualizando->precio_venta3 = $row['precio_venta3'];
+                    'codigo_barras'     => $row['codigo'],
+                    'descripcion'    => $row['articulo'],
+                    'categoria'    => $categoria,
+                    'precio_compra'    => $row['precio1'],
+                    'precio_venta1'    => $row['precio1'],
+                    'precio_venta2'    => $row['precio2'],
+                    'precio_venta3'    => $row['precio3'],
+                    'existencia'    => $row['existencia'],
+                ]);
+            } else {
+                $productoActualizando = Producto::where("descripcion", "=", $row['articulo'])->first();
+                $productoActualizando->codigo_barras = $row['codigo'];
+                $productoActualizando->categoria = $categoria;
+                $productoActualizando->precio_compra = $row['precio1'];
+                $productoActualizando->precio_venta1 = $row['precio1'];
+                $productoActualizando->precio_venta2 = $row['precio2'];
+                $productoActualizando->precio_venta3 = $row['precio3'];
                 $productoActualizando->existencia = $row['existencia'];
                 $productoActualizando->saveOrFail();
             }
-        }else{
+        } else {
             //Agregar mensaje de error
         }
-        
     }
-
-
 }
 
-class ProductosExport implements FromCollection,WithStrictNullComparison,WithHeadings
+class ProductosExport implements FromCollection, WithStrictNullComparison, WithHeadings
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
 
     public function headings(): array
     {
         return [
-            'Nro',
-            'Codigo',
-            'Descripcion',
-            'Precio compra',
-            'precio_venta1',
-            'precio_venta2',
-            'precio_venta3',
-            'Cantidad',
-            'Fecha Creado',
-            'Fecha Modificado'
+            'codigo',
+            'articulo',
+            'categoria',
+            'Precio1',
+            'Precio2',
+            'Precio3',
+            'existencia'
         ];
     }
-    public function collection()
+    /*public function collection()
     {
         return Producto::all();
+        
+    }*/
+
+    public function collection()
+    {
+        return Producto::select('codigo_barras','descripcion', 'categoria', 'precio_venta1','precio_venta2','precio_venta3', 'existencia')->get();
     }
+
+
+
 }
 class ProductosController extends Controller
 {
-    public function export() 
+    public function export()
     {
         return Excel::download(new ProductosExport, 'Productos.xlsx');
     }
 
-    public function importar() 
+    public function importar()
     {
-        Excel::import(new ProductsImport,request()->file('file'));        
+        Excel::import(new ProductsImport, request()->file('file'));
         return back();
     }
     /**
@@ -110,7 +171,9 @@ class ProductosController extends Controller
      */
     public function create()
     {
-        return view("productos.productos_create");
+        return view("productos.productos_create", [
+            'categorias' => Categoria::orderBy('nombre')->get(),
+        ]);
     }
 
     /**
@@ -121,6 +184,10 @@ class ProductosController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'categoria' => $this->normalizarCategoria($request->input('categoria')),
+        ]);
+
         $producto = new Producto($request->input());
 
         $probando = Producto::where("codigo_barras", "=", $producto->codigo_barras)->first();
@@ -133,22 +200,16 @@ class ProductosController extends Controller
                 ]);
         }
         $probando = Producto::where("descripcion", "=", $producto->descripcion)->first();
-        if($probando) {
+        if ($probando) {
             return redirect()
                 ->route("productos.index")
                 ->with([
                     "mensaje" => "Producto ya existente",
                     "tipo" => "danger"
                 ]);
-
         }
 
-
-
-
-
-        if($producto == Producto::find($producto->id))
-        {
+        if ($producto == Producto::find($producto->id)) {
             return redirect()->route("productos.index")->with("mensaje", "Producto NO guardado");
         }
         $producto = new Producto($request->input());
@@ -175,7 +236,9 @@ class ProductosController extends Controller
      */
     public function edit(Producto $producto)
     {
-        return view("productos.productos_edit", ["producto" => $producto,
+        return view("productos.productos_edit", [
+            "producto" => $producto,
+            'categorias' => Categoria::orderBy('nombre')->get(),
         ]);
     }
 
@@ -188,9 +251,38 @@ class ProductosController extends Controller
      */
     public function update(Request $request, Producto $producto)
     {
+        $request->merge([
+            'categoria' => $this->normalizarCategoria($request->input('categoria')),
+        ]);
+
         $producto->fill($request->input());
+
+        $probando = Producto::where("id", "=", $producto->id)->first();
+        
+        if ($probando) {
+            if($probando->codigo_barras!=$producto->codigo_barras){
+            return redirect()
+                ->route("productos.index")
+                ->with([
+                    "mensaje" => "Codigo ya existente. Producto no creado",
+                    "tipo" => "danger"
+                ]);
+            }}
         $producto->saveOrFail();
         return redirect()->route("productos.index")->with("mensaje", "Producto actualizado");
+    }
+
+    private function normalizarCategoria($categoria)
+    {
+        $categoria = trim((string) $categoria);
+
+        if ($categoria === '') {
+            $categoria = 'General';
+        }
+
+        Categoria::firstOrCreate(['nombre' => $categoria]);
+
+        return $categoria;
     }
 
     /**
@@ -205,5 +297,43 @@ class ProductosController extends Controller
         return redirect()->route("productos.index")->with("mensaje", "Producto eliminado");
     }
 
-    
+    public function deleteAll()
+    {
+        while (true) {
+            $producto = Producto::where("descripcion", "LIKE", '%a%')->first();
+            if ($producto == null) {
+                break;
+            }
+            $producto->delete();
+        }
+        while (true) {
+            $producto = Producto::where("descripcion", "LIKE", '%e%')->first();
+            if ($producto == null) {
+                break;
+            }
+            $producto->delete();
+        }
+        while (true) {
+            $producto = Producto::where("descripcion", "LIKE", '%i%')->first();
+            if ($producto == null) {
+                break;
+            }
+            $producto->delete();
+        }
+        while (true) {
+            $producto = Producto::where("descripcion", "LIKE", '%o%')->first();
+            if ($producto == null) {
+                break;
+            }
+            $producto->delete();
+        }
+        while (true) {
+            $producto = Producto::where("descripcion", "LIKE", '%u%')->first();
+            if ($producto == null) {
+                break;
+            }
+            $producto->delete();
+        }
+        return redirect()->route("productos.index")->with("mensaje", "Productos eliminados");
+    }
 }

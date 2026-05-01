@@ -24,8 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('sales:delete-old')->everyMinute(); // Runs daily
     }
+
 
     /**
      * Register the commands for the application.

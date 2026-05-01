@@ -11,12 +11,12 @@ Route::get('/', function () {
 Route::get("/acerca-de", function () {
     return view("");
 })->name("acerca_de.index");
-Route::get("/soporte", function(){
+Route::get("/soporte", function () {
     return redirect("");
 })->name("soporte.index");
 
 Auth::routes([
-    "reset" => false,// no pueden olvidar contraseña
+    "reset" => false, // no pueden olvidar contraseña
 ]);
 
 
@@ -29,40 +29,64 @@ Route::get("/logout", function () {
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/exportarp', 'ProductosController@export');
 Route::get('/exportarv', 'VentasController@export');
+Route::get('/policy', [VentasController::class, 'showPolicy'])->name('policy.show');
 
 
 Route::middleware("auth")
     ->group(function () {
+        Route::get('/logs', [VentasController::class, 'showLogs'])->name('logs.show');
+        Route::post('/logs/archive', [VentasController::class, 'archiveLog'])->name('logs.archive');
+        Route::post('/logs/deploy-maintenance', [VentasController::class, 'runDeployMaintenance'])->name('logs.deployMaintenance');
+        Route::get('/reportes', 'ReportesController@index')->name('reportes.index');
+        Route::post('clientes/{cliente}/toggle-estado', 'ClientesController@toggleEstado')->name('clientes.toggleEstado');
         Route::resource("clientes", "ClientesController");
         Route::resource("usuarios", "UserController")->parameters(["usuarios" => "user"]);
         Route::resource("productos", "ProductosController");
+        Route::resource("categorias", "CategoriasController")->except(['create', 'show', 'edit']);
         Route::get("/ventas/ticket", "VentasController@ticket")->name("ventas.ticket");
         Route::resource("ventas", "VentasController");
         Route::get("/vender", "VenderController@index")->name("vender.index");
         Route::post("/productoDeVenta", "VenderController@agregarProductoVenta")->name("agregarProductoVenta");
         Route::delete("/productoDeVenta", "VenderController@quitarProductoDeVenta")->name("quitarProductoDeVenta");
         Route::post("/terminarOCancelarVenta", "VenderController@terminarOCancelarVenta")->name("terminarOCancelarVenta");
-        
+
         Route::get('user-list-pdf', 'VentasController@exportPdf')->name('users.pdf');
+        Route::get('indexNoShowEntregados', 'VentasController@indexNoShowEntregados')->name('ventas.indexNoShowEntregados');
+        Route::get('indexSiShowEntregados', 'VentasController@indexSiShowEntregados')->name('ventas.indexSiShowEntregados');
+        Route::get('indexShowTodos', 'VentasController@indexShowTodos')->name('ventas.indexShowTodos');
+
+        Route::get('acumulados', 'VentasController@acumulados')->name('ventas.acumulados');
+        Route::get('info', 'UserController@info')->name('usuarios.info');
+
+        Route::get('ventas-list-pdf', 'VentasController@exportVentasPdf')->name('ventas.pdf');
+        Route::get('ventas-vendedor-list-pdf', 'VentasController@exportVentasVendedorPdf')->name('ventasVendedor.pdf');
+        Route::get('acumulado-vendedor-list-pdf', 'VentasController@exportAcumuladoVendedorPdf')->name('acumuladoVendedor.pdf');
         Route::get('cancelarpago', 'VentasController@cancelarPago')->name('cancelPago');
         Route::get('cancelarentrega', 'VentasController@cancelarEntrega')->name('cancelEntrega');
         Route::post('cargarpago', 'VentasController@cargarPago')->name('cargaPago');
         Route::get('cargarentrega', 'VentasController@cargarEntrega')->name('cargaEntrega');
         Route::post('agregarproducto', 'VenderController@agregarProductoACarrito')->name('agregaProducto');
         Route::post('guardarCliente', 'VenderController@guardarCliente')->name('guardarCliente');
+        Route::post('guardarLocalidad', 'VentasController@guardarLocalidad')->name('guardarLocalidad');
 
 
         Route::post('editarcantidad', 'VenderController@editarCantidad')->name('editaCantidad');
+        Route::post('editarventa', 'VenderController@editarVenta')->name('editaVenta');
 
         Route::post('import', 'ProductosController@importar')->name('import');
+        Route::get('/delete', 'ProductosController@deleteAll')->name('delete');
 
         Route::post('/autocomplete/fetch', 'VenderController@fetch')->name('autocomplete.fetch');
+        Route::post('/autocomplete/fetchVentas', 'VenderController@fetchVentas')->name('autocomplete.fetchVentas');
         Route::post('/autocomplete/fetchcliente', 'VenderController@fetchcliente')->name('autocomplete.fetchcliente');
+        Route::post('/autocomplete/fetchvendedor', 'ClientesController@fetchvendedor')->name('autocomplete.fetchvendedor');
+        Route::post('/autocomplete/fetchlocalidad', 'VentasController@fetchlocalidad')->name('autocomplete.fetchlocalidad');
         Route::post('/autocomplete/fetchcantidad', 'VenderController@fetchcantidad')->name('autocomplete.fetchcantidad');
+        Route::post('/autocomplete/fetchcantidadVentas', 'VenderController@fetchcantidadVentas')->name('autocomplete.fetchcantidadVentas');
+        Route::post('/autocomplete/fetchprecio','VenderController@fetchPrecio')->name('autocomplete.fetchprecio');
         Route::get("/totales", "TotalesController@index")->name("totales.index");
 
         Route::post("/ventas", "VentasController@destroyProducto")->name("destroyProducto");
         Route::post('cargarCantidad', 'VentasController@cargarCantidad')->name('cargaCantidad');
-
-
+        Route::post('cargarCantidadShow', 'VentasController@cargarCantidadShow')->name('cargaCantidadShow');
     });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\User;
 use Illuminate\Http\Request;
 
 class ClientesController extends Controller
@@ -14,7 +15,21 @@ class ClientesController extends Controller
      */
     public function index()
     {
-        return view("clientes.clientes_index", ["clientes" => Cliente::all()]);
+        $estado = request('estado', 'todos');
+
+        $clientesQuery = Cliente::query();
+        if ($estado === 'habilitados') {
+            $clientesQuery->where('estado', true);
+        } elseif ($estado === 'deshabilitados') {
+            $clientesQuery->where('estado', false);
+        } else {
+            $estado = 'todos';
+        }
+
+        return view("clientes.clientes_index", [
+            "clientes" => $clientesQuery->get(),
+            "estadoFiltro" => $estado,
+        ]);
     }
 
     /**
@@ -35,7 +50,20 @@ class ClientesController extends Controller
      */
     public function store(Request $request)
     {
-        (new Cliente($request->input()))->saveOrFail();
+        $cliente_existente = Cliente::where('nombre', '=', "{$request->nombre}")->first();
+        if ($cliente_existente != null)
+            return redirect()->route("clientes.index")->with("mensaje", "Cliente NO CREADO, Nombre ya existente");
+        
+        $cliente_existente = Cliente::where('direccion', '=', "{$request->direccion}")->first();
+        if ($cliente_existente != null)
+            return redirect()->route("clientes.index")->with("mensaje", "Cliente NO CREADO, Direccion ya existente");
+
+        $data = $request->input();
+        if (!isset($data['estado'])) {
+            $data['estado'] = 1;
+        }
+
+        (new Cliente($data))->saveOrFail();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente agregado");
     }
 
@@ -75,6 +103,19 @@ class ClientesController extends Controller
         return redirect()->route("clientes.index")->with("mensaje", "Cliente actualizado");
     }
 
+    public function toggleEstado(Cliente $cliente)
+    {
+        if (auth()->user()->role_id !== "Administrador") {
+            abort(403);
+        }
+
+        $cliente->estado = !$cliente->estado;
+        $cliente->saveOrFail();
+
+        return redirect()->route("clientes.index")
+            ->with("mensaje", $cliente->estado ? "Cliente habilitado" : "Cliente deshabilitado");
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -85,5 +126,22 @@ class ClientesController extends Controller
     {
         $cliente->delete();
         return redirect()->route("clientes.index")->with("mensaje", "Cliente eliminado");
+    }
+
+    function fetchvendedor(Request $request)
+    {
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = User::where('name', 'LIKE', "%{$query}%")
+                ->get();
+            $output = '<ul class="dropdown-menu" style="display:block; position:relative">';
+            foreach ($data as $row) {
+                $output .= '
+       <li><a href="#">' . $row->email . '</a></li>
+       ';
+            }
+            $output .= '</ul>';
+            echo $output;
+        }
     }
 }
