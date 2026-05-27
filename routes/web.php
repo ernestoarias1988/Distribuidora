@@ -40,6 +40,7 @@ Route::middleware("auth")
         Route::get('/reportes', 'ReportesController@index')->name('reportes.index');
         Route::post('clientes/{cliente}/toggle-estado', 'ClientesController@toggleEstado')->name('clientes.toggleEstado');
         Route::resource("clientes", "ClientesController");
+        Route::post('usuarios/{user}/toggle-can-create-client', 'UserController@toggleCanCreateClient')->name('usuarios.toggleCanCreateClient');
         Route::resource("usuarios", "UserController")->parameters(["usuarios" => "user"]);
         Route::resource("productos", "ProductosController");
         Route::resource("categorias", "CategoriasController")->except(['create', 'show', 'edit']);

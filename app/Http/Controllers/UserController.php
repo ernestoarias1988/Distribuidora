@@ -37,8 +37,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $usuario1 = new User($request->input());
-        $existencia = User::where("email", "=", $usuario1->email)->first();
+        $data = $request->input();
+        $data['canCreateClient'] = $request->has('canCreateClient') ? true : false;
+        $existencia = User::where("email", "=", $data['email'])->first();
         if ($existencia) {
             return redirect()
                 ->route("usuarios.index")
@@ -47,7 +48,7 @@ class UserController extends Controller
                     "tipo" => "danger"
                 ]);
         } else {
-            $usuario = new User($request->input());
+            $usuario = new User($data);
             $usuario->passwordApp = ($usuario->password);
             $usuario->password = Hash::make($usuario->password);
             $usuario->saveOrFail();
@@ -98,12 +99,22 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $usuario1 = new User($request->input());
-        $user->fill($request->input());
+        $data = $request->input();
+        $data['canCreateClient'] = $request->has('canCreateClient') ? true : false;
+        $user->fill($data);
         $user->passwordApp = $user->password;
         $user->password = Hash::make($user->password);
         $user->saveOrFail();
         return redirect()->route("usuarios.index")->with("mensaje", "Usuario actualizado");
+    }
+
+    public function toggleCanCreateClient(User $user)
+    {
+        $user->canCreateClient = !$user->canCreateClient;
+        $user->saveOrFail();
+
+        return redirect()->route('usuarios.index')
+            ->with('mensaje', $user->canCreateClient ? 'Permiso de crear clientes habilitado' : 'Permiso de crear clientes deshabilitado');
     }
 
     /**

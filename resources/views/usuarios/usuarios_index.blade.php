@@ -13,6 +13,7 @@
                         <th>Usuario</th>
                         <th>Nombre</th>
                         <th>Rol</th>
+                        <th>Crear Clientes</th>
                         <th>Clientes</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
@@ -24,6 +25,18 @@
                         <td><a href="{{route('totales.index', ["vendedor"=>$usuario->email])}}"> {{$usuario->email}}</a></td>
                         <td>{{$usuario->name}}</td>
                         <td>{{$usuario->role_id}}</td>
+                        <td>
+                            @if($usuario->name!='Administrador')
+                            <form action="{{route('usuarios.toggleCanCreateClient', [$usuario])}}" method="post">
+                                @csrf
+                                <button type="submit" class="btn {{$usuario->canCreateClient ? 'btn-secondary' : 'btn-success'}}">
+                                    {{$usuario->canCreateClient ? 'No Permitir' : 'Permitir'}}
+                                </button>
+                            </form>
+                            @else
+                                <span class="badge badge-success">Siempre</span>
+                            @endif
+                        </td>
                         <td>
                             <a class="btn btn-info" href="{{route("usuarios.info",["usuario"=>$usuario])}}">
                                 <i class="fa fa-info"></i>

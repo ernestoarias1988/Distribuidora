@@ -30,6 +30,15 @@
                 <input required value="{{$usuario->password}}" autocomplete="off" name="password" class="form-control" type="password" placeholder="Contraseña">
             </div>
 
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="canCreateClient" id="canCreateClient" value="1" {{$usuario->canCreateClient ? 'checked' : ''}}>
+                    <label class="form-check-label" for="canCreateClient">
+                        Puede crear clientes
+                    </label>
+                </div>
+            </div>
+
             @include("notificacion")
             <button class="btn btn-success">Guardar</button>
             <a class="btn btn-primary" href="{{route("usuarios.index")}}">Volver</a>
