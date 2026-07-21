@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Categoria;
 use App\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 use Artisan;
 use Illuminate\Support\Composer;
@@ -294,6 +295,7 @@ class ProductosController extends Controller
     public function destroy(Producto $producto)
     {
         $producto->delete();
+        Log::info('Producto eliminado: ' . $producto->descripcion);
         return redirect()->route("productos.index")->with("mensaje", "Producto eliminado");
     }
 

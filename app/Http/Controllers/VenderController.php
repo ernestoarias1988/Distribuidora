@@ -9,6 +9,7 @@ use App\ProductoVendido;
 use App\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 class VenderController extends Controller
 {
@@ -449,14 +450,17 @@ class VenderController extends Controller
 
     public function terminarVentaAPI(Request $request)
     {
+        $vendedor = $request->vendedor;
         try {
-            
+            DB::beginTransaction();
+
             $idAppnueva = $request->id;
             $ventaexiste = Venta::where("idApp", "=", $idAppnueva)->first();
             if($ventaexiste != NULL)
             {
+                DB::rollBack();
+                 Log::debug('Venta con idApp '.$idAppnueva.' ya existe, no se puede crear otra.');
                 return [false, $idAppnueva];
-                Log::debug('Venta con idApp '.$idAppnueva.' ya existe, no se puede crear otra.');
             }
 
 
@@ -486,6 +490,7 @@ class VenderController extends Controller
             }
             foreach ($request['productos'] as $producto) {
                 if (json_decode($producto['cantidad']) == 0) {
+                    DB::rollBack();
                     return [false, 0];
                 }
             }
@@ -503,8 +508,12 @@ class VenderController extends Controller
             // Recorrer carrito de compras
             foreach ($request['productos'] as $producto) {
                 $productoAVender = Producto::where("codigo_barras", "=", $producto['codigo_barras'])->first();
+                if (!$productoAVender) {
+                    Log::debug('Producto con codigo de barras '.$producto['codigo_barras'].' no encontrado, no se puede crear la venta.');
+                    throw new \RuntimeException('Producto con codigo de barras '.$producto['codigo_barras'].' no encontrado.');
+                }
 
-                switch ($lista) {
+                /*switch ($lista) {
                     case "1":
                         $precio = $productoAVender->precio_venta1;
                         break;
@@ -520,7 +529,8 @@ class VenderController extends Controller
                     default:
                         $precio = 9999;
                         break;
-                }
+                }*/
+                $precio = $producto['precio_venta'];
 
                 // El producto que se vende...
 
@@ -540,12 +550,15 @@ class VenderController extends Controller
                 $productoActualizado->existencia -= $productoVendido->cantidad;
                 $productoActualizado->saveOrFail();
             }
+
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack();
             //return [false, $idVenta, $e];
             $message = '     
             
             Error Creando Venta de' ;
-            Log::debug($message.' '.$venta->vendedor.' El error fue: '.$e);
+            Log::debug($message.' '.$vendedor.' El error fue: '.$e);
             $message = '
             El body que fallo fuess:' .$e->getMessage();
             Log::debug($message.' '.$request);
