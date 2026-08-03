@@ -163,7 +163,7 @@
                             <a href="{{route("productos.edit", $producto)}}" class="btn btn-warning btn-sm">
                                 <i class="fa fa-edit"></i> Editar
                             </a>
-                            <form action="{{route("productos.destroy", $producto)}}" method="post" style="display:inline-block;">
+                            <form action="{{route("productos.destroy", $producto)}}" method="post" style="display:inline-block;" onsubmit="return confirm('¿Está seguro de eliminar este producto?');">
                                 @method("delete")
                                 @csrf
                                 <button type="submit" class="btn btn-danger btn-sm">

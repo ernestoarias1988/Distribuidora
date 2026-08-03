@@ -452,108 +452,78 @@ class VenderController extends Controller
     {
         $vendedor = $request->vendedor;
         try {
-            DB::beginTransaction();
-
-            $idAppnueva = $request->id;
-            $ventaexiste = Venta::where("idApp", "=", $idAppnueva)->first();
-            if($ventaexiste != NULL)
-            {
-                DB::rollBack();
-                 Log::debug('Venta con idApp '.$idAppnueva.' ya existe, no se puede crear otra.');
-                return [false, $idAppnueva];
-            }
-
-
-
-           /* if($request['version']!=34)
-            {
-                return [false, $idVenta];
-            }
-            */
-            $cliente =  Cliente::where('id', '=', $request->idCliente)->first();
-                    
-            
-
-            if ($cliente == null) {
-                // (new Cliente($request['newClient']))->saveOrFail();
-
-                $clienteCreado = new Cliente;
-                $clienteCreado->nombre = $request->newClient[0];
-                $clienteCreado->telefono = $request->newClient[1];
-                $clienteCreado->direccion = $request->newClient[2];
-                $clienteCreado->localidad = $request->newClient[3];
-                $clienteCreado->lista = $request->newClient[4];
-                $clienteCreado->vendedor = $request->newClient[5];
-                $clienteCreado->saveOrFail();
-                //$cliente = Cliente::where('nombre', '=', $request->cliente)->first();
-                $cliente = $clienteCreado;
-            }
-            foreach ($request['productos'] as $producto) {
-                if (json_decode($producto['cantidad']) == 0) {
-                    DB::rollBack();
-                    return [false, 0];
-                }
-            }
-            // Crear una venta
-            $venta = new Venta();
-            // $cliente = Cliente::findOrFail($request->cliente);
-            $lista = $cliente->lista;
-            $venta->id_cliente = $cliente->id;
-            $venta->vendedor = $request->vendedor;
-            $venta->idApp = $request->id;
-            $venta->saveOrFail(); //REVISAR!!!!!!!
-            $idVenta = $venta->id;
-
-
-            // Recorrer carrito de compras
-            foreach ($request['productos'] as $producto) {
-                $productoAVender = Producto::where("codigo_barras", "=", $producto['codigo_barras'])->first();
-                if (!$productoAVender) {
-                    Log::debug('Producto con codigo de barras '.$producto['codigo_barras'].' no encontrado, no se puede crear la venta.');
-                    throw new \RuntimeException('Producto con codigo de barras '.$producto['codigo_barras'].' no encontrado.');
+            DB::transaction(function () use ($request, $vendedor) {
+                $idAppnueva = $request->id;
+                $ventaexiste = Venta::where("idApp", "=", $idAppnueva)->first();
+                if ($ventaexiste != NULL) {
+                    Log::debug('Venta con idApp '.$idAppnueva.' ya existe, no se puede crear otra.');
+                    throw new \RuntimeException('Venta ya existe.');
                 }
 
-                /*switch ($lista) {
-                    case "1":
-                        $precio = $productoAVender->precio_venta1;
-                        break;
+                $cliente = Cliente::where('id', '=', $request->idCliente)->first();
 
-                    case "2":
-                        $precio = $productoAVender->precio_venta2;
-                        break;
+                if ($cliente == null) {
+                    $clienteCreado = new Cliente;
+                    $clienteCreado->nombre = $request->newClient[0];
+                    $clienteCreado->telefono = $request->newClient[1];
+                    $clienteCreado->direccion = $request->newClient[2];
+                    $clienteCreado->localidad = $request->newClient[3];
+                    $clienteCreado->lista = $request->newClient[4];
+                    $clienteCreado->vendedor = $request->newClient[5];
+                    $clienteCreado->saveOrFail();
+                    $cliente = $clienteCreado;
+                }
 
-                    case "3":
-                        $precio = $productoAVender->precio_venta3;
-                        break;
+                $productosOrdenados = [];
+                foreach ($request['productos'] as $producto) {
+                    $cantidad = json_decode($producto['cantidad']);
+                    if ($cantidad == 0) {
+                        throw new \RuntimeException('Cantidad de producto '.$producto['nombre'].' no puede ser 0');
+                    }
 
-                    default:
-                        $precio = 9999;
-                        break;
-                }*/
-                $precio = $producto['precio_venta'];
+                    $productoAVender = Producto::where("codigo_barras", "=", $producto['codigo_barras'])->first();
+                    if (!$productoAVender) {
+                        Log::debug('Producto con codigo de barras '.$producto['codigo_barras'].' no encontrado, no se puede crear la venta.');
+                        throw new \RuntimeException('Producto con codigo de barras '.$producto['codigo_barras'].' no encontrado.');
+                    }
 
-                // El producto que se vende...
+                    $productosOrdenados[] = [
+                        'producto' => $productoAVender,
+                        'precio' => $producto['precio_venta'],
+                        'cantidad' => $cantidad,
+                    ];
+                }
 
-                $productoVendido = new ProductoVendido();
-                $productoVendido->fill([
-                    "id_venta" => $idVenta,
-                    "descripcion" => $productoAVender->descripcion, //json_decode($producto['descripcion']),
-                    "categoria" => $productoAVender->categoria ?: 'General',
-                    "codigo_barras" => $productoAVender->codigo_barras,
-                    "precio" => $precio,
-                    "cantidad" => json_decode($producto['cantidad']),
-                ]);
-                // Lo guardamos
-                $productoVendido->saveOrFail();
-                // Y restamos la existencia del original
-                $productoActualizado = Producto::where("descripcion", "=", $productoVendido->descripcion)->first();
-                $productoActualizado->existencia -= $productoVendido->cantidad;
-                $productoActualizado->saveOrFail();
-            }
+                usort($productosOrdenados, function ($a, $b) {
+                    return $a['producto']->id <=> $b['producto']->id;
+                });
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
+                $venta = new Venta();
+                $venta->id_cliente = $cliente->id;
+                $venta->vendedor = $vendedor;
+                $venta->idApp = $request->id;
+                $venta->saveOrFail();
+                $idVenta = $venta->id;
+
+                foreach ($productosOrdenados as $item) {
+                    $productoAVender = $item['producto'];
+
+                    $productoVendido = new ProductoVendido();
+                    $productoVendido->fill([
+                        "id_venta" => $idVenta,
+                        "descripcion" => $productoAVender->descripcion,
+                        "categoria" => $productoAVender->categoria ?: 'General',
+                        "codigo_barras" => $productoAVender->codigo_barras,
+                        "precio" => $item['precio'],
+                        "cantidad" => $item['cantidad'],
+                    ]);
+                    $productoVendido->saveOrFail();
+
+                    $productoAVender->existencia -= $item['cantidad'];
+                    $productoAVender->saveOrFail();
+                }
+            }, 5);
+        } catch (\Throwable $e) {
             //return [false, $idVenta, $e];
             $message = '     
             
@@ -562,7 +532,7 @@ class VenderController extends Controller
             $message = '
             El body que fallo fuess:' .$e->getMessage();
             Log::debug($message.' '.$request);
-            return [false, $message];
+            return [false, $e->getMessage()];
         }
         //return true;
         return [true, 0];
