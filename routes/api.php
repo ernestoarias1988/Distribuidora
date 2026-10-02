@@ -102,18 +102,20 @@ Route::group(['prefix' => 'auth'], function () {
             $result[1] = 0;
             $message = 'El body recibido fue:';
             Log::debug($message.' '.$request.'
-            
+
             ');
             $result = $venta_controller->terminarVentaAPI($request);
-
+            Log::debug('Resultado de terminarVentaAPI: '.json_encode($result));
             if ($result[0]) {
-                return  response("true", 200);
+                return  response()->json(["data" => "true"], 200);
+
             } else {
                 if ($result[1] > 0) {
                     $venta = Venta::findOrFail($result[1]);
                     $venta->delete();
                 }
-                return  response("false", 401);
+                return  response()->json(["data" => "false", "error" => $result[1] ?? ''], 401);
+                
             }
         });
         Route::put("/venta", function (Request $request) {
