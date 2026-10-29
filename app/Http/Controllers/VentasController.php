@@ -47,8 +47,8 @@ class VentasExport implements FromCollection, WithStrictNullComparison, WithHead
 
         $totales = Venta::join("productos_vendidos", "productos_vendidos.id_venta", "=", "ventas.id")
             ->Join('clientes', 'clientes.id', '=', 'ventas.id_cliente')
-            ->select("ventas.*", "clientes.nombre", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
-            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "ventas.vendedor", "clientes.nombre")
+            ->select("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.vendedor", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "clientes.nombre", DB::raw("sum(productos_vendidos.cantidad * productos_vendidos.precio) as total"))
+            ->groupBy("ventas.id", "ventas.pagado", "ventas.entregado", "ventas.vendedor", "ventas.created_at", "ventas.updated_at", "ventas.id_cliente", "clientes.nombre")
             ->get();
 
 
