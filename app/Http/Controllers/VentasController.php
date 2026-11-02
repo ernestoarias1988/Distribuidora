@@ -593,9 +593,9 @@ class VentasController extends Controller
 
         if ($periodo === "semana") {
             return [
-                "inicio" => $ahora->copy()->startOfWeek(Carbon::MONDAY),
-                "fin" => $ahora->copy()->endOfWeek(Carbon::SUNDAY),
-                "label" => "Semana actual",
+                "inicio" => $ahora->copy()->subDays(6)->startOfDay(),
+                "fin" => $ahora->copy()->endOfDay(),
+                "label" => "Últimos 7 días",
             ];
         }
 
